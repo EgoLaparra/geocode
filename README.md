@@ -1,2 +1,2 @@
 # GeoCoDe
-Geographical Complex Descriptions
+Geographical Composed Descriptions
