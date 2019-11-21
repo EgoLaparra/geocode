@@ -1,0 +1,108 @@
+{% load static %}
+{% load annotator_tags %}
+{% get_options as option_dict %}
+
+<link rel="stylesheet" type="text/css" href="{% static 'css/index.css' %}">
+<html version="5.0">
+<head>
+    <script type="text/javascript" src="{% static 'js/text.js' %}"></script>
+</head>
+<body style="background: #ebedef ">
+<form method="post" id="open" action="index">{% csrf_token %}
+    <select name="file_name">
+        <option value="None"></option>
+        {% for doc_name in collection.doc_list %}
+            <option value="{{ doc_name }}">{{ doc_name }}</option>
+        {% endfor %}
+    </select>
+    <input type="submit" value="Open" class="button"/>
+    Editing: {{ collection.opened }}
+</form>
+<form method="post" id="save" action="save">{% csrf_token %}
+    {% for entity in entities %}
+    <table width="100%">
+        <thead>
+            <tr>
+                <th>
+                    {{ entity.id }}
+                    <input type="hidden" id="{{ entity.id }}_modified" value="no"/>
+                    <div  style="padding-left: 1em; display:inline;">
+                    <select name="{{ entity.id }}"  onchange="selectChanged('{{ entity.id}}')">
+                        <option value="None"></option>
+                        {% for option_value, option_name in option_dict.items %}
+                        <option value="{{ option_value }}" {% if entity.saved == option_value %} selected {% endif %}>
+                            {{ option_value }} - {{ option_name }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                    </div>
+                </th>
+                <th width="45%" style="border-left: 0.5px solid #444444;">
+                    <a href="https://en.wikipedia.org/wiki/{{ entity.wikipedia }}"
+                       style="color:rgb({{ entity.color }})">
+                        {{ entity.wikipedia }}
+                    </a>
+                </th>
+                <th width="30%"  style="border-left: 0.5px solid #444444;">
+                {% for osm in entity.osm %}
+                    <a href="https://www.openstreetmap.org/{{ osm.otype }}/{{ osm.oid }}"
+                       style="color:rgb({{ entity.color }});padding-right:0.5em;">
+                        {{ osm.otype }}/{{ osm.oid }}
+                    </a>
+                {% endfor %}
+                </th>
+            </tr>
+        </thead>
+        <tr>
+            <td width="70%" colspan="2" style="text-align: justify; padding-bottom: 20px;">
+                {% for paragraph in entity.paragraphs %}
+<p id="{{ paragraph.id }}">
+{% for text in paragraph.content %}
+{% if text.color %}
+<font style="background-color:rgb({{ text.color }});)" id="{{ text.id }}_text">
+{{ text.text }}
+</font>
+{% else %}
+{{ text.text }}
+{% endif %}
+{% endfor %}
+</p>
+{% endfor %}
+            </td>
+            <td width="30%" style="border-left: 0.5px solid #444444;">
+                <div id="{{ entity.id }}_links">
+                {% for paragraph in entity.paragraphs %}
+                    <!--<div id="{{ paragraph.id }}">-->
+                        {% for child in paragraph.children%}
+                            <div id="{{ child.id }}_hrefs">
+                                <a href="https://en.wikipedia.org/wiki/{{ child.wikipedia }}"
+                                   style="color:rgb({{ child.color }});padding-right:0.5em;" class="wikipedia">
+                                    {{ child.wikipedia }}
+                                </a>
+                                {% for osm in child.osm %}
+                                    <a href="https://www.openstreetmap.org/{{ osm.otype }}/{{ osm.oid }}"
+                                       style="color:rgb({{ child.color }});padding-right:0.5em;" class="osm">
+                                        {{ osm.otype }}/{{ osm.oid }}
+                                    </a>
+                                {% endfor %}
+                                <input type="button" onclick="deleteAnnotation('{{ entity.id }}', '{{ child.id }}')" value="x" class="small-button"/>
+                            </div>
+                        {% endfor %}
+                    <!--</div>-->
+                {% endfor %}
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td colspan="3" style="font-size: 12px; font-style: italic;" id="{{ entity.id}}_script">
+                {{ entity.script }}
+            </td>
+        </tr>
+    </table>
+    <input type="button" onclick="submitForm('save', '{{ collection.opened }}')" value="Save" class="button"/>
+    <input type="button" onclick="addAnnotation('{{ entity.id }}')" value="Annotate" class="button"/>
+    <br/><br/>
+    {% endfor %}
+</form>
+</body>
+</html>

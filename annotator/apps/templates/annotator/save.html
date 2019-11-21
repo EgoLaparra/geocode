@@ -1,0 +1,32 @@
+{% load annotator_tags %}
+
+<html>
+    <body style='background: #ebedef'>
+        Document {{ file_name }} saved.
+        <table>
+        {% for key, value in statistics.items %}
+            <tr>
+                <td>{{ value }}</td>
+                <td>
+                    {% if key|filter_options %}
+                        {{ key|filter_options }}
+                    {% else %}
+                        {{ key }}
+                    {% endif %}
+                </td>
+            </tr>
+        {% endfor %}
+        </table>
+        <form action='index' method='post'>{% csrf_token %}
+            <input type='hidden' name='file_name' value='{{ file_name }}'/>
+            <input type='submit' value='Back' style='
+                                border-radius: 4px;
+                                color: #000000;
+                                background: #C6C6C6;
+                                background: -moz-linear-gradient(top, #d4d4d4 0%, #cbcbcb 66%, #C6C6C6 100%);
+                                background: -webkit-linear-gradient(top, #d4d4d4 0%, #cbcbcb 66%, #C6C6C6 100%);
+                                background: linear-gradient(to bottom, #d4d4d4 0%, #cbcbcb 66%, #C6C6C6 100%);
+            '>
+        </form>
+    </body>
+</html>
