@@ -1,2 +1,2 @@
-# geocode
+# GeoCoDe
 Geographical Complex Descriptions
