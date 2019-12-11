@@ -111,7 +111,7 @@ function addAnnotation(id) {
     var range = window.getSelection().getRangeAt(0);
     var parent_p = range.commonAncestorContainer.parentNode;
     var parent_p_id = parent_p.id;
-    var newchild_id = parent_p_id + "_" + String(parent_p.childElementCount).padStart(3, '0');
+    var newchild_id = parent_p_id + "_" + String(parent_p.childElementCount + 1).padStart(3, '0');
     var selectionContents = range.extractContents();
     var font = document.createElement("font");
     var r = randInt(80,220);
@@ -138,11 +138,21 @@ function hideAnnotation(id) {
 
 function deleteAnnotation(entity_id, id) {
     var el = document.getElementById(id + "_hrefs");
+    var osm_script = document.getElementById(entity_id + "_script").innerText;
+    var osms = el.getElementsByClassName("osm");
+    for (i=0; i < osms.length; i++){
+        var href_fields = osms[i].href.split("/");
+        var type = href_fields[href_fields.length - 2];
+        var ref = href_fields[href_fields.length - 1];
+        var out_from_script = "<id-query type=\"" + type + "\" ref=\"" + ref + "\"/>";
+        osm_script = osm_script.replace(out_from_script, "");
+    }
+    document.getElementById(entity_id + "_script").innerText = osm_script;
     var parent_p = el.parentNode;
     parent_p.removeChild(el);
     hideAnnotation(id);
     var modified = document.getElementById(entity_id + "_modified");
-    modified.value = "yes"
+    modified.value = "yes";
 }
 
 

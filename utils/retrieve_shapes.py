@@ -27,7 +27,7 @@ def get_polygon(overpass_object, osm_type):
         if len(nodes) > 0:
             polygon.append("MULTIPOINT(%s)" % (",".join(nodes)))
         return polygon, overpass_object.relations[0].tags, overpass_object.relations[0].attributes
-    elif osm_type == "way" and len(overpass_object.way) > 0:
+    elif osm_type == "way" and len(overpass_object.ways) > 0:
         way = "LINESTRING(%s)" % ",".join(["%s %s" % t for t in get_line(overpass_object.ways[0])])
         return [way], overpass_object.ways[0].tags, overpass_object.ways[0].attributes
     elif osm_type == "node" and len(overpass_object.nodes) > 0:
@@ -42,6 +42,14 @@ def retrieve_polygon(osm_type, osm_id):
     while overpass_result is None:
         try:
             overpass_result = api.query(overpass_query)
+            if osm_type == "relation" and len(overpass_result.ways) == 0 and len(overpass_result.nodes) == 0:
+                members = overpass_result.relations[0].members
+                if len(members) > 0:
+                    relations_query = "".join(["relation(%s);" % relation.ref for relation in members])
+                    overpass_query = """(%s);(._;>;);out meta;""" % relations_query
+                    overpass_result = None
+                else:
+                    print("No polygon for %s %s" % (osm_type, osm_id))
         except overpy.exception.OverpassTooManyRequests:
             print("Too many requests! Wait for it...")
             time.sleep(10)
@@ -86,15 +94,15 @@ def write_sql_script(polygon_dictionary, script_file_path):
         script_file.write("CREATE DATABASE geometries;\n\n")
         script_file.write("\\c geometries\n\n")
         script_file.write("CREATE EXTENSION postgis;\n\n")
-        script_file.write("CREATE TABLE geometries (osm_id varchar, osm_type varchar, geom geometry, PRIMARY KEY (osm_id, osm_type));\n\n")
+        script_file.write("CREATE TABLE IF NOT EXISTS geometries (osm_id varchar, osm_type varchar, geom geometry, PRIMARY KEY (osm_id, osm_type));\n\n")
         script_file.write("INSERT INTO geometries VALUES\n")
         polygon_rows = []
         for osm_key in polygon_dictionary:
             osm_id, osm_type = osm_key.split(" ")
-            for geometry in polygon_dictionary[osm_key]["polygon"]:
-                if geometry is not None:
-                    polygon_rows.append("\t('%s', '%s', '%s')" % (osm_id, osm_type, geometry))
-        script_file.write("%s;\n\n" % ",\n".join(polygon_rows))
+            if polygon_dictionary[osm_key]["polygon"] is not None:
+                for geometry in polygon_dictionary[osm_key]["polygon"]:
+                        polygon_rows.append("\t('%s', '%s', '%s')" % (osm_id, osm_type, geometry))
+        script_file.write("%s ON CONFLICT DO NOTHING;\n\n" % ",\n".join(polygon_rows))
         script_file.write("SELECT COUNT(*) FROM geometries;\n")
 
 

@@ -128,7 +128,7 @@ def iterelemout(elem, paragraph, divs):
                 link.set("wikipedia", " ".join(wikipedia_links))
                 osm_links = []
                 osm_types = []
-                for osm in div.xpath('./a[@class="osm"]'):
+                for osm in div.xpath('./a[@class="osm" and @href!=""]'):
                     href = osm.get("href").split("/")[-1]
                     htype = osm.get("href").split("/")[-2]
                     osm_links.append(href)
@@ -139,7 +139,13 @@ def iterelemout(elem, paragraph, divs):
                 divs.remove(div)
             iterelemout(child, link, divs)
         else:
-            paragraph[-1].tail += child.text + child.tail
+            append_text = child.text
+            if child.tail is not None:
+                append_text += child.tail
+            if len(paragraph) == 0:
+                paragraph.text += append_text
+            else:
+                paragraph[-1].tail += child.tail
     if elem.tail is not None:
         paragraph.tail = elem.tail
 

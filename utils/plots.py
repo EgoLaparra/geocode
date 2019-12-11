@@ -28,7 +28,7 @@ def plot_geometries(geometry_list, color_list, lims=None):
                     pg.plot(ax=ax, alpha=0.5, color=color, linewidth=1.5, edgecolor=color)
                 else:
                     pg.plot(ax=ax, alpha=1., color=color, linewidth=2.)
-    ctx.add_basemap(ax, url=ctx.providers.OpenStreetMap.Mapnik, zoom=13, attribution_size=5)
+    ctx.add_basemap(ax, url=ctx.providers.OpenStreetMap.Mapnik, zoom=12, attribution_size=5)
     ax.axis('off')
     if lims is not None:
         ax.set_xlim(lims.minx[0], lims.maxx[0])
@@ -58,8 +58,7 @@ if __name__ == "__main__":
         exclude = sys.argv[3].split(",")
         print(exclude)
     entity = gl.xpath("//entity[@id='%s' and @status='5']" % sys.argv[2])[0]
-    print(len(entity))
-    if len(entity) == 1:
+    if entity is not None:
         entity_geometries = get_entity_geometries(entity)
         link_geometries = []
         for link in entity.xpath(".//link"):
@@ -68,13 +67,5 @@ if __name__ == "__main__":
 
         geometries_for_plot = entity_geometries + link_geometries
         colors_for_plot = ["darkred"]*len(entity_geometries) + ["steelblue"]*len(link_geometries)
-
-        envelope = geo.get_envelope(geo.unite_geometries(geometries_for_plot))
-        envelope = geo.from_text("POLYGON((%s, %s, %s, %s, %s))"
-                                 % tuple(["%s %s" % (c[0],c[1]) for c in [geo.get_coordinates(e) for e in envelope]]))
-        pg = geo.make_geodataframe(envelope, gdf)
-        pt = pg.scale(1.05, 1.05)
-        geometries_for_plot.append(pt)
-        colors_for_plot.append(None)
 
         plot_geometries(geometries_for_plot, colors_for_plot)

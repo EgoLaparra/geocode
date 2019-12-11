@@ -5,8 +5,7 @@ cursor = conn.cursor()
 
 
 SQL = {"geometry":          {"query": """select geom from geometries 
-                                where osm_id = '%s' and osm_type = '%s'  
-                                and st_geometrytype(geom) != 'ST_MultiPoint';""",
+                                where osm_id = '%s' and osm_type = '%s';""",
                              "single_output": False},
        "as_text":           {"query": """select st_astext('%s');""",
                              "single_output": True},
@@ -87,4 +86,3 @@ def get_value_list(geometry_list):
 def dataframe_fromsql(geometry, dataframe):
     sql_query = SQL["geography"]
     return dataframe.from_postgis(sql_query["query"] % geometry, conn)
-    return dataframe.from_postgis(geometry, conn)

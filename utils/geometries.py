@@ -107,10 +107,11 @@ def process_geometry(geometry):
         if geometry_isclosed:
             geometry = execute_query("makepolygon", geometry)
 
-    elif geometry_type == "ST_Point":
+    elif geometry_type == "ST_Point" or geometry_type == "ST_MultiPoint":
         geometry = geometry[0]
     else:
-        raise Exception("Not LineString or MultiLineString: %s" % geometry_type)
+        print(as_text(execute_query("linemerge", geometry)))
+        raise Exception("Not LineString or MultiLineString or ST_Point or ST_MultiPoint: %s" % geometry_type)
 
     return geometry
 
