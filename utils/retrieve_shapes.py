@@ -5,6 +5,7 @@ import sys
 import os
 import time
 import http
+from tqdm import tqdm
 
 api = overpy.Overpass()
 
@@ -24,7 +25,7 @@ def get_polygon(overpass_object, osm_type):
         polygon = []
         if len(ways) > 0:
             polygon.append("MULTILINESTRING(%s)" % (",".join(ways)))
-        if len(nodes) > 0:
+        elif len(nodes) > 0:
             polygon.append("MULTIPOINT(%s)" % (",".join(nodes)))
         return polygon, overpass_object.relations[0].tags, overpass_object.relations[0].attributes
     elif osm_type == "way" and len(overpass_object.ways) > 0:
@@ -39,28 +40,36 @@ def get_polygon(overpass_object, osm_type):
 def retrieve_polygon(osm_type, osm_id):
     overpass_query = """%s(%s);(._;>;);out meta;""" % (osm_type, osm_id)
     overpass_result = None
-    while overpass_result is None:
-        try:
-            overpass_result = api.query(overpass_query)
-            if osm_type == "relation" and len(overpass_result.ways) == 0 and len(overpass_result.nodes) == 0:
-                members = overpass_result.relations[0].members
-                if len(members) > 0:
-                    relations_query = "".join(["relation(%s);" % relation.ref for relation in members])
-                    overpass_query = """(%s);(._;>;);out meta;""" % relations_query
-                    overpass_result = None
-                else:
-                    print("No polygon for %s %s" % (osm_type, osm_id))
-        except overpy.exception.OverpassTooManyRequests:
-            print("Too many requests! Wait for it...")
-            time.sleep(10)
-        except overpy.exception.OverpassGatewayTimeout:
-            print("Server load too high! Wait for it...")
-            time.sleep(10)
-        except http.client.IncompleteRead:
-            print("Incomplete read. Try again.")
-        except overpy.exception.OverPyException as ex:
-            print("Some overpass error with: %s %s" % (osm_type, osm_id))
-            print(ex)
+    try:
+        while overpass_result is None:
+            try:
+                overpass_result = api.query(overpass_query)
+                if osm_type == "relation" and len(overpass_result.ways) == 0 and len(overpass_result.nodes) == 0:
+                    members = []
+                    if len(overpass_result.relations) > 0:
+                        members = overpass_result.relations[0].members
+                    if len(members) > 0:
+                        relations_query = "".join(["relation(%s);" %
+                                                   relation.ref for relation in members])
+                        overpass_query = """(%s);(._;>;);out meta;""" % relations_query
+                        overpass_result = None
+                    else:
+                        raise NameError('No Polygon')
+            except overpy.exception.OverpassTooManyRequests:
+                print("Too many requests! Wait for it...")
+                time.sleep(10)
+            except overpy.exception.OverpassGatewayTimeout:
+                print("Server load too high! Wait for it...")
+                time.sleep(10)
+            except http.client.IncompleteRead:
+                print(osm_type, osm_id)
+                print("Incomplete read. Try again.")
+            except overpy.exception.OverPyException as ex:
+                print("Some overpass error with: %s %s" % (osm_type, osm_id))
+                print(ex)
+    except NameError:
+        print("No polygon for %s %s" % (osm_type, osm_id))
+        overpass_result = None
     return overpass_result
 
 
@@ -68,25 +77,38 @@ def create_file_paths(intput_path):
     if os.path.isfile(intput_path):
         return[intput_path]
     else:
-        return [os.path.join(intput_path, input_file) for input_file in os.listdir(intput_path)]
+        return [os.path.join(intput_path, input_file)
+                for input_file in os.listdir(intput_path)]
 
 
-def retrieve_polygon_dictionary(gl_paths, output_pkl_file, polygon_dictionary, dump_dictionary=False):
+def retrieve_entity(entity, polygon_dictionary, skip_entities, pklfile):
+    for osm_id, osm_type in zip(entity.get('osm').split(" "), entity.get('type').split(" ")):
+        osm_key = (osm_id, osm_type)
+        osm_key = " ".join(osm_key)
+        if osm_key not in polygon_dictionary and osm_key not in skip_entities:
+            overpass_result = retrieve_polygon(osm_type, osm_id)
+            if overpass_result is not None:
+                polygon, tags, attributes = get_polygon(overpass_result, osm_type)
+                polygon_dictionary[osm_key] = {"id": osm_key,
+                                               "tags": tags,
+                                               "attributes": attributes,
+                                               "polygon": polygon}
+                if pklfile is not None:
+                    pkl.dump(polygon_dictionary[osm_key], pklfile)
+    return polygon_dictionary
+
+
+def retrieve_polygon_dictionary(gl_paths, output_pkl_file, polygon_dictionary,
+                                skip_entities, dump_dictionary=False):
     with (open(output_pkl_file, "ab") if dump_dictionary else None) as pklfile:
-        for gl_path in gl_paths:
+        for gl_path in tqdm(gl_paths, desc="Paths"):
             gl_root = etree.parse(gl_path)
-            for e, entity in enumerate(gl_root.xpath('/data/entities//*[(self::entity and @status="5") or (self::link and ancestor::entity[@status="5"])]')):
-                for osm_id, osm_type in zip(entity.get('osm').split(" "), entity.get('type').split(" ")):
-                    osm_key = (osm_id, osm_type)
-                    osm_key = " ".join(osm_key)
-                    if osm_key not in polygon_dictionary:
-                        overpass_result = retrieve_polygon(osm_type, osm_id)
-                        if overpass_result is not None:
-                            polygon, tags, attributes = get_polygon(overpass_result, osm_type)
-                            polygon_dictionary[osm_key] = {"id": osm_key, "tags": tags, "attributes": attributes, "polygon": polygon}
-                            pkl.dump(polygon_dictionary[osm_key], pklfile)
-                if e % 5 == 0:
-                    print(e)
+            for entity in tqdm(gl_root.xpath('/data/entities//*[(self::entity and @status="5") '
+                                             'or (self::link and ancestor::entity[@status="5"])]'),
+                               leave=False):
+                polygon_dictionary = retrieve_entity(entity, polygon_dictionary,
+                                                     skip_entities, pklfile)
+        return polygon_dictionary
 
 
 def write_sql_script(polygon_dictionary, script_file_path):
@@ -94,7 +116,9 @@ def write_sql_script(polygon_dictionary, script_file_path):
         script_file.write("CREATE DATABASE geometries;\n\n")
         script_file.write("\\c geometries\n\n")
         script_file.write("CREATE EXTENSION postgis;\n\n")
-        script_file.write("CREATE TABLE IF NOT EXISTS geometries (osm_id varchar, osm_type varchar, geom geometry, PRIMARY KEY (osm_id, osm_type));\n\n")
+        script_file.write("CREATE TABLE IF NOT EXISTS geometries "
+                          "(osm_id varchar, osm_type varchar, geom geometry, "
+                          "PRIMARY KEY (osm_id, osm_type));\n\n")
         script_file.write("INSERT INTO geometries VALUES\n")
         polygon_rows = []
         for osm_key in polygon_dictionary:
@@ -119,11 +143,26 @@ def load_dictionary(output_pkl_file):
     return polygon_dictionary
 
 
+def load_skips(skip_file):
+    skips = set()
+    with open(skip_file) as sfile:
+        for skip in sfile:
+            osm_key = skip.rstrip()
+            skips.add(osm_key)
+    return skips
+
+
 if __name__ == "__main__":
     input_path = sys.argv[1]
     output_script_file = sys.argv[2]
     output_pkl_file = os.path.splitext(output_script_file)[0] + ".pkl"
     file_paths = create_file_paths(input_path)
     polygon_dictionary = load_dictionary(output_pkl_file)
-    retrieve_polygon_dictionary(file_paths, output_pkl_file, polygon_dictionary, dump_dictionary=True)
+    skip_entities = set()
+    if len(sys.argv) == 4:
+        skip_file = sys.argv[3]
+        skip_entities = load_skips(skip_file)
+    polygon_dictionary = retrieve_polygon_dictionary(file_paths, output_pkl_file,
+                                                     polygon_dictionary, skip_entities,
+                                                     dump_dictionary=True)
     write_sql_script(polygon_dictionary, output_script_file)

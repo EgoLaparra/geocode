@@ -1,8 +1,5 @@
 import psycopg2
 
-conn = psycopg2.connect("dbname=geometries user=egoitz password=egoitz")
-cursor = conn.cursor()
-
 
 SQL = {"geometry":          {"query": """select geom from geometries 
                                 where osm_id = '%s' and osm_type = '%s';""",
@@ -27,6 +24,10 @@ SQL = {"geometry":          {"query": """select geom from geometries
                              "single_output": True},
        "envelope":          {"query": """select st_points(st_envelope('%s'));""",
                              "single_output": True},
+       "oriented_envelope": {"query": """select st_orientedenvelope('%s');""",
+                             "single_output": True},
+       "bounding_circle":   {"query": """select st_minimumboundingcircle('%s');""",
+                             "single_output": True},
        "isempty":           {"query": """select st_isempty('%s');""",
                              "single_output": True},
        "isclosed":          {"query": """select st_isclosed('%s');""",
@@ -49,7 +50,11 @@ SQL = {"geometry":          {"query": """select geom from geometries
                              "single_output": True},
        "dump":              {"query": """select (st_dump('%s')).geom;""",
                              "single_output": False},
+       "dumppoints":        {"query": """select (st_dumppoints('%s')).geom;""",
+                             "single_output": False},
        "linemerge":         {"query": """select st_linemerge('%s');""",
+                             "single_output": True},
+       "collect":           {"query": """select st_collect(geom) from (values %s) as t (geom);""",
                              "single_output": True},
        "union":             {"query": """select st_union('%s');""",
                              "single_output": True},
@@ -59,6 +64,8 @@ SQL = {"geometry":          {"query": """select geom from geometries
                              "single_output": True},
        "translate":         {"query": """select st_translate('%s', %s, %s);""",
                              "single_output": True},
+       "scale":             {"query": """select st_scale('%s', '%s'::geometry, '%s');""",
+                             "single_output": True},
        "makepolygon":       {"query": """select st_makepolygon('%s');""",
                              "single_output": True},
        "transform":         {"query": """select st_transform(st_setsrid(st_astext('%s'), 4326), 3857) as geom;""",
@@ -66,23 +73,74 @@ SQL = {"geometry":          {"query": """select geom from geometries
        "geography":         {"query": """select Geography('%s') as geom;""",
                              "single_output": True},
        "buffer":            {"query": """select st_makevalid(st_buffer('%s', %s));""",
-                             "single_output": True}
+                             "single_output": True},
+       "prediction":        {"query": """select geom from %s 
+                                where entity_id = '%s';""",
+                             "single_output": False}
        }
 
 
-def execute_query(sql_query_key, geometry):
-    sql_query = SQL[sql_query_key]
-    cursor.execute(sql_query["query"] % geometry)
-    if sql_query["single_output"]:
-        return cursor.fetchone()[0]
-    else:
-        return cursor.fetchall()
+class Database:
 
+    conn = None
+    cursor = None
 
-def get_value_list(geometry_list):
-    return ",".join(["('%s')" % g for g in geometry_list])
+    def __init__(self):
+        try:
+            self.open()
+            self.cursor = self.conn.cursor()
+        except Exception as e:
+            print("\tException: %s" % e)
 
+    def open(self):
+        self.conn = psycopg2.connect("dbname=geometries user=guest password=guest")
 
-def dataframe_fromsql(geometry, dataframe):
-    sql_query = SQL["geography"]
-    return dataframe.from_postgis(sql_query["query"] % geometry, conn)
+    def close(self):
+        self.conn.close()
+
+    def execute_query(self, sql_query_key, geometry):
+        try:
+            sql_query = SQL[sql_query_key]
+            self.cursor.execute(sql_query["query"] % geometry)
+            if sql_query["single_output"]:
+                fetched = self.cursor.fetchone()[0]
+            else:
+                fetched = self.cursor.fetchall()
+            return fetched
+        except Exception as e:
+            self.close()
+            print("\tException: %s" % e)
+            return []
+
+    def insert_in_table(self, table, record_id, entity_id, geom):
+        try:
+            sql_insert_query = "insert into %s (id, entity_id, geom) values ('%s', '%s', '%s');"
+            self.cursor.execute(sql_insert_query % (table, record_id, entity_id, geom))
+            self.conn.commit()
+        except Exception as e:
+            self.close()
+            print("\tException: %s" % e)
+
+    def select_from_table(self, table, entity_id):
+        try:
+            sql_select_query = "select geom from %s where entity_id = '%s';"
+            self.cursor.execute(sql_select_query % (table, entity_id))
+            return self.cursor.fetchone()
+        except Exception as e:
+            self.close()
+            print("\tException: %s" % e)
+            return None
+
+    @staticmethod
+    def get_value_list(geometry_list):
+        return ",".join(["('%s')" % g for g in geometry_list])
+
+    def dataframe_from_sql(self, geometry, dataframe):
+        try:
+            sql_query = SQL["geography"]
+            return dataframe.from_postgis(sql_query["query"] % geometry, self.conn)
+        except Exception as e:
+            self.close()
+            print("\tException: %s" % e)
+            return None
+
