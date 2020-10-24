@@ -70,6 +70,7 @@ if __name__ == '__main__':
             pID2links[pID] = linkID2coordinates
         entityID2paras[entity_id] = pID2links
         ##process target entity
+        print('entityID: ', entity_id)
         entity_geometry = geom.get_entity_geometry(entity)
         simplified_geometry = geom.simplify_geometry(entity_geometry, segments=2)
         entity_coordinates_list = []
