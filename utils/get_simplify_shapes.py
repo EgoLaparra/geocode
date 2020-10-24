@@ -44,9 +44,8 @@ if __name__ == '__main__':
     all_entity_coordinates = {}
     for entity in entities:
         entity_id = entity.get("id")
-        #osm_ids = entity.get("osm").split(" ")
-        #osm_types = entity.get("type").split(" ")
-        #temp_key = '_'.join(osm_ids + osm_types)
+        for p in entity.xpath('./p'):
+            pid = p.get("id")
         entity_geometry = geom.get_entity_geometry(entity)
         simplified_geometry = geom.simplify_geometry(entity_geometry, segments=2)
         entity_coordinates_list = []
