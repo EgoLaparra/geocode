@@ -59,6 +59,7 @@ if __name__ == '__main__':
                 linkID = link.get("id")
                 print('Link ID: ', linkID)
                 link_geometry = geom.get_entity_geometry(link)
+                print(geom.geometry_isemtpy(link_geometry))
                 print(geom.get_geometry_area(link_geometry))
                 simplified_link_geometry = geom.simplify_geometry(link_geometry, segments=2)
                 link_coordinates_list = []
