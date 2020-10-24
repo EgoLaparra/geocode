@@ -57,6 +57,7 @@ if __name__ == '__main__':
             linkID2coordinates = {}
             for e, link in enumerate(p.xpath('./link')):
                 linkID = link.get("id")
+                print('Link ID: ', linkID)
                 link_geometry = geom.get_entity_geometry(link)
                 simplified_link_geometry = geom.simplify_geometry(link_geometry, segments=2)
                 link_coordinates_list = []
