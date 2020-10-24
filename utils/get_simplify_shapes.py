@@ -46,6 +46,7 @@ if __name__ == '__main__':
         entity_id = entity.get("id")
         for p in entity.xpath('./p'):
             pid = p.get("id")
+            print('pid: ', pid)
         entity_geometry = geom.get_entity_geometry(entity)
         simplified_geometry = geom.simplify_geometry(entity_geometry, segments=2)
         entity_coordinates_list = []
