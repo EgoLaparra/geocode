@@ -3,6 +3,7 @@ from lxml import etree
 import argparse
 import pickle
 import sys
+import os
 
 def pickle_dump_large_file(obj, filepath):
     max_bytes = 2**31 - 1
@@ -42,9 +43,10 @@ if __name__ == '__main__':
     entities = get_entities_fromXML(args.xml_filepath_train)
     all_entity_coordinates = {}
     for entity in entities:
-        osm_ids = entity.get("osm").split(" ")
-        osm_types = entity.get("type").split(" ")
-        temp_key = '_'.join(osm_ids + osm_types)
+        entity_id = entity.get("id")
+        #osm_ids = entity.get("osm").split(" ")
+        #osm_types = entity.get("type").split(" ")
+        #temp_key = '_'.join(osm_ids + osm_types)
         entity_geometry = geom.get_entity_geometry(entity)
         simplified_geometry = geom.simplify_geometry(entity_geometry, segments=2)
         entity_coordinates_list = []
@@ -56,8 +58,8 @@ if __name__ == '__main__':
         # print(entity_geometry)
         print(simplified_geometry)
         print(entity_coordinates_list)
-        all_entity_coordinates[temp_key] = entity_coordinates_list
-        print(temp_key)
+        all_entity_coordinates[entity_id] = entity_coordinates_list
+        print(entity_id)
     assert len(entities) == len(list(all_entity_coordinates.keys()))
     geom.close_connection()
     pickle_dump_large_file(all_entity_coordinates, args.output_dir_train)
