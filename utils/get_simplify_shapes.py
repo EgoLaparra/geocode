@@ -44,9 +44,15 @@ if __name__ == '__main__':
     all_entity_coordinates = {}
     for entity in entities:
         entity_id = entity.get("id")
+        print(entity_id)
         for p in entity.xpath('./p'):
             pid = p.get("id")
             print('pid: ', pid)
+            for e, link in enumerate(p.xpath('./link')):
+                print(link.get("wikipedia"))
+                print(link.get("osm"))
+                print(link.get("type"))
+                print(link.get("id"))
         entity_geometry = geom.get_entity_geometry(entity)
         simplified_geometry = geom.simplify_geometry(entity_geometry, segments=2)
         entity_coordinates_list = []
@@ -56,10 +62,9 @@ if __name__ == '__main__':
                 coordinates.append(geom.get_coordinates(polygon))
             entity_coordinates_list.append(coordinates)
         # print(entity_geometry)
-        print(simplified_geometry)
-        print(entity_coordinates_list)
+        #print(simplified_geometry)
+        #print(entity_coordinates_list)
         all_entity_coordinates[entity_id] = entity_coordinates_list
-        print(entity_id)
     assert len(entities) == len(list(all_entity_coordinates.keys()))
     geom.close_connection()
     pickle_dump_large_file(all_entity_coordinates, args.output_dir_train)
