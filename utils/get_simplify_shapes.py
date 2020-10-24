@@ -31,7 +31,7 @@ def get_entities_fromXML(xml_filepath):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--xml_filepath_train', default='../../geocode-data/collection_samples/train_samples.xml', type=str,
+    parser.add_argument('--xml_filepath_train', default='../../geocode-data/collection_samples/train_samples_test.xml', type=str,
                         help='path of data collections')
     parser.add_argument('--sample_size', default=50, type=int,
                         help='number of sample datas')
@@ -59,6 +59,7 @@ if __name__ == '__main__':
                 linkID = link.get("id")
                 print('Link ID: ', linkID)
                 link_geometry = geom.get_entity_geometry(link)
+                print(geom.get_geometry_area(link_geometry))
                 simplified_link_geometry = geom.simplify_geometry(link_geometry, segments=2)
                 link_coordinates_list = []
                 for polygon_list in simplified_link_geometry:
