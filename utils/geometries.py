@@ -97,39 +97,42 @@ class Geometries:
         return self.database.execute_query("transform", geometry)
 
     def simplify_geometry(self, geometry, segments=2):
-        simple_geometry = [[None] * (segments + 1) for i in range(segments + 1)]
         envelope = self.get_envelope(geometry)
-        new_x_set = set()
-        new_y_set = set()
-        i = 0
-        j = 0
-        increments = [(0, 1), (1, 0), (0, -1), (-1, 0)]
-        for e, point in enumerate(envelope[:-1], 1):
-            i_increment, j_increment = increments[e - 1]
-            closest_to_point = self.database.execute_query("closest_point", (geometry, point[0]))
-            simple_geometry[i][j] = closest_to_point
-            i += i_increment
-            j += j_increment
-            source_x, source_y = self.get_coordinates(point)
-            target_x, target_y = self.get_coordinates(envelope[e])
-            for segment in range(1, segments):
-                segment_x = source_x + (target_x - source_x) * segment / segments
-                if segment_x != source_x and segment_x != target_x:
-                    new_x_set.add(segment_x)
-                segment_y = source_y + (target_y - source_y) * segment / segments
-                if segment_y != source_y and segment_y != target_y:
-                    new_y_set.add(segment_y)
-                segment_point = self.from_text("POINT(%s %s)" % (segment_x, segment_y))
-                closest_to_segment_point = self.database.execute_query("closest_point", (geometry, segment_point))
-                simple_geometry[i][j] = closest_to_segment_point
+        if len(envelope) == 1:
+            return [[envelope[0]] * (segments + 1) for i in range(segments + 1)]
+        else:
+            simple_geometry = [[None] * (segments + 1) for i in range(segments + 1)]
+            new_x_set = set()
+            new_y_set = set()
+            i = 0
+            j = 0
+            increments = [(0, 1), (1, 0), (0, -1), (-1, 0)]
+            for e, point in enumerate(envelope[:-1], 1):
+                i_increment, j_increment = increments[e - 1]
+                closest_to_point = self.database.execute_query("closest_point", (geometry, point[0]))
+                simple_geometry[i][j] = closest_to_point
                 i += i_increment
                 j += j_increment
-        for i, new_x in enumerate(sorted(new_x_set), 1):
-            for j, new_y in enumerate(sorted(new_y_set), 1):
-                inner_point = self.from_text("POINT(%s %s)" % (new_x, new_y))
-                closest_to_inner_point = self.database.execute_query("closest_point", (geometry, inner_point))
-                simple_geometry[i][j] = closest_to_inner_point
-        return simple_geometry
+                source_x, source_y = self.get_coordinates(point)
+                target_x, target_y = self.get_coordinates(envelope[e])
+                for segment in range(1, segments):
+                    segment_x = source_x + (target_x - source_x) * segment / segments
+                    if segment_x != source_x and segment_x != target_x:
+                        new_x_set.add(segment_x)
+                    segment_y = source_y + (target_y - source_y) * segment / segments
+                    if segment_y != source_y and segment_y != target_y:
+                        new_y_set.add(segment_y)
+                    segment_point = self.from_text("POINT(%s %s)" % (segment_x, segment_y))
+                    closest_to_segment_point = self.database.execute_query("closest_point", (geometry, segment_point))
+                    simple_geometry[i][j] = closest_to_segment_point
+                    i += i_increment
+                    j += j_increment
+            for i, new_x in enumerate(sorted(new_x_set), 1):
+                for j, new_y in enumerate(sorted(new_y_set), 1):
+                    inner_point = self.from_text("POINT(%s %s)" % (new_x, new_y))
+                    closest_to_inner_point = self.database.execute_query("closest_point", (geometry, inner_point))
+                    simple_geometry[i][j] = closest_to_inner_point
+            return simple_geometry
 
     def process_geometry(self, geometry):
         geometry_type = self.database.execute_query("type", geometry)
