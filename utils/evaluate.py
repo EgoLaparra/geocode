@@ -8,9 +8,9 @@ from geometries import Geometries
 class Scores:
     def __init__(self, total_gold=1, total_predicted=0):
         self.overlap_score = np.array([0., 0., 0.])
-        self.overlap_score_x200 = np.array([0., 0., 0.])
+        self.overlap_score_x2 = np.array([0., 0., 0.])
         self.envelope_score = np.array([0., 0., 0.])
-        self.envelope_score_x200 = np.array([0., 0., 0.])
+        self.envelope_score_x2 = np.array([0., 0., 0.])
         self.total_gold = total_gold
         self.total_predicted = total_predicted
 
@@ -25,11 +25,14 @@ class Scores:
 
     def global_overlap(self, predicted=False):
         return [tuple(self.global_score(self.overlap_score[0], self.overlap_score[1], predicted)),
-                tuple(self.global_score(self.overlap_score_x200[0], self.overlap_score_x200[1], predicted))]
+                tuple(self.global_score(self.overlap_score_x2[0], self.overlap_score_x2[1], predicted))]
 
     def global_envelope(self, predicted=False):
         return [tuple(self.global_score(self.envelope_score[0], self.envelope_score[1], predicted)),
-                tuple(self.global_score(self.envelope_score_x200[0], self.envelope_score_x200[1], predicted))]
+                tuple(self.global_score(self.envelope_score_x2[0], self.envelope_score_x2[1], predicted))]
+
+    def coverage(self):
+        return self.total_predicted / self.total_gold
 
 
 def to_km(value, area=False):
@@ -45,15 +48,21 @@ def transform_to_geography(geom, gold_geometry, predicted_geometry):
     return gold_geography, predicted_geography
 
 
-def score_overlap(geom, gold_geometry, predicted_geometry, scale_factor=1., envelope=False, skip_transform=False):
+def scale_geometry(geom, geometry, scale_factor):
+    factor_point = geom.from_text("POINT(%s %s)" % (scale_factor, scale_factor))
+    origin = geom.get_centrality(geometry)
+    if not geom.contains(geometry, origin):
+        origin = geom.get_point_on_surface(geometry)
+    scaled_geometry = geom.scale_geometry(geometry, factor_point, origin)
+    return geom.unite_geometries([geometry, scaled_geometry])
+
+
+def score_overlap(geom, gold_geometry, predicted_geometry, envelope=False, skip_transform=False):
     if not skip_transform:
         gold_geometry, predicted_geometry = transform_to_geography(geom, gold_geometry, predicted_geometry)
     if envelope:
         gold_geometry = geom.get_oriented_envelope(gold_geometry)
-    if scale_factor > 1.:
-        factor_point = geom.from_text("POINT(%s %s)" % (scale_factor, scale_factor))
-        centroid = geom.get_centrality(gold_geometry)
-        gold_geometry = geom.scale_geometry(gold_geometry, factor_point, centroid)
+
     overlap_geometry = geom.intersect_geometries([gold_geometry, predicted_geometry])
     gold_area = geom.get_geometry_area(gold_geometry)
     predicted_area = geom.get_geometry_area(predicted_geometry)
@@ -64,36 +73,46 @@ def score_overlap(geom, gold_geometry, predicted_geometry, scale_factor=1., enve
     return p, r, f
 
 
+def score_scaled(geom, gold_geometry, predicted_geometry, scale_factor=2., envelope=False, skip_transform=False):
+    if not skip_transform:
+        gold_geometry, predicted_geometry = transform_to_geography(geom, gold_geometry, predicted_geometry)
+    if envelope:
+        gold_geometry = geom.get_oriented_envelope(gold_geometry)
+    gold_scaled_geometry = scale_geometry(geom, gold_geometry, scale_factor)
+    p, _, _ = score_overlap(geom, gold_scaled_geometry, predicted_geometry, envelope, skip_transform=True)
+    predicted_scaled_geometry = scale_geometry(geom, predicted_geometry, scale_factor)
+    _, r, _ = score_overlap(geom, gold_geometry, predicted_scaled_geometry, envelope, skip_transform=True)
+    return p, r, 0.
+
+
 def update_scores(global_scores, local_scores):
     if local_scores is not None:
         global_scores.overlap_score += local_scores.overlap_score
-        global_scores.overlap_score_x200 += local_scores.overlap_score_x200
+        global_scores.overlap_score_x2 += local_scores.overlap_score_x2
         global_scores.envelope_score += local_scores.envelope_score
-        global_scores.envelope_score_x200 += local_scores.envelope_score_x200
+        global_scores.envelope_score_x2 += local_scores.envelope_score_x2
         global_scores.total_predicted += 1
 
 
 def print_scores(scores, tabular=""):
     overlaps = scores.global_overlap()
-    print(tabular + "Overlap:")
+    print(tabular + "Strict:")
     print(tabular + "P: %s\tR: %s\tF: %s" % overlaps[0])
-    print(tabular + "Overlap X2:")
-    print(tabular + "P: %s\tR: %s\tF: %s" % overlaps[1])
+    print(tabular + "Px2: %s\tRx2: %s" % overlaps[1][:2])
     overlaps = scores.global_overlap(predicted=True)
-    print(tabular + "Overlap (predicted):")
+    print(tabular + "Strict (predicted):")
     print(tabular + "P: %s\tR: %s\tF: %s" % overlaps[0])
-    print(tabular + "Overlap X2:")
-    print(tabular + "P: %s\tR: %s\tF: %s" % overlaps[1])
+    print(tabular + "Px2: %s\tRx2: %s" % overlaps[1][:2])
     envelopes = scores.global_envelope()
-    print(tabular + "Envelope:")
+    print(tabular + "Relaxed:")
     print(tabular + "P: %s\tR: %s\tF: %s" % envelopes[0])
-    print(tabular + "Envelope X2:")
-    print(tabular + "P: %s\tR: %s\tF: %s" % envelopes[1])
+    print(tabular + "Px2: %s\tRx2: %s" % envelopes[1][:2])
     envelopes = scores.global_envelope(predicted=True)
-    print(tabular + "Envelope (predicted):")
+    print(tabular + "Relaxed (predicted):")
     print(tabular + "P: %s\tR: %s\tF: %s" % envelopes[0])
-    print(tabular + "Envelope X2:")
-    print(tabular + "P: %s\tR: %s\tF: %s" % envelopes[1])
+    print(tabular + "Px2: %s\tRx2: %s" % envelopes[1][:2])
+    if tabular == "":
+        print("Coverage: %s" % scores.coverage())
 
 
 def score(geom, gold_geometry, predicted_geometry, skip_transform=False, print_it=False):
@@ -107,17 +126,17 @@ def score(geom, gold_geometry, predicted_geometry, skip_transform=False, print_i
     else:
         overlap = score_overlap(geom, gold_geometry, predicted_geometry,
                                 skip_transform=True)
-        overlap_x200 = score_overlap(geom, gold_geometry, predicted_geometry,
-                                     scale_factor=2, skip_transform=True)
+        overlap_x2 = score_scaled(geom, gold_geometry, predicted_geometry,
+                                  skip_transform=True)
         envelope = score_overlap(geom, gold_geometry, predicted_geometry,
                                  envelope=True, skip_transform=True)
-        envelope_x200 = score_overlap(geom, gold_geometry, predicted_geometry,
-                                      scale_factor=2, envelope=True, skip_transform=True)
+        envelope_x2 = score_scaled(geom, gold_geometry, predicted_geometry,
+                                   envelope=True, skip_transform=True)
         scores = Scores(total_predicted=1)
         scores.overlap_score = np.array([overlap[0], overlap[1], overlap[2]])
-        scores.overlap_score_x200 = np.array([overlap_x200[0], overlap_x200[1], overlap_x200[2]])
+        scores.overlap_score_x2 = np.array([overlap_x2[0], overlap_x2[1], overlap_x2[2]])
         scores.envelope_score = np.array([envelope[0], envelope[1], envelope[2]])
-        scores.envelope_score_x200 = np.array([envelope_x200[0], envelope_x200[1], envelope_x200[2]])
+        scores.envelope_score_x2 = np.array([envelope_x2[0], envelope_x2[1], envelope_x2[2]])
         if print_it:
             print_scores(scores)
         return scores
@@ -141,8 +160,8 @@ def evaluate(gold_file, prediction_table):
             print("Gold entity: %s %s" % (gold_entity.get("id"), gold_entity.get("wikipedia")))
             gold_geometry = geom.get_entity_geometry(gold_entity)
             predicted_geometry = geom.get_predicted_geometry(prediction_table, gold_entity.get("id"))
-            if len(predicted_geometry) > 0:
-                entity_scores = score(gold_geometry, predicted_geometry, False)
+            if len(predicted_geometry) > 0 and not geom.geometry_isempty(predicted_geometry):
+                entity_scores = score(geom, gold_geometry, predicted_geometry, False)
                 print_scores(entity_scores, tabular="\t")
                 update_scores(scores, entity_scores)
             else:
