@@ -42,6 +42,9 @@ class Geometries:
         centrality = self.database.execute_query(metric, geometry)
         return self.database.execute_query("closest_point", (geometry, centrality))
 
+    def get_point_on_surface(self, geometry):
+        return self.database.execute_query("point_on_surface", geometry)
+
     def get_envelope(self, geometry):
         envelope = self.database.execute_query("envelope", geometry)
         return self.database.execute_query("dump", envelope)
@@ -51,6 +54,12 @@ class Geometries:
 
     def get_bounding_circle(self, geometry):
         return self.database.execute_query("bounding_circle", geometry)
+
+    def get_bounding_diagonal(self, geometry):
+        return self.database.execute_query("bounding_diagonal", geometry)
+
+    def contains(self, geometry_a, geometry_b):
+        return self.database.execute_query("contains", (geometry_a, geometry_b))
 
     def calculate_distance(self, geometry_a, geometry_b):
         return self.database.execute_query("distance", (geometry_a, geometry_b))
