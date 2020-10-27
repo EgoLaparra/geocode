@@ -44,80 +44,53 @@ if __name__ == '__main__':
     geom = Geometries()
 
     entities = get_entities_fromXML(args.xml_filepath_train)
-    print("entity numbers: ",len(entities)) 
+    print("entity numbers: ", len(entities))
     entityID2target = {}
     entityID2paras = {}
     for entity in entities:
         entity_id = entity.get("id")
         print(entity_id)
-        flag = 0
         try:
-            temp = geom.get_entity_geometry(entity)
-        except Exception:
-            print("No geometries for %s" % (entity_id))
+            # process paras entities
+            pID2links = {}
+            for p in entity.xpath('./p'):
+                pID = p.get("id")
+                print('pid: ', pID)
+                linkID2coordinates = {}
+                for e, link in enumerate(p.xpath('./link')):
+                    linkID = link.get("id")
+                    print('Link ID: ', linkID)
+                    link_geometry = geom.get_entity_geometry(link)
+                    print(geom.geometry_isempty(link_geometry))
+                    print(geom.get_geometry_area(link_geometry))
+                    simplified_link_geometry = geom.simplify_geometry(link_geometry, segments=2)
+                    link_coordinates_list = []
+                    for polygon_list in simplified_link_geometry:
+                        coordinates = []
+                        for polygon in polygon_list:
+                            coordinates.append(geom.get_coordinates(polygon))
+                        link_coordinates_list.append(coordinates)
+                    linkID2coordinates[linkID] = link_coordinates_list
+                pID2links[pID] = linkID2coordinates
+            entityID2paras[entity_id] = pID2links
+            ##process target entity
+            print('entityID: ', entity_id)
+            entity_geometry = geom.get_entity_geometry(entity)
+            simplified_geometry = geom.simplify_geometry(entity_geometry, segments=2)
+            entity_coordinates_list = []
+            for polygon_list in simplified_geometry:
+                coordinates = []
+                for polygon in polygon_list:
+                    coordinates.append(geom.get_coordinates(polygon))
+                entity_coordinates_list.append(coordinates)
+            # print(entity_geometry)
+            # print(simplified_geometry)
+            # print(entity_coordinates_list)
+            entityID2target[entity_id] = entity_coordinates_list
+        except Exception as e:
+            print("Error processing %s" % (entity_id))
+            print(e)
             geom = Geometries()
-            continue
-        else:
-            a = 1
-
-        for p in entity.xpath('./p'):
-            for e, link in enumerate(p.xpath('./link')):
-                try:
-                    temp_link = geom.get_entity_geometry(link)
-                except Exception:
-                    print("No geometries for %s" % (entity_id))
-                    flag=1
-                    geom = Geometries()
-                    continue
-                else:
-                    a = 1
-        if flag == 1:
-            continue
-        #if geom.get_entity_geometry(entity)==None:
-        #    continue
-        #flag = 0
-        #for p in entity.xpath('./p'):
-        #    for e, link in enumerate(p.xpath('./link')):
-        #        if geom.get_entity_geometry(link)==None:
-        #            flag = 1
-        #if flag == 1:
-        #    continue               
-        ##process paras entities
-        pID2links = {}
-        for p in entity.xpath('./p'):
-            pID = p.get("id")
-            print('pid: ', pID)
-            linkID2coordinates = {}
-            for e, link in enumerate(p.xpath('./link')):
-                linkID = link.get("id")
-                print('Link ID: ', linkID)
-                link_geometry = geom.get_entity_geometry(link)
-                print(geom.geometry_isempty(link_geometry))
-                print(geom.get_geometry_area(link_geometry))
-                simplified_link_geometry = geom.simplify_geometry(link_geometry, segments=2)
-                link_coordinates_list = []
-                for polygon_list in simplified_link_geometry:
-                    coordinates = []
-                    for polygon in polygon_list:
-                        coordinates.append(geom.get_coordinates(polygon))
-                    link_coordinates_list.append(coordinates)
-                linkID2coordinates[linkID] = link_coordinates_list
-            pID2links[pID] = linkID2coordinates
-        entityID2paras[entity_id] = pID2links
-        ##process target entity
-        print('entityID: ', entity_id)
-        entity_geometry = geom.get_entity_geometry(entity)
-        simplified_geometry = geom.simplify_geometry(entity_geometry, segments=2)
-        entity_coordinates_list = []
-        for polygon_list in simplified_geometry:
-            coordinates = []
-            for polygon in polygon_list:
-                coordinates.append(geom.get_coordinates(polygon))
-            entity_coordinates_list.append(coordinates)
-        #print(entity_geometry)
-        #print(simplified_geometry)
-        #print(entity_coordinates_list)
-        entityID2target[entity_id] = entity_coordinates_list
     #assert len(entities) == len(list(entityID2target.keys())) == len(list(entityID2paras.keys()))
     geom.close_connection()
     pickle_dump_large_file(entityID2target, args.output_target_train)
