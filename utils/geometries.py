@@ -173,8 +173,8 @@ class Geometries:
         elif len(entity_geometry) > 1:
             return self.unite_geometries(entity_geometry)
         else:
-            return None
-            #raise Exception("No geometries for %s %s" % (" ".join(osm_ids), " ".join(osm_types)))
+            #return None
+            raise Exception("No geometries for %s %s" % (" ".join(osm_ids), " ".join(osm_types)))
 
     def get_geometries(self, osm, otype):
         return self.database.execute_query("geometry", (osm, otype))
