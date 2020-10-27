@@ -50,6 +50,18 @@ if __name__ == '__main__':
     for entity in entities:
         entity_id = entity.get("id")
         print(entity_id)
+        flag = 0
+        try:
+            temp = geom.get_entity_geometry(entity)
+            for p in entity.xpath('./p'):
+                for e, link in enumerate(p.xpath('./link')):
+                    temp_link = geom.get_entity_geometry(link)
+        except Exception:
+            print("No geometries for %s" % (entity_id))
+            geom = Geometries()
+            continue
+        else:
+            flag = 1
         #if geom.get_entity_geometry(entity)==None:
         #    continue
         #flag = 0
