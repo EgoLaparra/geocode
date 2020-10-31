@@ -40,6 +40,10 @@ if __name__ == '__main__':
     parser.add_argument('--output_paras_train', default='../../geocode-data/collection_samples/model_input_paras_train.pkl',
                         type=str,
                         help='path of data collections samples')
+    parser.add_argument('--output_desc_train',
+                        default='../../geocode-data/collection_samples/model_input_desc_train.pkl',
+                        type=str,
+                        help='path of data collections samples')
     args = parser.parse_args()
     geom = Geometries()
 
@@ -100,3 +104,4 @@ if __name__ == '__main__':
     geom.close_connection()
     pickle_dump_large_file(entityID2target, args.output_target_train)
     pickle_dump_large_file(entityID2paras, args.output_paras_train)
+    pickle_dump_large_file(entityID2desc, args.output_desc_train)
