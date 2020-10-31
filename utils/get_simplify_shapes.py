@@ -47,6 +47,7 @@ if __name__ == '__main__':
     print("entity numbers: ", len(entities))
     entityID2target = {}
     entityID2paras = {}
+    entityID2desc = {}
     for entity in entities:
         entity_id = entity.get("id")
         print(entity_id)
@@ -73,6 +74,10 @@ if __name__ == '__main__':
                     linkID2coordinates[linkID] = link_coordinates_list
                 pID2links[pID] = linkID2coordinates
             entityID2paras[entity_id] = pID2links
+            ##process entity description
+            text = " ".join(entity.xpath('./p/text()'))
+            print(text)
+            entityID2desc[entity_id] = text
             ##process target entity
             print('entityID: ', entity_id)
             entity_geometry = geom.get_entity_geometry(entity)
