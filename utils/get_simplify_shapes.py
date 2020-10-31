@@ -96,7 +96,7 @@ if __name__ == '__main__':
             print("Error processing %s" % (entity_id))
             print(e)
             geom = Geometries()
-    #assert len(entities) == len(list(entityID2target.keys())) == len(list(entityID2paras.keys()))
+    assert len(list(entityID2desc.keys())) == len(list(entityID2target.keys())) == len(list(entityID2paras.keys()))
     geom.close_connection()
     pickle_dump_large_file(entityID2target, args.output_target_train)
     pickle_dump_large_file(entityID2paras, args.output_paras_train)
