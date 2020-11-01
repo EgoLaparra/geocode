@@ -104,4 +104,4 @@ if __name__ == '__main__':
     geom.close_connection()
     pickle_dump_large_file(entityID2target, args.output_target_test)
     pickle_dump_large_file(entityID2paras, args.output_paras_test)
-    pickle_dump_large_file(entityID2desc, args.output_desc_train)
+    pickle_dump_large_file(entityID2desc, args.output_desc_test)
