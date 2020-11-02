@@ -1,5 +1,6 @@
 from geometries import Geometries
 from lxml import etree
+from itertools import chain
 import argparse
 import pickle
 import sys
