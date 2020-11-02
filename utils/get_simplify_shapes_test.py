@@ -1,5 +1,6 @@
 from geometries import Geometries
 from lxml import etree
+from itertools import chain
 import argparse
 import pickle
 import sys
@@ -28,6 +29,13 @@ def get_entities_fromXML(xml_filepath):
     all_entities = collection.xpath('//entity')
 
     return all_entities
+
+def get_text(node):
+
+    parts = ([node.text] + list(chain(*(get_text(c) for c in node.getchildren()))) + [node.tail])
+
+    return ''.join(filter(None, parts))
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
@@ -79,7 +87,8 @@ if __name__ == '__main__':
                 pID2links[pID] = linkID2coordinates
             entityID2paras[entity_id] = pID2links
             ##process entity description
-            text = " ".join(entity.xpath('./p/text()'))
+            #text = " ".join(entity.xpath('./p/text()'))
+            text = get_text(entity)
             print(text)
             entityID2desc[entity_id] = text
             ##process target entity
