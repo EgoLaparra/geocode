@@ -68,14 +68,14 @@ if __name__ == '__main__':
             pID2links = {}
             for p in entity.xpath('./p'):
                 pID = p.get("id")
-                print('pid: ', pID)
+                #print('pid: ', pID)
                 linkID2coordinates = {}
                 for e, link in enumerate(p.xpath('./link')):
                     linkID = link.get("id")
-                    print('Link ID: ', linkID)
+                    #print('Link ID: ', linkID)
                     link_geometry = geom.get_entity_geometry(link)
-                    print(geom.geometry_isempty(link_geometry))
-                    print(geom.get_geometry_area(link_geometry))
+                    #print(geom.geometry_isempty(link_geometry))
+                    #print(geom.get_geometry_area(link_geometry))
                     simplified_link_geometry = geom.simplify_geometry(link_geometry, segments=2)
                     link_coordinates_list = []
                     for polygon_list in simplified_link_geometry:
@@ -87,12 +87,11 @@ if __name__ == '__main__':
                 pID2links[pID] = linkID2coordinates
             entityID2paras[entity_id] = pID2links
             ##process entity description
-            # text = " ".join(entity.xpath('./p/text()'))
             text = get_text(entity)
-            print(text)
+            #print(text)
             entityID2desc[entity_id] = text
             ##process target entity
-            print('entityID: ', entity_id)
+            #print('entityID: ', entity_id)
             entity_geometry = geom.get_entity_geometry(entity)
             simplified_geometry = geom.simplify_geometry(entity_geometry, segments=2)
             entity_coordinates_list = []
