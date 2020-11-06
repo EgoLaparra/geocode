@@ -85,11 +85,6 @@ if __name__ == '__main__':
                         link_coordinates_list.append(coordinates)
                     linkID2coordinates[linkID] = link_coordinates_list
                 pID2links[pID] = linkID2coordinates
-            entityID2paras[entity_id] = pID2links
-            ##process entity description
-            text = get_text(entity)
-            #print(text)
-            entityID2desc[entity_id] = text
             ##process target entity
             #print('entityID: ', entity_id)
             entity_geometry = geom.get_entity_geometry(entity)
@@ -104,6 +99,11 @@ if __name__ == '__main__':
             # print(simplified_geometry)
             # print(entity_coordinates_list)
             entityID2target[entity_id] = entity_coordinates_list
+            ##process entity description
+            text = get_text(entity)
+            # print(text)
+            entityID2desc[entity_id] = text
+            entityID2paras[entity_id] = pID2links
         except Exception as e:
             print("Error processing %s" % (entity_id))
             print(e)
