@@ -30,4 +30,5 @@ for key, value in output_raw.items():
         entity_id = entityIds[idx]
         geometry = geom.from_text("LINESTRING(%s)" % ", ".join([" ".join(map(str, point)) for e1, row in enumerate(prediction) for e2, point in enumerate(row) if not (e1 == 1 and e2 == 1)] + ["%s %s" % (prediction[0][0][0],prediction[0][0][1])]))
 
+
         geom.database.insert_in_table("output_table", idx, entity_id, geometry)
