@@ -32,9 +32,10 @@ def get_entities_fromXML(xml_filepath):
     return all_entities
 
 def get_text(node):
-    #print('node.text: ', node.text)
-    #parts = ([node.text] + list(chain(*(get_text(c) for c in node.getchildren()))) + [node.tail])
-    parts = (['Location'] + list(chain(*(get_text(c) for c in node.getchildren()))) + [node.tail])
+    print('node.text: ', node.text)
+    print('node.tail: ', node.tail)
+    parts = ([node.text] + list(chain(*(get_text(c) for c in node.getchildren()))) + [node.tail])
+    #parts = (['Location'] + list(chain(*(get_text(c) for c in node.getchildren()))) + [node.tail])
     return ''.join(filter(None, parts))
 
 if __name__ == '__main__':
