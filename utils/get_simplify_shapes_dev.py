@@ -34,12 +34,12 @@ def get_entities_fromXML(xml_filepath):
 def get_text(node):
     print('node.text: ', node.text)
     print('node.tail: ', node.tail)
-    print(node.text.split(' '))
-    print(node.text.isspace())
-    print(node.tail.split(' '))
-    print(node.tail.isspace())
-    if node.text=='\n' and node.tail=='\n':
-        print('True')
+    #print(node.text.split(' '))
+    #print(node.text.isspace())
+    #print(node.tail.split(' '))
+    #print(node.tail.isspace())
+    #if node.text=='\n' and node.tail=='\n':
+    #    print('True')
     parts = ([node.text] + list(chain(*(get_text(c) for c in node.getchildren()))) + [node.tail])
     #parts = (['Location'] + list(chain(*(get_text(c) for c in node.getchildren()))) + [node.tail])
     return ''.join(filter(None, parts))
@@ -80,6 +80,7 @@ if __name__ == '__main__':
                 for e, link in enumerate(p.xpath('./link')):
                     linkID = link.get("id")
                     #print('Link ID: ', linkID)
+                    print('link.text: ', link.text)
                     link_geometry = geom.get_entity_geometry(link)
                     #print(geom.geometry_isempty(link_geometry))
                     #print(geom.get_geometry_area(link_geometry))
