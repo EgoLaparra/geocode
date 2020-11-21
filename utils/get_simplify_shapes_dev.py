@@ -32,14 +32,16 @@ def get_entities_fromXML(xml_filepath):
     return all_entities
 
 def get_text(node):
-    print('node.text: ', node.text)
-    print('node.tail: ', node.tail)
+    #print('node.text: ', node.text)
+    #print('node.tail: ', node.tail)
     #print(node.text.split(' '))
     #print(node.text.isspace())
     #print(node.tail.split(' '))
     #print(node.tail.isspace())
     #if node.text=='\n' and node.tail=='\n':
     #    print('True')
+    if not node.text.isspace() and not node.tail.isspace():
+        node.text = 'LOCATION'
     parts = ([node.text] + list(chain(*(get_text(c) for c in node.getchildren()))) + [node.tail])
     #parts = (['Location'] + list(chain(*(get_text(c) for c in node.getchildren()))) + [node.tail])
     return ''.join(filter(None, parts))
