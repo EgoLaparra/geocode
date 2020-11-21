@@ -1,6 +1,7 @@
 from geometries import Geometries
 from lxml import etree
 from itertools import chain
+from tqdm import tqdm
 import argparse
 import pickle
 import sys
@@ -61,7 +62,7 @@ if __name__ == '__main__':
     entityID2target = {}
     entityID2paras = {}
     entityID2desc = {}
-    for entity in entities:
+    for entity in tqdm(entities, desc='Entities'):
         entity_id = entity.get("id")
         print(entity_id)
         try:
