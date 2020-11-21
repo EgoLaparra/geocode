@@ -34,7 +34,7 @@ def get_entities_fromXML(xml_filepath):
 def get_text(node):
     print('node.text: ', node.text)
     print('node.tail: ', node.tail)
-    if node.text==None and node.tail==None:
+    if node.text=='\n' and node.tail=='\n':
         print('True')
     parts = ([node.text] + list(chain(*(get_text(c) for c in node.getchildren()))) + [node.tail])
     #parts = (['Location'] + list(chain(*(get_text(c) for c in node.getchildren()))) + [node.tail])
