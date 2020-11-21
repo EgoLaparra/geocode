@@ -32,7 +32,8 @@ def get_entities_fromXML(xml_filepath):
     return all_entities
 
 def get_text(node):
-
+    if not node.text.isspace() and not node.tail.isspace():
+        node.text = 'LOCATION'
     parts = ([node.text] + list(chain(*(get_text(c) for c in node.getchildren()))) + [node.tail])
 
     return ''.join(filter(None, parts))
@@ -49,7 +50,7 @@ if __name__ == '__main__':
                         type=str,
                         help='path of data collections samples')
     parser.add_argument('--output_desc_train',
-                        default='../../geocode-data/collection_samples/model_input_desc_train.pkl',
+                        default='../../geocode-data/collection_samples/model_input_desc_train_LOCATION.pkl',
                         type=str,
                         help='path of data collections samples')
     args = parser.parse_args()
@@ -100,8 +101,10 @@ if __name__ == '__main__':
             # print(entity_coordinates_list)
             entityID2target[entity_id] = entity_coordinates_list
             ##process entity description
+            temp_text = " ".join(entity.xpath('./p/text()'))
+            print('temp_text: ', temp_text)
             text = get_text(entity)
-            # print(text)
+            print('text: ', text)
             entityID2desc[entity_id] = text
             entityID2paras[entity_id] = pID2links
         except Exception as e:
@@ -111,7 +114,7 @@ if __name__ == '__main__':
     print(len(list(entityID2desc.keys())))
     print(len(list(entityID2target.keys())))
     print(len(list(entityID2paras.keys())))
-    #assert len(list(entityID2desc.keys())) == len(list(entityID2target.keys())) == len(list(entityID2paras.keys()))
+    assert len(list(entityID2desc.keys())) == len(list(entityID2target.keys())) == len(list(entityID2paras.keys()))
     geom.close_connection()
     pickle_dump_large_file(entityID2target, args.output_target_train)
     pickle_dump_large_file(entityID2paras, args.output_paras_train)

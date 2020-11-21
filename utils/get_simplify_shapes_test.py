@@ -31,7 +31,8 @@ def get_entities_fromXML(xml_filepath):
     return all_entities
 
 def get_text(node):
-
+    if not node.text.isspace() and not node.tail.isspace():
+        node.text = 'LOCATION'
     parts = ([node.text] + list(chain(*(get_text(c) for c in node.getchildren()))) + [node.tail])
 
     return ''.join(filter(None, parts))
@@ -49,7 +50,7 @@ if __name__ == '__main__':
                         type=str,
                         help='path of data collections samples')
     parser.add_argument('--output_desc_test',
-                        default='../../geocode-data/test/model_input_desc_test.pkl',
+                        default='../../geocode-data/test/model_input_desc_test_LOCATION.pkl',
                         type=str,
                         help='path of data collections samples')
     args = parser.parse_args()
@@ -72,10 +73,11 @@ if __name__ == '__main__':
                 linkID2coordinates = {}
                 for e, link in enumerate(p.xpath('./link')):
                     linkID = link.get("id")
-                    print('Link ID: ', linkID)
+                    #print('Link ID: ', linkID)
+                    print('link.text: ', link.text)
                     link_geometry = geom.get_entity_geometry(link)
-                    print(geom.geometry_isempty(link_geometry))
-                    print(geom.get_geometry_area(link_geometry))
+                    #print(geom.geometry_isempty(link_geometry))
+                    #print(geom.get_geometry_area(link_geometry))
                     simplified_link_geometry = geom.simplify_geometry(link_geometry, segments=2)
                     link_coordinates_list = []
                     for polygon_list in simplified_link_geometry:
@@ -85,14 +87,8 @@ if __name__ == '__main__':
                         link_coordinates_list.append(coordinates)
                     linkID2coordinates[linkID] = link_coordinates_list
                 pID2links[pID] = linkID2coordinates
-            entityID2paras[entity_id] = pID2links
-            ##process entity description
-            #text = " ".join(entity.xpath('./p/text()'))
-            text = get_text(entity)
-            print(text)
-            entityID2desc[entity_id] = text
             ##process target entity
-            print('entityID: ', entity_id)
+            #print('entityID: ', entity_id)
             entity_geometry = geom.get_entity_geometry(entity)
             simplified_geometry = geom.simplify_geometry(entity_geometry, segments=2)
             entity_coordinates_list = []
@@ -105,6 +101,13 @@ if __name__ == '__main__':
             # print(simplified_geometry)
             # print(entity_coordinates_list)
             entityID2target[entity_id] = entity_coordinates_list
+            ##process entity description
+            temp_text = " ".join(entity.xpath('./p/text()'))
+            print('temp_text: ', temp_text)
+            text = get_text(entity)
+            print('text: ', text)
+            entityID2desc[entity_id] = text
+            entityID2paras[entity_id] = pID2links
         except Exception as e:
             print("Error processing %s" % (entity_id))
             print(e)

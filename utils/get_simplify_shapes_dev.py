@@ -32,18 +32,9 @@ def get_entities_fromXML(xml_filepath):
     return all_entities
 
 def get_text(node):
-    #print('node.text: ', node.text)
-    #print('node.tail: ', node.tail)
-    #print(node.text.split(' '))
-    #print(node.text.isspace())
-    #print(node.tail.split(' '))
-    #print(node.tail.isspace())
-    #if node.text=='\n' and node.tail=='\n':
-    #    print('True')
     if not node.text.isspace() and not node.tail.isspace():
         node.text = 'LOCATION'
     parts = ([node.text] + list(chain(*(get_text(c) for c in node.getchildren()))) + [node.tail])
-    #parts = (['Location'] + list(chain(*(get_text(c) for c in node.getchildren()))) + [node.tail])
     return ''.join(filter(None, parts))
 
 if __name__ == '__main__':
@@ -58,7 +49,7 @@ if __name__ == '__main__':
                         type=str,
                         help='path of data collections samples')
     parser.add_argument('--output_desc_dev',
-                        default='../../geocode-data/collection_samples/model_input_desc_dev.pkl',
+                        default='../../geocode-data/collection_samples/model_input_desc_dev_LOCATION.pkl',
                         type=str,
                         help='path of data collections samples')
     args = parser.parse_args()
@@ -114,7 +105,6 @@ if __name__ == '__main__':
             print('temp_text: ', temp_text)
             text = get_text(entity)
             print('text: ', text)
-            # print(text)
             entityID2desc[entity_id] = text
             entityID2paras[entity_id] = pID2links
         except Exception as e:
@@ -124,7 +114,7 @@ if __name__ == '__main__':
     print(len(list(entityID2desc.keys())))
     print(len(list(entityID2target.keys())))
     print(len(list(entityID2paras.keys())))
-    #assert len(list(entityID2desc.keys())) == len(list(entityID2target.keys())) == len(list(entityID2paras.keys()))
+    assert len(list(entityID2desc.keys())) == len(list(entityID2target.keys())) == len(list(entityID2paras.keys()))
     geom.close_connection()
     pickle_dump_large_file(entityID2target, args.output_target_dev)
     pickle_dump_large_file(entityID2paras, args.output_paras_dev)
