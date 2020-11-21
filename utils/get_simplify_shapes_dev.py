@@ -100,6 +100,8 @@ if __name__ == '__main__':
             # print(entity_coordinates_list)
             entityID2target[entity_id] = entity_coordinates_list
             ##process entity description
+            temp_text = " ".join(entity.xpath('./p/text()'))
+            print('temp_text: ', temp_text)
             text = get_text(entity)
             # print(text)
             entityID2desc[entity_id] = text
