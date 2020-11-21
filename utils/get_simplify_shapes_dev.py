@@ -34,6 +34,8 @@ def get_entities_fromXML(xml_filepath):
 def get_text(node):
     print('node.text: ', node.text)
     print('node.tail: ', node.tail)
+    print(node.text.split(' '))
+    print(node.tail.split(' '))
     if node.text=='\n' and node.tail=='\n':
         print('True')
     parts = ([node.text] + list(chain(*(get_text(c) for c in node.getchildren()))) + [node.tail])
