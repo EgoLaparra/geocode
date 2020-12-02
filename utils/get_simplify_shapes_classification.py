@@ -85,7 +85,8 @@ if __name__ == '__main__':
             ##process target entity
 
             entity_geometry = geom.get_entity_geometry(entity)
-            entity_central_coordinates = geom.get_centrality(entity_geometry, metric="centroid")
+            entity_central_point = geom.get_centrality(entity_geometry, metric="centroid")
+            entity_central_coordinates = geom.get_coordinates(entity_central_point)
             print('entity central point: ', entity_central_coordinates)
             entityID2target[entity_id] = entity_central_coordinates
             # simplified_geometry = geom.simplify_geometry(entity_geometry, segments=2)

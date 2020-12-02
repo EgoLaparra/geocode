@@ -84,8 +84,8 @@ if __name__ == '__main__':
             #     pID2links[pID] = linkID2coordinates
             ##process target entity
             entity_geometry = geom.get_entity_geometry(entity)
-            entity_central_coordinates = geom.get_centrality(entity_geometry, metric="centroid")
-            print('entity central point: ', entity_central_coordinates)
+            entity_central_point = geom.get_centrality(entity_geometry, metric="centroid")
+            entity_central_coordinates = geom.get_coordinates(entity_central_point)
             entityID2target[entity_id] = entity_central_coordinates
             # simplified_geometry = geom.simplify_geometry(entity_geometry, segments=2)
             # entity_coordinates_list = []
