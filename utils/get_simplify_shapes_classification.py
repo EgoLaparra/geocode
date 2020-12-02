@@ -25,6 +25,43 @@ def pickle_load_large_file(filepath):
     obj = pickle.loads(bytes_in)
     return obj
 
+def coord_to_index(coordinates, polygon_size):
+    """
+    Convert coordinates into an array (world representation) index. Use that to modify map_vector polygon value.
+    :param coordinates: (latitude, longitude) to convert to the map vector index
+    :param polygon_size: integer size of the polygon? i.e. the resolution of the world
+    :return: index pointing into map_vector array
+    """
+    latitude = float(coordinates[0]) - 90 if float(coordinates[0]) != -90 else -179.99  # The two edge cases must
+    longitude = float(coordinates[1]) + 180 if float(coordinates[1]) != 180 else 359.99  # get handled differently!
+    if longitude < 0:
+        longitude = -longitude
+    if latitude < 0:
+        latitude = -latitude
+    x = int(360 / polygon_size) * int(latitude / polygon_size)
+    y = int(longitude / polygon_size)
+    return x + y if 0 <= x + y <= int(360 / polygon_size) * int(180 / polygon_size) else Exception(u"Shock horror!!")
+
+
+def index_to_coord(index, polygon_size):
+    """
+    Convert index (output of the prediction model) back to coordinates.
+    :param index: of the polygon/tile in map_vector array (given by model prediction)
+    :param polygon_size: size of each polygon/tile i.e. resolution of the world
+    :return: pair of (latitude, longitude)
+    """
+    x = int(index / (360 / polygon_size))
+    y = index % int(360 / polygon_size)
+    if x > int(90 / polygon_size):
+        x = -int((x - (90 / polygon_size)) * polygon_size)
+    else:
+        x = int(((90 / polygon_size) - x) * polygon_size)
+    if y < int(180 / polygon_size):
+        y = -int(((180 / polygon_size) - y) * polygon_size)
+    else:
+        y = int((y - (180 / polygon_size)) * polygon_size)
+    return x, y
+
 def get_entities_fromXML(xml_filepath):
     collection = etree.parse(xml_filepath)
     all_entities = collection.xpath('//entity')
@@ -88,7 +125,9 @@ if __name__ == '__main__':
             entity_central_point = geom.get_centrality(entity_geometry, metric="centroid")
             entity_central_coordinates = geom.get_coordinates(entity_central_point)
             print('entity central point: ', entity_central_coordinates)
-            entityID2target[entity_id] = entity_central_coordinates
+            entity_classification_label = coord_to_index(entity_central_coordinates, 2)
+            print('classification_label: ', entity_classification_label)
+            entityID2target[entity_id] = entity_classification_label
             # simplified_geometry = geom.simplify_geometry(entity_geometry, segments=2)
             # entity_coordinates_list = []
             # for polygon_list in simplified_geometry:
