@@ -103,29 +103,29 @@ if __name__ == '__main__':
         print(entity_id)
         try:
             # process paras entities
-            # pID2links = {}
-            # for p in entity.xpath('./p'):
-            #     pID = p.get("id")
-            #     linkID2coordinates = {}
-            #     for e, link in enumerate(p.xpath('./link')):
-            #         linkID = link.get("id")
-            #         link_geometry = geom.get_entity_geometry(link)
-            #         simplified_link_geometry = geom.simplify_geometry(link_geometry, segments=2)
-            #         link_coordinates_list = []
-            #         for polygon_list in simplified_link_geometry:
-            #             coordinates = []
-            #             for polygon in polygon_list:
-            #                 coordinates.append(geom.get_coordinates(polygon))
-            #             link_coordinates_list.append(coordinates)
-            #         linkID2coordinates[linkID] = link_coordinates_list
-            #     pID2links[pID] = linkID2coordinates
+            pID2links = {}
+            for p in entity.xpath('./p'):
+                pID = p.get("id")
+                linkID2coordinates = {}
+                for e, link in enumerate(p.xpath('./link')):
+                    linkID = link.get("id")
+                    link_geometry = geom.get_entity_geometry(link)
+                    simplified_link_geometry = geom.simplify_geometry(link_geometry, segments=2)
+                    link_coordinates_list = []
+                    for polygon_list in simplified_link_geometry:
+                        coordinates = []
+                        for polygon in polygon_list:
+                            coordinates.append(geom.get_coordinates(polygon))
+                        link_coordinates_list.append(coordinates)
+                    linkID2coordinates[linkID] = link_coordinates_list
+                pID2links[pID] = linkID2coordinates
             ##process target entity
 
             entity_geometry = geom.get_entity_geometry(entity)
             entity_central_point = geom.get_centrality(entity_geometry, metric="centroid")
             entity_central_coordinates = geom.get_coordinates(entity_central_point)
             print('entity central point: ', entity_central_coordinates)
-            entity_classification_label = coord_to_index(entity_central_coordinates, 2)
+            entity_classification_label = coord_to_index(entity_central_coordinates, 10)
             print('classification_label: ', entity_classification_label)
             entityID2target[entity_id] = entity_classification_label
             # simplified_geometry = geom.simplify_geometry(entity_geometry, segments=2)
