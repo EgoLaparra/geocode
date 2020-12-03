@@ -865,8 +865,8 @@ class BertForSequenceClassification(BertPreTrainedModel):
 
         self.bert = BertModel(config)
         self.dropout = nn.Dropout(config.hidden_dropout_prob)
-        self.classifier = nn.Linear(config.hidden_size + 3 * 3 * 2, self.num_labels)
-
+        self.classifier_1 = nn.Linear(config.hidden_size + 3 * 3 * 2, config.hidden_size + 3 * 3 * 2)
+        self.classifier_2 = nn.Linear(config.hidden_size + 3 * 3 * 2, self.num_labels)
         self.init_weights()
 
     def forward(self, input_ids, attention_mask=None, token_type_ids=None,
@@ -887,7 +887,10 @@ class BertForSequenceClassification(BertPreTrainedModel):
         # print(pooled_output.shape)
         pooled_output = pooled_output.unsqueeze(1).expand([pooled_output.shape[0], links_num, 768])
         final_pooled_output = torch.cat([pooled_output, para_links], dim=2)
-        logits = self.classifier(final_pooled_output)
+        output_1 = self.classifier_1(final_pooled_output)
+        output_1 = nn.functional.tanh(output_1)
+        output_1 = torch.max(output_1, dim =1 ).values
+        logits = self.classifier(output_1)
         # temp_logits = self.classifier(final_pooled_output)
         # logits = torch.sum(temp_logits, dim=1)
         outputs = (logits,) + outputs[2:]
