@@ -887,10 +887,11 @@ class BertForSequenceClassification(BertPreTrainedModel):
         # print(pooled_output.shape)
         pooled_output = pooled_output.unsqueeze(1).expand([pooled_output.shape[0], links_num, 768])
         final_pooled_output = torch.cat([pooled_output, para_links], dim=2)
-        temp_logits = self.classifier(final_pooled_output)
-        logits = torch.sum(temp_logits, dim=1)
+        logits = self.classifier(final_pooled_output)
+        # temp_logits = self.classifier(final_pooled_output)
+        # logits = torch.sum(temp_logits, dim=1)
         outputs = (logits,) + outputs[2:]
-        # print('logits shape: ',logits.shape)
+        print('logits shape: ',logits.shape)
 
         if labels is not None:
             if self.num_labels == 1:
