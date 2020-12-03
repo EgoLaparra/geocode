@@ -865,7 +865,7 @@ class BertForSequenceClassification(BertPreTrainedModel):
 
         self.bert = BertModel(config)
         self.dropout = nn.Dropout(config.hidden_dropout_prob)
-        self.classifier = nn.Linear(config.hidden_size + 3 * 3 * 2, 3 * 3 * 2)
+        self.classifier = nn.Linear(config.hidden_size + 3 * 3 * 2, self.num_labels)
 
         self.init_weights()
 

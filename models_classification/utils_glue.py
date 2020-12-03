@@ -92,16 +92,16 @@ class GeoComposeProcessor(DataProcessor):
     def get_train_examples(self, data_dir):
         """See base class."""
         logger.info("LOOKING AT {} train".format(data_dir))
-        return self._create_examples(self.pickle_load_large_file(os.path.join(data_dir, "model_input_desc_train.pkl")),
-                                     self.pickle_load_large_file(os.path.join(data_dir, "model_input_paras_train.pkl")),
-                                     self.pickle_load_large_file(os.path.join(data_dir, "model_input_target_train.pkl")),"train")
+        return self._create_examples(self.pickle_load_large_file(os.path.join(data_dir, "model_input_desc_classification_train.pkl")),
+                                     self.pickle_load_large_file(os.path.join(data_dir, "model_input_paras_classification_train.pkl")),
+                                     self.pickle_load_large_file(os.path.join(data_dir, "model_input_target_classification_train.pkl")),"train")
 
     def get_dev_examples(self, data_dir):
         """See base class."""
         logger.info("LOOKING AT {} dev".format(data_dir))
-        return self._create_examples(self.pickle_load_large_file(os.path.join(data_dir, "model_input_desc_dev.pkl")),
-                                     self.pickle_load_large_file(os.path.join(data_dir, "model_input_paras_dev.pkl")),
-                                     self.pickle_load_large_file(os.path.join(data_dir, "model_input_target_dev.pkl")), "dev")
+        return self._create_examples(self.pickle_load_large_file(os.path.join(data_dir, "model_input_desc_classification_dev.pkl")),
+                                     self.pickle_load_large_file(os.path.join(data_dir, "model_input_paras_classification_dev.pkl")),
+                                     self.pickle_load_large_file(os.path.join(data_dir, "model_input_target_classification_dev.pkl")), "dev")
 
     def get_test_examples(self, data_dir):
         """See base class."""
@@ -113,7 +113,7 @@ class GeoComposeProcessor(DataProcessor):
     def get_labels(self, n_labels):
         """See base class."""
         self.n_labels = n_labels
-        return [str(item) for item in range(n_labels)]
+        return [item for item in range(n_labels)]
 
     def pickle_dump_large_file(self, obj, filepath):
         max_bytes = 2 ** 31 - 1
@@ -168,7 +168,9 @@ class GeoComposeProcessor(DataProcessor):
             if entity_id not in targets.keys():
                 continue
             target = targets[entity_id]
-            target = np.array(target) / norm_bench
+            if type(target) != type(1):
+                target = 0
+            #target = np.array(target) / norm_bench
             para_entities = []
             for single_para in para.keys():
                 for link_id in para[single_para].keys():
@@ -183,7 +185,7 @@ class GeoComposeProcessor(DataProcessor):
                 text_a=text,
                 text_b="",
                 para_links=para_entities,
-                label=target.tolist(),
+                label=target,
             ))
         print(len(examples))
         return examples
