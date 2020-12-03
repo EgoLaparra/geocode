@@ -169,8 +169,7 @@ class GeoComposeProcessor(DataProcessor):
             if entity_id not in targets.keys():
                 continue
             target = targets[entity_id]
-            print(target)
-            if type(target) != type(1):
+            if not isinstance(target, int):
                 target = 0
             #target = np.array(target) / norm_bench
             para_entities = []
