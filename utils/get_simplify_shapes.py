@@ -99,7 +99,6 @@ if __name__ == '__main__':
             # print(entity_geometry)
             # print(simplified_geometry)
             # print(entity_coordinates_list)
-            entityID2target[entity_id] = entity_coordinates_list
             ##process entity description
             temp_text = " ".join(entity.xpath('./p/text()'))
             print('temp_text: ', temp_text)
@@ -107,6 +106,7 @@ if __name__ == '__main__':
             print('text: ', text)
             entityID2desc[entity_id] = text
             entityID2paras[entity_id] = pID2links
+            entityID2target[entity_id] = entity_coordinates_list
         except Exception as e:
             print("Error processing %s" % (entity_id))
             print(e)

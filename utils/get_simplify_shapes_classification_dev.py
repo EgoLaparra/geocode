@@ -126,7 +126,6 @@ if __name__ == '__main__':
             print('entity central point: ', entity_central_coordinates)
             entity_classification_label = coord_to_index(entity_central_coordinates, 10)
             print('classification_label: ', entity_classification_label)
-            entityID2target[entity_id] = entity_classification_label
             # simplified_geometry = geom.simplify_geometry(entity_geometry, segments=2)
             # entity_coordinates_list = []
             # for polygon_list in simplified_geometry:
@@ -140,19 +139,20 @@ if __name__ == '__main__':
             ##process entity description
             # temp_text = " ".join(entity.xpath('./p/text()'))
             # print('temp_text: ', temp_text)
-            # text = get_text(entity)
-            # print('text: ', text)
-            # entityID2desc[entity_id] = text
-            # entityID2paras[entity_id] = pID2links
+            text = get_text(entity)
+            print('text: ', text)
+            entityID2desc[entity_id] = text
+            entityID2paras[entity_id] = pID2links
+            entityID2target[entity_id] = entity_classification_label
         except Exception as e:
             print("Error processing %s" % (entity_id))
             print(e)
             geom = Geometries()
-    # print(len(list(entityID2desc.keys())))
+    print(len(list(entityID2desc.keys())))
     print(len(list(entityID2target.keys())))
-    # print(len(list(entityID2paras.keys())))
-    # assert len(list(entityID2desc.keys())) == len(list(entityID2target.keys())) == len(list(entityID2paras.keys()))
+    print(len(list(entityID2paras.keys())))
+    assert len(list(entityID2desc.keys())) == len(list(entityID2target.keys())) == len(list(entityID2paras.keys()))
     geom.close_connection()
     pickle_dump_large_file(entityID2target, args.output_target_dev)
-    # pickle_dump_large_file(entityID2paras, args.output_paras_dev)
-    # pickle_dump_large_file(entityID2desc, args.output_desc_dev)
+    pickle_dump_large_file(entityID2paras, args.output_paras_dev)
+    pickle_dump_large_file(entityID2desc, args.output_desc_dev)
