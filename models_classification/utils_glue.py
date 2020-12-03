@@ -20,6 +20,7 @@ import csv
 import re
 import glob
 import json
+import types
 import logging
 import os
 import pickle
@@ -168,6 +169,7 @@ class GeoComposeProcessor(DataProcessor):
             if entity_id not in targets.keys():
                 continue
             target = targets[entity_id]
+            print(target)
             if type(target) != type(1):
                 target = 0
             #target = np.array(target) / norm_bench
