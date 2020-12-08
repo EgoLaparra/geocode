@@ -26,6 +26,7 @@ with open('eval_preds_score.json', 'r') as file:
 entity2desc = pickle_load_large_file('../../geocode-data/collection_samples/model_input_desc_dev.pkl')
 entityIds = list(entity2desc.keys())
 value = output_raw['preds_score_']
+
 for idx, prediction in enumerate(value):
     entity_id = entityIds[idx]
     geometry = geom.from_text("LINESTRING(%s)" % ", ".join([" ".join(map(str, point)) for e1, row in enumerate(prediction) for e2, point in enumerate(row) if not (e1 == 1 and e2 == 1)] + ["%s %s" % (prediction[0][0][0],prediction[0][0][1])]))
