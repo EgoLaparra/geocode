@@ -148,7 +148,7 @@ if __name__ == '__main__':
             print("Error processing %s" % (entity_id))
             print(e)
             geom = Geometries()
-    print(len(list(entityID2desc.keys())))
+    #print(len(list(entityID2desc.keys())))
     print(len(list(entityID2target.keys())))
     print(len(list(entityID2paras.keys())))
     assert len(list(entityID2desc.keys())) == len(list(entityID2target.keys())) == len(list(entityID2paras.keys()))
