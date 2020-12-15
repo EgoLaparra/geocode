@@ -40,6 +40,8 @@ def coord_to_index(coordinates, polygon_size):
         latitude = -latitude
     x = int(360 / polygon_size) * int(latitude / polygon_size)
     y = int(longitude / polygon_size)
+    print("latitude: ", latitude)
+    print("longitude: ", longitude)
     return x + y if 0 <= x + y <= int(360 / polygon_size) * int(180 / polygon_size) else Exception(u"Shock horror!!")
 
 
