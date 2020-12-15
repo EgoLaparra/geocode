@@ -32,8 +32,8 @@ def coord_to_index(coordinates, polygon_size):
     :param polygon_size: integer size of the polygon? i.e. the resolution of the world
     :return: index pointing into map_vector array
     """
-    latitude = float(coordinates[0]) - 90 if float(coordinates[0]) != -90 else -179.99  # The two edge cases must
-    longitude = float(coordinates[1]) + 180 if float(coordinates[1]) != 180 else 359.99  # get handled differently!
+    latitude = float(coordinates[1]) - 90 if float(coordinates[1]) != -90 else -179.99  # The two edge cases must
+    longitude = float(coordinates[0]) + 180 if float(coordinates[0]) != 180 else 359.99  # get handled differently!
     if longitude < 0:
         longitude = -longitude
     if latitude < 0:
@@ -60,7 +60,7 @@ def index_to_coord(index, polygon_size):
         y = -int(((180 / polygon_size) - y) * polygon_size)
     else:
         y = int((y - (180 / polygon_size)) * polygon_size)
-    return x, y
+    return y, x
 
 def get_entities_fromXML(xml_filepath):
     collection = etree.parse(xml_filepath)
@@ -148,7 +148,7 @@ if __name__ == '__main__':
             print("Error processing %s" % (entity_id))
             print(e)
             geom = Geometries()
-    #print(len(list(entityID2desc.keys())))
+    print(len(list(entityID2desc.keys())))
     print(len(list(entityID2target.keys())))
     print(len(list(entityID2paras.keys())))
     assert len(list(entityID2desc.keys())) == len(list(entityID2target.keys())) == len(list(entityID2paras.keys()))
