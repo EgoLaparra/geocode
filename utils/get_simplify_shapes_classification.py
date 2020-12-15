@@ -32,8 +32,8 @@ def coord_to_index(coordinates, polygon_size):
     :param polygon_size: integer size of the polygon? i.e. the resolution of the world
     :return: index pointing into map_vector array
     """
-    latitude = float(coordinates[0]) - 90 if float(coordinates[0]) != -90 else -179.99  # The two edge cases must
-    longitude = float(coordinates[1]) + 180 if float(coordinates[1]) != 180 else 359.99  # get handled differently!
+    latitude = float(coordinates[1]) - 90 if float(coordinates[1]) != -90 else -179.99  # The two edge cases must
+    longitude = float(coordinates[0]) + 180 if float(coordinates[0]) != 180 else 359.99  # get handled differently!
     if longitude < 0:
         longitude = -longitude
     if latitude < 0:
