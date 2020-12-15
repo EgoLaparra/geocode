@@ -5,6 +5,7 @@ from lxml import etree
 from geometries import Geometries
 
 
+
 class Scores:
     def __init__(self, total_gold=1, total_predicted=0):
         self.overlap_score = np.array([0., 0., 0.])
