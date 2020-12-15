@@ -62,7 +62,7 @@ def index_to_coord(index, polygon_size):
         y = -int(((180 / polygon_size) - y) * polygon_size)
     else:
         y = int((y - (180 / polygon_size)) * polygon_size)
-    return x, y
+    return y, x
 
 def get_entities_fromXML(xml_filepath):
     collection = etree.parse(xml_filepath)
