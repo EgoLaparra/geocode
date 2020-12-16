@@ -53,6 +53,7 @@ print(len(value))
 for idx, prediction in enumerate(value):
     entity_id = entityIds[idx]
     prediction_values = index_to_coord(prediction, 10)
+    print(prediction_values)
     geometry = geom.from_text("LINESTRING(%s)" % ", ".join([" ".join(map(str, point)) for e1, row in enumerate(prediction_values) for e2, point in enumerate(row)] + ["%s %s" % (prediction[0][0][0],prediction[0][0][1])]))
 
     geom.database.insert_in_table("output_table", idx, entity_id, geometry)
