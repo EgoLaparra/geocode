@@ -49,6 +49,7 @@ print(output_raw.keys())
 value = output_raw['preds_Compositional_classification/output_epoch50']
 print(len(value))
 
+
 for idx, prediction in enumerate(value):
     entity_id = entityIds[idx]
     prediction_values = index_to_coord(prediction, 10)
