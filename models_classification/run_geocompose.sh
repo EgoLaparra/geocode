@@ -30,11 +30,11 @@ singularity exec --nv /xdisk/bethard/mig2020/extra/zeyuzhang/image/hpc-ml_centos
 --do_eval \
 --eval_all_checkpoints \
 --data_dir /home/u12/zeyuzhang/Geo_Compositional/geocode-data/collection_samples \
---n_labels 1 \
+--n_labels 648 \
 --learning_rate 5e-6 \
 --num_train_epochs 50 \
 --max_seq_length 400 \
 --per_gpu_train_batch_size 8 \
 --gradient_accumulation_steps 8 \
 --save_steps 1000 \
---output_dir output_epoch50/
+--output_dir /xdisk/bethard/mig2020/xdisk/zeyuzhang/Geo-Compositional_classification/output_epoch50/
