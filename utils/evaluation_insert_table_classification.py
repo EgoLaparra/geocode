@@ -57,6 +57,7 @@ for idx, prediction in enumerate(value):
     for e1, row in enumerate(prediction_values):
         for e2, point in enumerate(row):
             print(point)
+            print(" ".join(map(str, point)))
 
     geometry = geom.from_text("LINESTRING(%s)" % ", ".join([" ".join(map(str, point)) for e1, row in enumerate(prediction_values) for e2, point in enumerate(row)] + ["%s %s" % (prediction[0][0][0],prediction[0][0][1])]))
 
