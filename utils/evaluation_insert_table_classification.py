@@ -46,13 +46,16 @@ entity2desc = pickle_load_large_file('../../geocode-data/collection_samples/mode
 entityIds = list(entity2desc.keys())
 print(output_raw.keys())
 value = output_raw['preds_Compositional_classification/output_epoch50']
+print(len(value))
 
-for idx, prediction in enumerate(value):
-    entity_id = entityIds[idx]
-    geometry = geom.from_text("LINESTRING(%s)" % ", ".join([" ".join(map(str, point)) for e1, row in enumerate(prediction) for e2, point in enumerate(row) if not (e1 == 1 and e2 == 1)] + ["%s %s" % (prediction[0][0][0],prediction[0][0][1])]))
+# for idx, prediction in enumerate(value):
+#     entity_id = entityIds[idx]
+#     geometry = geom.from_text("LINESTRING(%s)" % ", ".join([" ".join(map(str, point)) for e1, row in enumerate(prediction) for e2, point in enumerate(row) if not (e1 == 1 and e2 == 1)] + ["%s %s" % (prediction[0][0][0],prediction[0][0][1])]))
+#
+#
+#     geom.database.insert_in_table("output_table", idx, entity_id, geometry)
 
 
-    geom.database.insert_in_table("output_table", idx, entity_id, geometry)
 # for key, value in output_raw.items():
 #     for idx, prediction in enumerate(value):
 #         entity_id = entityIds[idx]
