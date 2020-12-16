@@ -3,9 +3,9 @@
 #PBS -q standard
 #PBS -l select=1:ncpus=28:mem=224gb:np100s=1:os7=True
 ### Specify a name for the job
-#PBS -N text_on1
+#PBS -N classi_50
 ### Specify the group name
-#PBS -W group_list=msurdeanu
+#PBS -W group_list=nlp
 ### Used if job requires partial node only
 #PBS -l place=pack:exclhost
 ### CPUtime required in hhh:mm:ss.
@@ -13,8 +13,8 @@
 #PBS -l cput=140:00:00
 ### Walltime is how long your job will run
 #PBS -l walltime=5:00:00
-#PBS -e /home/u12/zeyuzhang/Multi_Model_QA/QA_image_augmentation/transformers_text_only/logs/error_epoch3
-#PBS -o /home/u12/zeyuzhang/Multi_Model_QA/QA_image_augmentation/transformers_text_only/logs/output_epoch3
+#PBS -e /home/u12/zeyuzhang/Geo_Compositional/geocode/models_classification/logs/error_epoch50
+#PBS -o /home/u12/zeyuzhang/Geo_Compositional/geocode/models_classification/logs/output_epoch50
 
 #####module load cuda80/neuralnet/6/6.0
 #####module load cuda80/toolkit/8.0.61
@@ -29,7 +29,7 @@ singularity exec --nv /xdisk/bethard/mig2020/extra/zeyuzhang/image/hpc-ml_centos
 --do_train \
 --do_eval \
 --eval_all_checkpoints \
---data_dir ../geocode-data/collection_samples \
+--data_dir /home/u12/zeyuzhang/Geo_Compositional/geocode-data/collection_samples \
 --n_labels 1 \
 --learning_rate 5e-6 \
 --num_train_epochs 50 \
