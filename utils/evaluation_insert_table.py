@@ -20,12 +20,12 @@ def pickle_load_large_file(filepath):
 
 geom = Geometries()
 
-with open('eval_preds_score.json', 'r') as file:
+with open('eval_preds_score_tanh_average.json', 'r') as file:
     output_raw = json.load(file)
 
 entity2desc = pickle_load_large_file('../../geocode-data/collection_samples/model_input_desc_dev.pkl')
 entityIds = list(entity2desc.keys())
-value = output_raw['preds_score_']
+value = output_raw['preds_score_output_epoch100_tanh_average']
 
 for idx, prediction in enumerate(value):
     entity_id = entityIds[idx]
