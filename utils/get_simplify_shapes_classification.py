@@ -83,15 +83,19 @@ if __name__ == '__main__':
                         help='path of data collections')
     parser.add_argument('--sample_size', default=50, type=int,
                         help='number of sample datas')
-    parser.add_argument('--output_target_train', default='../../geocode-data/collection_samples/model_input_target_classification_train.pkl', type=str,
+    parser.add_argument('--output_target_train', default='../../geocode-data/collection_samples/model_input_target_classification_60_train.pkl', type=str,
                         help='path of data collections samples')
-    parser.add_argument('--output_paras_train', default='../../geocode-data/collection_samples/model_input_paras_classification_train.pkl',
+    parser.add_argument('--output_paras_train', default='../../geocode-data/collection_samples/model_input_paras_classification_60_train.pkl',
                         type=str,
                         help='path of data collections samples')
     parser.add_argument('--output_desc_train',
-                        default='../../geocode-data/collection_samples/model_input_desc_classification_train.pkl',
+                        default='../../geocode-data/collection_samples/model_input_desc_classification_60_train.pkl',
                         type=str,
                         help='path of data collections samples')
+    parser.add_argument('--polygon_size',
+                        default=60,
+                        type=int,
+                        help="polygon size of coor_2_index")
     args = parser.parse_args()
     geom = Geometries()
 
@@ -127,7 +131,7 @@ if __name__ == '__main__':
             entity_central_point = geom.get_centrality(entity_geometry, metric="centroid")
             entity_central_coordinates = geom.get_coordinates(entity_central_point)
             print('entity central point: ', entity_central_coordinates)
-            entity_classification_label = coord_to_index(entity_central_coordinates, 10)
+            entity_classification_label = coord_to_index(entity_central_coordinates, args.polygon_size)
             print('classification_label: ', entity_classification_label)
             # simplified_geometry = geom.simplify_geometry(entity_geometry, segments=2)
             # entity_coordinates_list = []
