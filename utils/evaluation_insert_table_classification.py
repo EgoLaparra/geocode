@@ -26,7 +26,7 @@ def index_to_coord(index, polygon_size):
     else:
         y = int((y - (180 / polygon_size)) * polygon_size)
     prediction_values = [[[y - polygon_size/2, x - polygon_size/2], [y - polygon_size/2, x + polygon_size/2]], [[y + polygon_size/2, x + polygon_size/2], [y + polygon_size/2, x - polygon_size/2]]]
-    return y, x
+    return prediction_values
 
 def pickle_load_large_file(filepath):
     max_bytes = 2**31 - 1
