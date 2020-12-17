@@ -4,20 +4,6 @@ import scala.collection.immutable.{IndexedSeq, Seq}
 
 /**
  * A set of root symbols and synchronous rules that define a synchronous grammar.
- * 
- * Non-terminal symbols should be alphanumeric characters enclosed in square brackets, for example,
- * `[Period]`, `[TimeSpan]` or `[Int]`.
- * 
- * A single colon can be used to "subtype" a non-terminal, e.g. `[Int:4Digit]` or `[Unit:Singular]`.
- * In such cases, the symbol without the subtype information is called the "basic symbol", e.g.
- * `[Int]` and `[Unit]` are the basic symbols for the preceding two examples.
- * 
- * A symbol of the form `[Int:X-Y]`, where X and Y are integers, is treated as a numeric range
- * specification (inclusive of both endpoints). [[SynchronousParser]] has special handling of
- * such ranges.
- * 
- * A non-terminal whose basic symbol is `[Nil]` is called a "nil symbol". [[SynchronousParser]] has
- * special handling of such nil symbols. 
  *
  * @constructor Create a new grammar from a set of root symbols and a set of synchronous rules.
  * @param rootSymbols The symbols that are allowed to be the root of a parse.
@@ -128,18 +114,7 @@ object SynchronousGrammar {
   
   /**
    * Parses a [[SynchronousGrammar]] from a string representation.
-   * 
-   * The first line defines the one or more root symbols and looks like:
-   * <pre>
-   * ROOTS [Period] [TimeSpan] ...
-   * </pre>
-   * The remaining lines follow the format of Joshua/Heiro
-   * (http://joshua-decoder.org/4.0/file-formats.html) and look like:
-   * <pre>
-   * [Period] ||| [Period,1] and [Period,2] ||| Sum [Period,1] [Period,2] ||| 1.0
-   * ...
-   * </pre>
-   * 
+   *
    * @param text The formatted grammar string.
    * @return A new [[SynchronousGrammar]].
    */
