@@ -59,7 +59,7 @@ for idx, prediction in enumerate(value):
     #         print(point)
     #         print(" ".join(map(str, point)))
 
-    geometry = geom.from_text("LINESTRING(%s)" % ", ".join([" ".join(map(str, point)) for e1, row in enumerate(prediction_values) for e2, point in enumerate(row)] + ["%s %s" % (prediction_values[0][0][0],prediction_values[0][0][1])]))
+    geometry = geom.from_text("POLYGON(%s)" % ", ".join([" ".join(map(str, point)) for e1, row in enumerate(prediction_values) for e2, point in enumerate(row)] + ["%s %s" % (prediction_values[0][0][0],prediction_values[0][0][1])]))
 
     geom.database.insert_in_table("output_table", idx, entity_id, geometry)
 
