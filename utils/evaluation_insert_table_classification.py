@@ -40,13 +40,13 @@ def pickle_load_large_file(filepath):
 
 geom = Geometries()
 
-with open('eval_preds_classification_epoch100.json', 'r') as file:
+with open('eval_preds_classification_epoch80.json', 'r') as file:
     output_raw = json.load(file)
 
 entity2desc = pickle_load_large_file('../../geocode-data/collection_samples/model_input_desc_dev.pkl')
 entityIds = list(entity2desc.keys())
 print(output_raw.keys())
-value = output_raw['preds_Compositional_classification/output_epoch100']
+value = output_raw['preds_Compositional_classification/output_epoch80']
 print(len(value))
 
 
