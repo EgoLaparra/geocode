@@ -32,8 +32,8 @@ def get_entities_fromXML(xml_filepath):
     return all_entities
 
 def get_text(node):
-    if not node.text.isspace() and not node.tail.isspace():
-        node.text = 'LOCATION'
+    # if not node.text.isspace() and not node.tail.isspace():
+    #     node.text = 'LOCATION'
     parts = ([node.text] + list(chain(*(get_text(c) for c in node.getchildren()))) + [node.tail])
 
     return ''.join(filter(None, parts))
@@ -50,7 +50,7 @@ if __name__ == '__main__':
                         type=str,
                         help='path of data collections samples')
     parser.add_argument('--output_desc_train',
-                        default='../../geocode-data/collection_samples/model_input_desc_train_LOCATION.pkl',
+                        default='../../geocode-data/collection_samples/model_input_desc_train.pkl',
                         type=str,
                         help='path of data collections samples')
     args = parser.parse_args()
