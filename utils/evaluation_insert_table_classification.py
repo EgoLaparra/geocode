@@ -47,12 +47,14 @@ entity2desc = pickle_load_large_file('../../geocode-data/collection_samples/mode
 entityIds = list(entity2desc.keys())
 print(output_raw.keys())
 value = output_raw['preds_Compositional_classification/output_60_epoch50']
+print(value)
 print(len(value))
 
 
 for idx, prediction in enumerate(value):
     entity_id = entityIds[idx]
     prediction_values = index_to_coord(prediction, 10)
+    print(prediction_values)
     # print(prediction_values)
     # for e1, row in enumerate(prediction_values):
     #     for e2, point in enumerate(row):
