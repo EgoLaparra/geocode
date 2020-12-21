@@ -46,7 +46,7 @@ with open('eval_preds_classification_60_epoch50.json', 'r') as file:
 entity2desc = pickle_load_large_file('../../geocode-data/collection_samples/model_input_desc_dev.pkl')
 entityIds = list(entity2desc.keys())
 print(output_raw.keys())
-value = output_raw['preds_Compositional_classification/output_epoch50']
+value = output_raw['preds_Compositional_classification/output_60_epoch50']
 print(len(value))
 
 
