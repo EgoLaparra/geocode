@@ -1,8 +1,3 @@
-import sys
-from lxml import etree
-from geometries import Geometries
-
-
 def normalize(coordinates, min_limit=(-180, -90), max_limit=(180, 90)):
        xmin, ymin = min_limit
        xmax, ymax = max_limit
@@ -90,39 +85,62 @@ def index_to_coord(index, polygon_size):
         return x, y
 
 
-def geometry_group_bounds(geom, geometries):
+def bounded_grid(geom, num_tiles, min_limit=(-180, -90), max_limit=(180, 90)):
+       xstep = (max_limit[0] - min_limit[0]) / num_tiles
+       ystep = (max_limit[1] - min_limit[1]) / num_tiles
+       grid = []
+       ypos = max_limit[1]
+       while ypos > min_limit[1]:
+              grid_row = []
+              xpos = min_limit[0]
+              while xpos < max_limit[0]:
+                     coordinates =[
+                            [[xpos, ypos], [xpos + xstep, ypos]],
+                            [[xpos + xstep, ypos - ystep], [xpos, ypos - ystep]]
+                     ]
+                     polygon = geom.from_text(
+                            "POLYGON((%s))" % ", ".join([" ".join(map(str, point))
+                                                         for e1, row in enumerate(coordinates)
+                                                         for e2, point in enumerate(row)] +
+                                                        ["%s %s" % (coordinates[0][0][0], coordinates[0][0][1])])
+                            )
+                     grid_row.append(polygon)
+                     xpos += xstep
+              grid.append(grid_row)
+              ypos -= ystep
+       return grid
+
+
+def geometry_to_bitmap(geom, grid, geometry):
+       bitmap = []
+       for grid_row in grid:
+              bitmap_row = []
+              for polygon in grid_row:
+                     bitmap_row.append(
+                            1. if geom.instersects(geometry, polygon) else 0.
+                            )
+              bitmap.append(bitmap_row)
+       return bitmap
+
+
+def bitmap_to_geometry(geom, grid, bitmap):
+       polygons = []
+       for grid_row, bitmap_row in zip(grid, bitmap):
+              polygons.extend([
+                     polygon for polygon, bit in zip(grid_row, bitmap_row) if bit > .5
+                     ])
+       return geom.unite_geometries(polygons)
+
+
+def geometry_group_bounds(geom, geometries, squared=True):
        bounding_diagonal = geom.get_bounding_diagonal(
               geom.unite_geometries(geometries)
        )
+       if squared:
+              bounding_diagonal = geom.get_bounding_diagonal(
+                     geom.get_bounding_circle(bounding_diagonal)
+              )              
        lower_point, upper_point = geom.dump_points(bounding_diagonal)
        min_coordinates = geom.get_coordinates(lower_point)
        max_coordinates = geom.get_coordinates(upper_point)
        return min_coordinates, max_coordinates
-
-       
-def main(xml_file):
-       geom = Geometries()
-       data = etree.parse(xml_file)
-       for entity in data.xpath("//entity"):
-              print(entity.get("id"))
-              links = entity.xpath(".//link")
-              geometries = []
-              for link in links:
-                     geometry = geom.get_entity_geometry(link)
-                     geometries.append(geometry)
-              min_bound, max_bound = geometry_group_bounds(geom, geometries)
-              print(min_bound, max_bound)
-              for geometry in geometries:
-                     centroid = geom.get_centrality(geometry)
-                     x, y = geom.get_coordinates(centroid)
-                     index = coord_to_index((y, x), 10)
-                     coord = index_to_coord(index, 10)
-                     index_absolute = coord_to_index_relative((x, y), 26)
-                     coord_absolute = index_to_coord_relative(index_absolute, 26)
-                     index_relative = coord_to_index_relative((x, y), 26, min_bound, max_bound)
-                     coord_relative = index_to_coord_relative(index_relative, 26, min_bound, max_bound)
-                     print((x, y), index, coord, index_absolute, coord_absolute, index_relative, coord_relative)
-       
-       
-if __name__ == "__main__":
-       main(sys.argv[1])
