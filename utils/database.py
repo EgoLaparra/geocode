@@ -42,6 +42,8 @@ SQL = {"geometry":          {"query": """select geom from geometries
                              "single_output": False},
        "contains":          {"query": """select st_contains('%s', '%s');""",
                              "single_output": True},
+       "intersects":        {"query": """select st_intersects('%s', '%s');""",
+                             "single_output": True},
        "numpoints":         {"query": """select st_numpoints('%s');""",
                              "single_output": True},
        "numpoints_list":    {"query": """select st_numpoints(geom) from (values %s) as t (geom);""",
