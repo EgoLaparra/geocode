@@ -42,47 +42,44 @@ def index_to_coord_relative(index, num_tiles, min_limit=(-180, -90), max_limit=(
         y = 1 - yindex * step - step / 2
         return denormalize((x, y), min_limit, max_limit)
 
-
 def coord_to_index(coordinates, polygon_size):
-        """
-        Convert coordinates into an array (world representation) index. Use that to modify map_vector polygon value.
-        :param coordinates: (latitude, longitude) to convert to the map vector index
-        :param polygon_size: integer size of the polygon? i.e. the resolution of the world
-        :return: index pointing into map_vector array
-        """
-        latitude = float(coordinates[0]) - 90 if float(coordinates[0]) != -90 else -179.99  # The two edge cases must
-        longitude = float(coordinates[1]) + 180 if float(coordinates[1]) != 180 else 359.99  # get handled differently!
-        if longitude < 0:
-                longitude = -longitude
-        if latitude < 0:
-                latitude = -latitude
-        x = int(360 / polygon_size) * int(latitude / polygon_size)
-        y = int(longitude / polygon_size)
-        if 0 <= x + y <= int(360 / polygon_size) * int(180 / polygon_size):
-               return x + y
-        else:
-               raise Exception(u"Shock horror!!")
-
+    """
+    Convert coordinates into an array (world representation) index. Use that to modify map_vector polygon value.
+    :param coordinates: (latitude, longitude) to convert to the map vector index
+    :param polygon_size: integer size of the polygon? i.e. the resolution of the world
+    :return: index pointing into map_vector array
+    """
+    latitude = float(coordinates[1]) - 90 if float(coordinates[1]) != -90 else -179.99  # The two edge cases must
+    longitude = float(coordinates[0]) + 180 if float(coordinates[0]) != 180 else 359.99  # get handled differently!
+    if longitude < 0:
+        longitude = -longitude
+    if latitude < 0:
+        latitude = -latitude
+    x = int(360 / polygon_size) * int(latitude / polygon_size)
+    y = int(longitude / polygon_size)
+    print("latitude: ", latitude)
+    print("longitude: ", longitude)
+    return x + y if 0 <= x + y <= int(360 / polygon_size) * int(180 / polygon_size) else Exception(u"Shock horror!!")
 
 
 def index_to_coord(index, polygon_size):
-        """
-        Convert index (output of the prediction model) back to coordinates.
-        :param index: of the polygon/tile in map_vector array (given by model prediction)
-        :param polygon_size: size of each polygon/tile i.e. resolution of the world
-        :return: pair of (latitude, longitude)
-        """
-        x = int(index / (360 / polygon_size))
-        y = index % int(360 / polygon_size)
-        if x > int(90 / polygon_size):
-                x = -int((x - (90 / polygon_size)) * polygon_size)
-        else:
-                x = int(((90 / polygon_size) - x) * polygon_size)
-        if y < int(180 / polygon_size):
-                y = -int(((180 / polygon_size) - y) * polygon_size)
-        else:
-                y = int((y - (180 / polygon_size)) * polygon_size)
-        return x, y
+    """
+    Convert index (output of the prediction model) back to coordinates.
+    :param index: of the polygon/tile in map_vector array (given by model prediction)
+    :param polygon_size: size of each polygon/tile i.e. resolution of the world
+    :return: pair of (latitude, longitude)
+    """
+    x = int(index / (360 / polygon_size))
+    y = index % int(360 / polygon_size)
+    if x > int(90 / polygon_size):
+        x = -int((x - (90 / polygon_size)) * polygon_size)
+    else:
+        x = int(((90 / polygon_size) - x) * polygon_size)
+    if y < int(180 / polygon_size):
+        y = -int(((180 / polygon_size) - y) * polygon_size)
+    else:
+        y = int((y - (180 / polygon_size)) * polygon_size)
+    return y, x
 
 
 def bounded_grid(geom, num_tiles, min_limit=(-180, -90), max_limit=(180, 90)):
