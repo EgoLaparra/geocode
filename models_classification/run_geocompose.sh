@@ -37,4 +37,4 @@ singularity exec --nv /xdisk/bethard/mig2020/extra/zeyuzhang/image/hpc-ml_centos
 --per_gpu_train_batch_size 8 \
 --gradient_accumulation_steps 8 \
 --save_steps 1000 \
---output_dir /xdisk/bethard/mig2020/xdisk/zeyuzhang/Geo-Compositional_classification/output_60_epoch50/
+--output_dir /xdisk/bethard/mig2020/xdisk/zeyuzhang/Geo-Compositional_classification_relative/output_26_epoch50/
