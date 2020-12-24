@@ -66,31 +66,10 @@ if __name__ == '__main__':
     entityID2target = {}
     entityID2paras = {}
     entityID2desc = {}
-    geometries = []
-    for entity in tqdm(entities, desc='Entities'):
-        entity_id = entity.get("id")
-        try:
-            ##process paras entities
-            entity_geometry = geom.get_entity_geometry(entity)
-            geometries.append(entity_geometry)
-            pID2links = {}
-            for p in entity.xpath('./p'):
-                pID = p.get("id")
-                for e, link in enumerate(p.xpath('./link')):
-                    linkID = link.get("id")
-                    link_geometry = geom.get_entity_geometry(link)
-                    geometries.append(link_geometry)
-            ##process target entity
-        except Exception as e:
-            print("Error processing %s" % (entity_id))
-            print(e)
-            geom = Geometries()
-    geom = Geometries()
-    min_bound, max_bound = geometry_group_bounds(geom, geometries, squared=True)
-    geom = Geometries()
     for entity in tqdm(entities, desc='Entities'):
         entity_id = entity.get("id")
         print(entity_id)
+        geometries = []
         try:
             # process paras entities
             pID2links = {}
@@ -100,6 +79,7 @@ if __name__ == '__main__':
                 for e, link in enumerate(p.xpath('./link')):
                     linkID = link.get("id")
                     link_geometry = geom.get_entity_geometry(link)
+                    geometries.append(link_geometry)
                     simplified_link_geometry = geom.simplify_geometry(link_geometry, segments=2)
                     link_coordinates_list = []
                     for polygon_list in simplified_link_geometry:
@@ -114,6 +94,8 @@ if __name__ == '__main__':
             entity_geometry = geom.get_entity_geometry(entity)
             entity_central_point = geom.get_centrality(entity_geometry, metric="centroid")
             entity_central_coordinates = geom.get_coordinates(entity_central_point)
+            geometries.append(entity_geometry)
+            min_bound, max_bound = geometry_group_bounds(geom, geometries, squared=True)
             print('entity central point: ', entity_central_coordinates)
             entity_classification_label = coord_to_index_relative(entity_central_coordinates, args.polygon_size, min_bound, max_bound)
             print('classification_label: ', entity_classification_label)
