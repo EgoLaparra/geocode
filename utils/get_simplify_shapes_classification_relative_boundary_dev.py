@@ -85,7 +85,9 @@ if __name__ == '__main__':
             print("Error processing %s" % (entity_id))
             print(e)
             geom = Geometries()
+    geom = Geometries()
     min_bound, max_bound = geometry_group_bounds(geom, geometries, squared=True)
+    geom = Geometries()
     for entity in tqdm(entities, desc='Entities'):
         entity_id = entity.get("id")
         print(entity_id)
