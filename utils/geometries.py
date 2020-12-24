@@ -61,6 +61,9 @@ class Geometries:
     def contains(self, geometry_a, geometry_b):
         return self.database.execute_query("contains", (geometry_a, geometry_b))
 
+    def instersects(self, geometry_a, geometry_b):
+        return self.database.execute_query("intersects", (geometry_a, geometry_b))
+
     def calculate_distance(self, geometry_a, geometry_b):
         return self.database.execute_query("distance", (geometry_a, geometry_b))
 
