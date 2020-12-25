@@ -48,14 +48,14 @@ entity2desc = pickle_load_large_file('../../geocode-data/collection_samples/mode
 entityIds = list(entity2desc.keys())
 print(output_raw.keys())
 value = output_raw['preds_Compositional_classification_relative/output_26_epoch50']
-print(value)
+#print(value)
 print(len(value))
 
 
 for idx, prediction in enumerate(value):
     entity_id = entityIds[idx]
     prediction_values = index_to_coord_relative(prediction, 26)
-    print(prediction_values)
+    #print(prediction_values)
     prediction_values = [[[prediction_values[0] - 26 / 2, prediction_values[1] - 26 / 2], [prediction_values[0] - 26 / 2, prediction_values[1] + 26 / 2]], [[prediction_values[0] + 26 / 2, prediction_values[1] + 26 / 2], [prediction_values[0] + 26 / 2, prediction_values[1] - 26 / 2]]]
     # print(prediction_values)
     # for e1, row in enumerate(prediction_values):
