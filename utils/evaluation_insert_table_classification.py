@@ -41,13 +41,13 @@ def pickle_load_large_file(filepath):
 
 geom = Geometries()
 
-with open('classification_relative_results/eval_preds_26_epoch200.json', 'r') as file:
+with open('classification_relative_results/eval_preds_26_epoch300_5e5.json', 'r') as file:
     output_raw = json.load(file)
 
 entity2desc = pickle_load_large_file('../../geocode-data/collection_samples/model_input_desc_dev.pkl')
 entityIds = list(entity2desc.keys())
 print(output_raw.keys())
-value = output_raw['preds_Compositional_classification_relative/output_26_epoch200']
+value = output_raw['preds_Compositional_classification_relative/output_26_epoch300_5e5']
 #print(value)
 print(len(value))
 
