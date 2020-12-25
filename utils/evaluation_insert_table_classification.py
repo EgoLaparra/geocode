@@ -1,4 +1,5 @@
 from geometries import Geometries
+from preprocess import index_to_coord_relative
 from lxml import etree
 from tqdm import tqdm
 from itertools import chain
@@ -40,20 +41,20 @@ def pickle_load_large_file(filepath):
 
 geom = Geometries()
 
-with open('eval_preds_classification_60_epoch50.json', 'r') as file:
+with open('classification_relative_results/eval_preds_26_epoch50.json', 'r') as file:
     output_raw = json.load(file)
 
 entity2desc = pickle_load_large_file('../../geocode-data/collection_samples/model_input_desc_dev.pkl')
 entityIds = list(entity2desc.keys())
 print(output_raw.keys())
-value = output_raw['preds_Compositional_classification/output_60_epoch50']
+value = output_raw['preds_Compositional_classification/output_26_epoch50']
 print(value)
 print(len(value))
 
 
 for idx, prediction in enumerate(value):
     entity_id = entityIds[idx]
-    prediction_values = index_to_coord(prediction, 10)
+    prediction_values = index_to_coord_relative(prediction, 26)
     print(prediction_values)
     # print(prediction_values)
     # for e1, row in enumerate(prediction_values):
