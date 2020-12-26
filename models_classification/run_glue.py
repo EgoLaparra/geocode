@@ -358,15 +358,42 @@ def load_and_cache_examples(args, task, tokenizer, evaluate=False, test=False):
     else:
         cached_mode = "train"
     assert not (evaluate and test)
-    cached_features_file = os.path.join(
-        args.data_dir,
-        "cached_{}_{}_{}_{}".format(
-            cached_mode,
-            list(filter(None, args.model_name_or_path.split("/"))).pop(),
-            str(args.max_seq_length),
-            str(task),
-        ),
-    )
+    if args.do_relative and args.do_boundary:
+        cached_features_file = os.path.join(
+            args.data_dir,
+            "cached_{}_{}_{}_{}_{}_{}_{}".format(
+                cached_mode,
+                list(filter(None, args.model_name_or_path.split("/"))).pop(),
+                str(args.max_seq_length),
+                str(task),
+                "relative",
+                "boundary",
+                str(args.num_tiles)
+            ),
+        )
+    elif args.do_relative and not args.do_boundary:
+        cached_features_file = os.path.join(
+            args.data_dir,
+            "cached_{}_{}_{}_{}_{}_{}".format(
+                cached_mode,
+                list(filter(None, args.model_name_or_path.split("/"))).pop(),
+                str(args.max_seq_length),
+                str(task),
+                "relative",
+                str(args.num_tiles)
+            ),
+        )
+    else:
+        cached_features_file = os.path.join(
+            args.data_dir,
+            "cached_{}_{}_{}_{}".format(
+                cached_mode,
+                list(filter(None, args.model_name_or_path.split("/"))).pop(),
+                str(args.max_seq_length),
+                str(task),
+            ),
+        )
+
     if os.path.exists(cached_features_file) and not args.overwrite_cache:
         logger.info("Loading features from cached file %s", cached_features_file)
         features = torch.load(cached_features_file)
@@ -474,6 +501,9 @@ def main():
     parser.add_argument("--do_train", action="store_true", help="Whether to run training.")
     parser.add_argument("--do_eval", action="store_true", help="Whether to run eval on the dev set.")
     parser.add_argument("--do_test", action="store_true", help="Whether to run test on the test set")
+    parser.add_argument("--do_relative", action="store_true", help="Whether to run model on the relative")
+    parser.add_argument("--do_boundary", action="store_true", help="Whether to run model on the boundary")
+    parser.add_argument("--num_tiles", default=26, type=int, help="Whether to run model on the boundary")
     parser.add_argument(
         "--evaluate_during_training", action="store_true", help="Run evaluation during training at each logging step."
     )

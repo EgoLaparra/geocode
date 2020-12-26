@@ -10,9 +10,9 @@
 #PBS -l place=pack:exclhost
 ### CPUtime required in hhh:mm:ss.
 ### Leading 0's can be omitted e.g 48:0:0 sets 48 hours
-#PBS -l cput=140:00:00
+#PBS -l cput=980:00:00
 ### Walltime is how long your job will run
-#PBS -l walltime=5:00:00
+#PBS -l walltime=35:00:00
 #PBS -e /home/u12/zeyuzhang/Geo_Compositional/geocode/models_classification/logs/error_50_epoch50
 #PBS -o /home/u12/zeyuzhang/Geo_Compositional/geocode/models_classification/logs/output_50_epoch50
 
@@ -28,6 +28,9 @@ singularity exec --nv /xdisk/bethard/mig2020/extra/zeyuzhang/image/hpc-ml_centos
 --model_name_or_path bert-base-uncased \
 --do_train \
 --do_eval \
+--do_relative \
+--do_boundary \
+--num_tiles 26 \
 --eval_all_checkpoints \
 --data_dir /home/u12/zeyuzhang/Geo_Compositional/geocode-data/collection_samples \
 --n_labels 2501 \
