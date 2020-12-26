@@ -181,6 +181,7 @@ class GeoComposeProcessor(DataProcessor):
                 para_entities = para_entities + [np.zeros([3, 3, 2], dtype=float).tolist()] * (
                             max_links_num - len(para_entities))
             assert len(para_entities) == max_links_num
+            print("target: ", target)
             examples.append(InputExample(
                 example_id=str(idx),
                 text_a=text,
