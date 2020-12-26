@@ -965,8 +965,8 @@ class BertForMultipleChoice(BertPreTrainedModel):
 
         pooled_output = outputs[1]
         pooled_output = self.dropout(pooled_output)
-        print('********pooled output shape: ',pooled_output.shape)
-        print('********populations shape: ', populations.shape)
+        #print('********pooled output shape: ',pooled_output.shape)
+        #print('********populations shape: ', populations.shape)
         batch_size = populations.shape[0]
         pooled_output = pooled_output.view(batch_size, 40, 768)
         populations = populations.squeeze(1)
@@ -976,25 +976,25 @@ class BertForMultipleChoice(BertPreTrainedModel):
         log_populations = torch.log(populations)
         log_populations = log_populations.unsqueeze(2)
         #log_populations = log_populations.squeeze(0)
-        print('********log populations shape: ', log_populations.shape)
+        #print('********log populations shape: ', log_populations.shape)
         # print('********feacodes shape: ', feacodes.shape)
         #print('********population: ',log_populations)
         feacodes = feacodes.squeeze(1)
         choice_feacodes = feacodes.unsqueeze(2)
         choice_feacodes = choice_feacodes.view(batch_size*40, 1)
-        print('********choice_feacodes shape: ', choice_feacodes.shape)
+        #print('********choice_feacodes shape: ', choice_feacodes.shape)
         #choice_feacodes = choice_feacodes.squeeze(0)
         choice_feacodes_onehot = torch.zeros(batch_size*40, 681)
         choice_feacodes_onehot.scatter_(1, choice_feacodes, 1)
         choice_feacodes_onehot = choice_feacodes_onehot.view(batch_size, 40, 681)
-        print('********feacodes onehot shape: ', choice_feacodes_onehot.shape)
+        #print('********feacodes onehot shape: ', choice_feacodes_onehot.shape)
         final_pooled_output = torch.cat((pooled_output, log_populations, choice_feacodes_onehot), dim=2)
         # print("********final_pooled_output shape: ", final_pooled_output.shape)
         logits_temp = self.classifier(final_pooled_output)
         logits = self.classifer_final(logits_temp)
         reshaped_logits = logits.view(-1, num_choices)
-        print("********reshaped_logits shape", reshaped_logits.shape)
-        print("********label shape: ", labels.shape)
+        #print("********reshaped_logits shape", reshaped_logits.shape)
+        #print("********label shape: ", labels.shape)
 
         outputs = (reshaped_logits,) + outputs[2:]  # add hidden states and attention if they are here
 
