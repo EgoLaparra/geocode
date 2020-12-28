@@ -42,7 +42,22 @@ def index_to_coord_relative(index, num_tiles, min_limit=(-180, -90), max_limit=(
         y = 1 - yindex * step - step / 2
         return denormalize((x, y), min_limit, max_limit)
 
+ 
+def index_to_tile_relative(index, num_tiles, min_limit=(-180, -90), max_limit=(180, 90)):
+        step = 2 / num_tiles
+        yindex = int(index / num_tiles)
+        xindex = index - yindex * num_tiles
+        x = -1 + xindex * step
+        y = 1 - yindex * step
+        tile = [
+               [denormalize((x, y), min_limit, max_limit),
+                denormalize((x + step, y), min_limit, max_limit)],
+               [denormalize((x, y - step), min_limit, max_limit),
+                denormalize((x + step, y - step), min_limit, max_limit)]
+        ]
+        return tile
 
+ 
 def coord_to_index(coordinates, polygon_size):
         """
         Convert coordinates into an array (world representation) index. Use that to modify map_vector polygon value.
@@ -85,6 +100,15 @@ def index_to_coord(index, polygon_size):
         return x, y
 
 
+def make_polygon(geom, coordinates):
+       return geom.from_text(
+              "POLYGON((%s))" % ", ".join([" ".join(map(str, point))
+                                           for e1, row in enumerate(coordinates)
+                                           for e2, point in enumerate(row)] +
+                                          ["%s %s" % (coordinates[0][0][0], coordinates[0][0][1])])
+       )
+
+       
 def bounded_grid(geom, num_tiles, min_limit=(-180, -90), max_limit=(180, 90)):
        xstep = (max_limit[0] - min_limit[0]) / num_tiles
        ystep = (max_limit[1] - min_limit[1]) / num_tiles
@@ -98,12 +122,7 @@ def bounded_grid(geom, num_tiles, min_limit=(-180, -90), max_limit=(180, 90)):
                             [[xpos, ypos], [xpos + xstep, ypos]],
                             [[xpos + xstep, ypos - ystep], [xpos, ypos - ystep]]
                      ]
-                     polygon = geom.from_text(
-                            "POLYGON((%s))" % ", ".join([" ".join(map(str, point))
-                                                         for e1, row in enumerate(coordinates)
-                                                         for e2, point in enumerate(row)] +
-                                                        ["%s %s" % (coordinates[0][0][0], coordinates[0][0][1])])
-                            )
+                     polygon = make_polygon(geom, coordinates)
                      grid_row.append(polygon)
                      xpos += xstep
               grid.append(grid_row)
