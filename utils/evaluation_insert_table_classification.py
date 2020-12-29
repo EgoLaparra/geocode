@@ -1,5 +1,5 @@
 from geometries import Geometries
-from preprocess import index_to_coord_relative
+from preprocess import index_to_tile_relative
 from lxml import etree
 from tqdm import tqdm
 from itertools import chain
@@ -54,9 +54,9 @@ print(len(value))
 
 for idx, prediction in enumerate(value):
     entity_id = entityIds[idx]
-    prediction_values = index_to_coord_relative(prediction, 26)
+    prediction_values = index_to_tile_relative(prediction, 26)
     #print(prediction_values)
-    prediction_values = [[[prediction_values[0] - 26 / 2, prediction_values[1] - 26 / 2], [prediction_values[0] - 26 / 2, prediction_values[1] + 26 / 2]], [[prediction_values[0] + 26 / 2, prediction_values[1] + 26 / 2], [prediction_values[0] + 26 / 2, prediction_values[1] - 26 / 2]]]
+    #prediction_values = [[[prediction_values[0] - 26 / 2, prediction_values[1] - 26 / 2], [prediction_values[0] - 26 / 2, prediction_values[1] + 26 / 2]], [[prediction_values[0] + 26 / 2, prediction_values[1] + 26 / 2], [prediction_values[0] + 26 / 2, prediction_values[1] - 26 / 2]]]
     # print(prediction_values)
     # for e1, row in enumerate(prediction_values):
     #     for e2, point in enumerate(row):
