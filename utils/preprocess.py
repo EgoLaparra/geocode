@@ -57,6 +57,7 @@ def index_to_tile_relative(index, num_tiles, min_limit=(-180, -90), max_limit=(1
         ]
         return tile
 
+
 def coord_to_index(coordinates, polygon_size):
     """
     Convert coordinates into an array (world representation) index. Use that to modify map_vector polygon value.
