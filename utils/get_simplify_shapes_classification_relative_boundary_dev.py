@@ -54,6 +54,10 @@ if __name__ == '__main__':
                         default='../../geocode-data/collection_samples/model_input_desc_classification_relative_boundary_26_dev.pkl',
                         type=str,
                         help='path of data collections samples')
+    parser.add_argument('--output_boundary_dev',
+                        default='../../geocode-data/collection_samples/model_input_boundary_classification_relative_boundary_26_dev.pkl',
+                        type=str,
+                        help='path of data collections samples')
     parser.add_argument('--polygon_size',
                         default=26,
                         type=int,
@@ -66,6 +70,7 @@ if __name__ == '__main__':
     entityID2target = {}
     entityID2paras = {}
     entityID2desc = {}
+    entityID2boundary = {}
     for entity in tqdm(entities, desc='Entities'):
         entity_id = entity.get("id")
         print(entity_id)
@@ -116,6 +121,7 @@ if __name__ == '__main__':
             entityID2desc[entity_id] = text
             entityID2paras[entity_id] = pID2links
             entityID2target[entity_id] = entity_classification_label
+            entityID2boundary[entity_id] = [min_bound,max_bound]
         except Exception as e:
             print("Error processing %s" % (entity_id))
             print(e)
@@ -128,3 +134,4 @@ if __name__ == '__main__':
     pickle_dump_large_file(entityID2target, args.output_target_dev)
     pickle_dump_large_file(entityID2paras, args.output_paras_dev)
     pickle_dump_large_file(entityID2desc, args.output_desc_dev)
+    pickle_dump_large_file(entityID2boundary, args.output_desc_boundary_dev)
