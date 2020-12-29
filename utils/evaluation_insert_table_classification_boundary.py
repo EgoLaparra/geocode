@@ -57,6 +57,7 @@ for idx, prediction in enumerate(value):
     entity_id = entityIds[idx]
     min_bound, max_bound = entityID2boundary[entity_id]
     prediction_values = index_to_tile_relative(prediction, 26, min_bound, max_bound)
+    print(prediction_values)
     geometry = make_polygon(geom, prediction_values)
     #print(prediction_values)
     #prediction_values = [[[prediction_values[0] - 26 / 2, prediction_values[1] - 26 / 2], [prediction_values[0] - 26 / 2, prediction_values[1] + 26 / 2]], [[prediction_values[0] + 26 / 2, prediction_values[1] + 26 / 2], [prediction_values[0] + 26 / 2, prediction_values[1] - 26 / 2]]]
