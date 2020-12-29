@@ -134,4 +134,4 @@ if __name__ == '__main__':
     pickle_dump_large_file(entityID2target, args.output_target_dev)
     pickle_dump_large_file(entityID2paras, args.output_paras_dev)
     pickle_dump_large_file(entityID2desc, args.output_desc_dev)
-    pickle_dump_large_file(entityID2boundary, args.output_desc_boundary_dev)
+    pickle_dump_large_file(entityID2boundary, args.output_boundary_dev)

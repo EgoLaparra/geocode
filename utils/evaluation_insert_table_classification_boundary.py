@@ -45,6 +45,7 @@ with open('classification_relative_results/eval_preds_26_epoch50.json', 'r') as 
     output_raw = json.load(file)
 
 entity2desc = pickle_load_large_file('../../geocode-data/collection_samples/model_input_desc_dev.pkl')
+entityID2boundary = pickle_load_large_file('../../geocode-data/collection_samples/model_input_boundary_classification_relative_boundary_26_dev.pkl')
 entityIds = list(entity2desc.keys())
 print(output_raw.keys())
 value = output_raw['preds_Compositional_classification_relative/output_26_epoch50']
@@ -54,7 +55,8 @@ print(len(value))
 
 for idx, prediction in enumerate(value):
     entity_id = entityIds[idx]
-    prediction_values = index_to_tile_relative(prediction, 26)
+    min_bound, max_bound = entityID2boundary[entity_id]
+    prediction_values = index_to_tile_relative(prediction, 26, min_bound, max_bound)
     geometry = make_polygon(geom, prediction_values)
     #print(prediction_values)
     #prediction_values = [[[prediction_values[0] - 26 / 2, prediction_values[1] - 26 / 2], [prediction_values[0] - 26 / 2, prediction_values[1] + 26 / 2]], [[prediction_values[0] + 26 / 2, prediction_values[1] + 26 / 2], [prediction_values[0] + 26 / 2, prediction_values[1] - 26 / 2]]]
