@@ -52,8 +52,8 @@ def index_to_tile_relative(index, num_tiles, min_limit=(-180, -90), max_limit=(1
         tile = [
                [denormalize((x, y), min_limit, max_limit),
                 denormalize((x + step, y), min_limit, max_limit)],
-               [denormalize((x, y - step), min_limit, max_limit),
-                denormalize((x + step, y - step), min_limit, max_limit)]
+               [denormalize((x + step, y - step), min_limit, max_limit),
+                denormalize((x, y - step), min_limit, max_limit)]
         ]
         return tile
 
