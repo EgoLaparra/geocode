@@ -57,7 +57,7 @@ for idx, prediction in enumerate(value):
     entity_id = entityIds[idx]
     min_bound, max_bound = entityID2boundary[entity_id]
     prediction_values = index_to_tile_relative(prediction, 26, min_bound, max_bound)
-    geometry = make_polygon(geom, prediction_values)
+    #geometry = make_polygon(geom, prediction_values)
     #print(prediction_values)
     #prediction_values = [[[prediction_values[0] - 26 / 2, prediction_values[1] - 26 / 2], [prediction_values[0] - 26 / 2, prediction_values[1] + 26 / 2]], [[prediction_values[0] + 26 / 2, prediction_values[1] + 26 / 2], [prediction_values[0] + 26 / 2, prediction_values[1] - 26 / 2]]]
     # print(prediction_values)
@@ -65,7 +65,7 @@ for idx, prediction in enumerate(value):
     #     for e2, point in enumerate(row):
     #         print(point)
     #         print(" ".join(map(str, point)))
-    #geometry = geom.from_text("POLYGON((%s))" % ", ".join([" ".join(map(str, point)) for e1, row in enumerate(prediction_values) for e2, point in enumerate(row)] + ["%s %s" % (prediction_values[0][0][0],prediction_values[0][0][1])]))
+    geometry = geom.from_text("POLYGON((%s))" % ", ".join([" ".join(map(str, point)) for e1, row in enumerate(prediction_values) for e2, point in enumerate(row)] + ["%s %s" % (prediction_values[0][0][0],prediction_values[0][0][1])]))
 
     geom.database.insert_in_table("output_table", idx, entity_id, geometry)
 
