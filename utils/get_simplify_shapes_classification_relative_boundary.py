@@ -136,5 +136,5 @@ if __name__ == '__main__':
     pickle_dump_large_file(entityID2target, args.output_target_train)
     pickle_dump_large_file(entityID2paras, args.output_paras_train)
     pickle_dump_large_file(entityID2desc, args.output_desc_train)
-    pickle_dump_large_file(entityID2boundary, args.output_desc_boundary_train)
+    pickle_dump_large_file(entityID2boundary, args.output_boundary_train)
     geom.close_connection()
