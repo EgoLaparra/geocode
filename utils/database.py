@@ -24,7 +24,7 @@ SQL = {"geometry":          {"query": """select geom from geometries
                              "single_output": True},
        "point_on_surface":  {"query": """select st_pointonsurface('%s');""",
                              "single_output": True},
-       "envelope":          {"query": """select st_points(st_envelope('%s'));""",
+       "envelope":          {"query": """select st_envelope('%s');""",
                              "single_output": True},
        "oriented_envelope": {"query": """select st_orientedenvelope('%s');""",
                              "single_output": True},

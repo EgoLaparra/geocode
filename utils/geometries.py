@@ -46,8 +46,7 @@ class Geometries:
         return self.database.execute_query("point_on_surface", geometry)
 
     def get_envelope(self, geometry):
-        envelope = self.database.execute_query("envelope", geometry)
-        return self.database.execute_query("dump", envelope)
+        return self.database.execute_query("envelope", geometry)
 
     def get_oriented_envelope(self, geometry):
         return self.database.execute_query("oriented_envelope", geometry)
@@ -100,7 +99,9 @@ class Geometries:
         return self.database.execute_query("transform", geometry)
 
     def simplify_geometry(self, geometry, segments=2):
-        envelope = self.get_envelope(geometry)
+        envelope = self.dump_geometry(
+            self.get_envelope(geometry)
+        )
         if len(envelope) == 1:
             return [[envelope[0]] * (segments + 1) for i in range(segments + 1)]
         else:
