@@ -13,8 +13,8 @@
 #PBS -l cput=980:00:00
 ### Walltime is how long your job will run
 #PBS -l walltime=35:00:00
-#PBS -e /home/u12/zeyuzhang/Geo_Compositional/geocode/models_classification/logs/error_50_epoch50
-#PBS -o /home/u12/zeyuzhang/Geo_Compositional/geocode/models_classification/logs/output_50_epoch50
+#PBS -e /home/u12/zeyuzhang/Geo_Compositional/geocode/models_classification/logs/error_boundary_50_epoch50
+#PBS -o /home/u12/zeyuzhang/Geo_Compositional/geocode/models_classification/logs/output_boundary_50_epoch50
 
 #####module load cuda80/neuralnet/6/6.0
 #####module load cuda80/toolkit/8.0.61
@@ -30,7 +30,7 @@ singularity exec --nv /xdisk/bethard/mig2020/extra/zeyuzhang/image/hpc-ml_centos
 --do_eval \
 --do_relative \
 --do_boundary \
---num_tiles 26 \
+--num_tiles 50 \
 --eval_all_checkpoints \
 --data_dir /home/u12/zeyuzhang/Geo_Compositional/geocode-data/collection_samples \
 --n_labels 2501 \
@@ -40,4 +40,4 @@ singularity exec --nv /xdisk/bethard/mig2020/extra/zeyuzhang/image/hpc-ml_centos
 --per_gpu_train_batch_size 8 \
 --gradient_accumulation_steps 8 \
 --save_steps 1000 \
---output_dir /xdisk/bethard/mig2020/xdisk/zeyuzhang/Geo-Compositional_classification_relative/output_50_epoch50/
+--output_dir /xdisk/bethard/mig2020/xdisk/zeyuzhang/Geo-Compositional_classification_relative_boundary/output_50_epoch50/
