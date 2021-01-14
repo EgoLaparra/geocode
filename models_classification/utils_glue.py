@@ -93,9 +93,9 @@ class GeoComposeProcessor(DataProcessor):
     def get_train_examples(self, data_dir):
         """See base class."""
         logger.info("LOOKING AT {} train".format(data_dir))
-        return self._create_examples(self.pickle_load_large_file(os.path.join(data_dir, "model_input_desc_classification_relative_boundary_50_train.pkl")),
-                                     self.pickle_load_large_file(os.path.join(data_dir, "model_input_paras_classification_relative_boundary_50_train.pkl")),
-                                     self.pickle_load_large_file(os.path.join(data_dir, "model_input_target_classification_relative_boundary_50_train.pkl")),"train")
+        return self._create_examples(self.pickle_load_large_file(os.path.join(data_dir, "model_input_desc_classification_relative_boundary_50_nochecklimit_train.pkl")),
+                                     self.pickle_load_large_file(os.path.join(data_dir, "model_input_paras_classification_relative_boundary_50_nochecklimit_train.pkl")),
+                                     self.pickle_load_large_file(os.path.join(data_dir, "model_input_target_classification_relative_boundary_50_nochecklimit_train.pkl")),"train")
 
     def get_dev_examples(self, data_dir):
         """See base class."""
