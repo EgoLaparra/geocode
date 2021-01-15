@@ -109,7 +109,7 @@ class Geometries:
         return self.database.execute_query("transform", geometry)
 
     def simplify_geometry(self, geometry, segments=2):
-        envelope = self.dump_geometry(
+        envelope = self.dump_points(
             self.get_envelope(geometry)
         )
         if len(envelope) == 1:
