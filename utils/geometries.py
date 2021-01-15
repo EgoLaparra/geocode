@@ -42,12 +42,21 @@ class Geometries:
         centrality = self.database.execute_query(metric, geometry)
         return self.database.execute_query("closest_point", (geometry, centrality))
 
+    def get_max(self, geometry):
+        xmax = self.database.execute_query("xmax", geometry)
+        ymax = self.database.execute_query("ymax", geometry)
+        return xmax, ymax
+
+    def get_min(self, geometry):
+        xmin = self.database.execute_query("xmin", geometry)
+        ymin = self.database.execute_query("ymin", geometry)
+        return xmin, ymin
+
     def get_point_on_surface(self, geometry):
         return self.database.execute_query("point_on_surface", geometry)
 
     def get_envelope(self, geometry):
-        envelope = self.database.execute_query("envelope", geometry)
-        return self.database.execute_query("dump", envelope)
+        return self.database.execute_query("envelope", geometry)
 
     def get_oriented_envelope(self, geometry):
         return self.database.execute_query("oriented_envelope", geometry)
@@ -100,7 +109,9 @@ class Geometries:
         return self.database.execute_query("transform", geometry)
 
     def simplify_geometry(self, geometry, segments=2):
-        envelope = self.get_envelope(geometry)
+        envelope = self.dump_geometry(
+            self.get_envelope(geometry)
+        )
         if len(envelope) == 1:
             return [[envelope[0]] * (segments + 1) for i in range(segments + 1)]
         else:
