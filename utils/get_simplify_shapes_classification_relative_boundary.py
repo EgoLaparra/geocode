@@ -41,47 +41,21 @@ def get_text(node):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    #parser.add_argument('--xml_filepath_train', default='../../geocode-data/collection_samples/train_samples.xml', type=str,
-    #                    help='path of data collections')
-    #parser.add_argument('--sample_size', default=50, type=int,
-    #                    help='number of sample datas')
-    #parser.add_argument('--output_target_train', default='../../geocode-data/collection_samples/model_input_target_classification_relative_boundary_100_nochecklimit_train.pkl', type=str,
-    #                    help='path of data collections samples')
-    #parser.add_argument('--output_paras_train', default='../../geocode-data/collection_samples/model_input_paras_classification_relative_boundary_100_nochecklimit_train.pkl',
-    #                    type=str,
-    #                    help='path of data collections samples')
-    #parser.add_argument('--output_desc_train',
-    #                    default='../../geocode-data/collection_samples/model_input_desc_classification_relative_boundary_100_nochecklimit_train.pkl',
-    #                    type=str,
-    #                    help='path of data collections samples')
-    #parser.add_argument('--output_boundary_train',
-    #                    default='../../geocode-data/collection_samples/model_input_boundary_classification_relative_boundary_100_nochecklimit_train.pkl',
-    #                    type=str,
-    #                    help='path of data collections samples')
-    #parser.add_argument('--polygon_size',
-    #                    default=100,
-    #                    type=int,
-    #                    help="polygon size of coor_2_index")
-
-    parser.add_argument('--xml_filepath_train', default='../../geocode-data/collection_samples/train_subsample.xml',
-                        type=str,
+    parser.add_argument('--xml_filepath_train', default='../../geocode-data/collection_samples/train_samples.xml', type=str,
                         help='path of data collections')
     parser.add_argument('--sample_size', default=50, type=int,
                         help='number of sample datas')
-    parser.add_argument('--output_target_train',
-                        default='../../geocode-data/collection_samples/model_input_target_classification_relative_boundary_temp.pkl',
-                        type=str,
+    parser.add_argument('--output_target_train', default='../../geocode-data/collection_samples/model_input_target_classification_relative_boundary_50_train.pkl', type=str,
                         help='path of data collections samples')
-    parser.add_argument('--output_paras_train',
-                        default='../../geocode-data/collection_samples/model_input_paras_classification_relative_boundary_temp.pkl',
+    parser.add_argument('--output_paras_train', default='../../geocode-data/collection_samples/model_input_paras_classification_relative_boundary_50_train.pkl',
                         type=str,
                         help='path of data collections samples')
     parser.add_argument('--output_desc_train',
-                        default='../../geocode-data/collection_samples/model_input_desc_classification_relative_boundary_temp.pkl',
+                        default='../../geocode-data/collection_samples/model_input_desc_classification_relative_boundary_50_train.pkl',
                         type=str,
                         help='path of data collections samples')
     parser.add_argument('--output_boundary_train',
-                        default='../../geocode-data/collection_samples/model_input_boundary_classification_relative_boundary_temp.pkl',
+                        default='../../geocode-data/collection_samples/model_input_boundary_classification_relative_boundary_50_train.pkl',
                         type=str,
                         help='path of data collections samples')
     parser.add_argument('--polygon_size',
