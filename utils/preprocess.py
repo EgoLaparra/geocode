@@ -149,14 +149,34 @@ def bitmap_to_geometry(geom, grid, bitmap):
        return geom.unite_geometries(polygons)
 
 
+def limit_to_inner_boundaries(geom, geometries):
+       largest_geometry = (None, 0)
+       for i, geometry in enumerate(geometries):
+           geometry_area = geom.get_geometry_area(geometry)
+           if geometry_area > largest_geometry[1]:
+                  largest_geometry = (i, geometry_area)
+       i, _ = largest_geometry
+       if i is not None:
+              geometry = geom.get_envelope(geometries[i])
+              rest = geom.unite_geometries(
+                     [geom.get_envelope(geometry)
+                      for geometry in geometries[:i] + geometries[i+1:]]
+              )
+              if geom.contains(geometry, rest):
+                     geometries[i] = geom.get_envelope(rest)
+
+
 def geometry_group_bounds(geom, geometries, squared=True):
+       envelopes = [geom.get_envelope(geometry)
+                    for geometry in geometries]
        bounding_diagonal = geom.get_bounding_diagonal(
-              geom.unite_geometries(geometries)
+              geom.unite_geometries(envelopes)
        )
+       lower_point, upper_point = geom.dump_points(bounding_diagonal)
        if squared:
               bounding_diagonal = geom.get_bounding_diagonal(
                      geom.get_bounding_circle(bounding_diagonal)
-              )              
+              )
        lower_point, upper_point = geom.dump_points(bounding_diagonal)
        min_coordinates = geom.get_coordinates(lower_point)
        max_coordinates = geom.get_coordinates(upper_point)
