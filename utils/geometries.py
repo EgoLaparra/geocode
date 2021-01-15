@@ -42,6 +42,16 @@ class Geometries:
         centrality = self.database.execute_query(metric, geometry)
         return self.database.execute_query("closest_point", (geometry, centrality))
 
+    def get_max(self, geometry):
+        xmax = self.database.execute_query("xmax", geometry)
+        ymax = self.database.execute_query("ymax", geometry)
+        return xmax, ymax
+
+    def get_min(self, geometry):
+        xmin = self.database.execute_query("xmin", geometry)
+        ymin = self.database.execute_query("ymin", geometry)
+        return xmin, ymin
+
     def get_point_on_surface(self, geometry):
         return self.database.execute_query("point_on_surface", geometry)
 
