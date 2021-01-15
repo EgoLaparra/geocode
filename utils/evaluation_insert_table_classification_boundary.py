@@ -41,14 +41,14 @@ def pickle_load_large_file(filepath):
 
 geom = Geometries()
 
-with open('classification_relative_boundary_results/eval_preds_100_epoch200_nochecklimit.json', 'r') as file:
+with open('classification_relative_boundary_results/eval_preds_100_epoch300_nochecklimit.json', 'r') as file:
     output_raw = json.load(file)
 
 entity2desc = pickle_load_large_file('../../geocode-data/collection_samples/model_input_desc_dev.pkl')
 entityID2boundary = pickle_load_large_file('../../geocode-data/collection_samples/model_input_boundary_classification_relative_boundary_100_dev.pkl')
 entityIds = list(entity2desc.keys())
 print(output_raw.keys())
-value = output_raw['preds_Compositional_classification_relative_boundary/output_100_epoch200_nochecklimit']
+value = output_raw['preds_Compositional_classification_relative_boundary/output_100_epoch300_nochecklimit']
 #print(value)
 print(len(value))
 
