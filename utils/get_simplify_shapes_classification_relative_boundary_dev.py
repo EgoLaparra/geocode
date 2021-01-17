@@ -100,8 +100,10 @@ if __name__ == '__main__':
             entity_central_coordinates = geom.get_coordinates(entity_central_point)
             geometries.append(entity_geometry)
             min_bound, max_bound = geometry_group_bounds(geom, geometries, squared=True)
-            if min_bound[0] < -180 or min_bound[1] < -90 or max_bound[0] > 180 or max_bound[1] > -90:
-                min_bound, max_bound = geometry_group_bounds(geom, geometries, squared=False)
+            min_bound = (max(min_bound[0], -180), max(min_bound[1], -90))
+            max_bound = (min(max_bound[0], 180), min(max_bound[1], 90))
+            #if min_bound[0] < -180 or min_bound[1] < -90 or max_bound[0] > 180 or max_bound[1] > -90:
+            #    min_bound, max_bound = geometry_group_bounds(geom, geometries, squared=False)
             print('entity central point: ', entity_central_coordinates)
             entity_classification_label = coord_to_index_relative(entity_central_coordinates, args.polygon_size, min_bound, max_bound)
             print('classification_label: ', entity_classification_label)
