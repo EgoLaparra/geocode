@@ -93,16 +93,16 @@ class GeoComposeProcessor(DataProcessor):
     def get_train_examples(self, data_dir):
         """See base class."""
         logger.info("LOOKING AT {} train".format(data_dir))
-        return self._create_examples(self.pickle_load_large_file(os.path.join(data_dir, "model_input_desc_classification_relative_boundary_100_train.pkl")),
-                                     self.pickle_load_large_file(os.path.join(data_dir, "model_input_paras_classification_relative_boundary_100_train.pkl")),
-                                     self.pickle_load_large_file(os.path.join(data_dir, "model_input_target_classification_relative_boundary_100_train.pkl")),"train")
+        return self._create_examples(self.pickle_load_large_file(os.path.join(data_dir, "model_input_desc_classification_relative_boundary_26_train.pkl")),
+                                     self.pickle_load_large_file(os.path.join(data_dir, "model_input_paras_classification_relative_boundary_26_train.pkl")),
+                                     self.pickle_load_large_file(os.path.join(data_dir, "model_input_target_classification_relative_boundary_26_train.pkl")),"train")
 
     def get_dev_examples(self, data_dir):
         """See base class."""
         logger.info("LOOKING AT {} dev".format(data_dir))
-        return self._create_examples(self.pickle_load_large_file(os.path.join(data_dir, "model_input_desc_classification_relative_boundary_100_dev.pkl")),
-                                     self.pickle_load_large_file(os.path.join(data_dir, "model_input_paras_classification_relative_boundary_100_dev.pkl")),
-                                     self.pickle_load_large_file(os.path.join(data_dir, "model_input_target_classification_relative_boundary_100_dev.pkl")), "dev")
+        return self._create_examples(self.pickle_load_large_file(os.path.join(data_dir, "model_input_desc_classification_relative_boundary_26_dev.pkl")),
+                                     self.pickle_load_large_file(os.path.join(data_dir, "model_input_paras_classification_relative_boundary_26_dev.pkl")),
+                                     self.pickle_load_large_file(os.path.join(data_dir, "model_input_target_classification_relative_boundary_26_dev.pkl")), "dev")
 
     def get_test_examples(self, data_dir):
         """See base class."""
