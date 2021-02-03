@@ -255,7 +255,7 @@ def evaluate(args, model, tokenizer, prefix="", test=False):
 
     results = {}
     preds_single = {}
-    #preds_score_single = {}
+    preds_score_single = {}
     for eval_task, eval_output_dir in zip(eval_task_names, eval_outputs_dirs):
         eval_dataset = load_and_cache_examples(args, eval_task, tokenizer, evaluate=not test, test=test)
 
@@ -313,16 +313,16 @@ def evaluate(args, model, tokenizer, prefix="", test=False):
         #print('preds_temp: ', preds_temp.shape)
         #preds_score = preds_temp*norm_bench
         #print('preds_score: ', preds_score.shape)
-        #preds_score = preds_score.tolist()
+        preds_score = preds.tolist()
         preds = np.argmax(preds, axis=1)
         acc = simple_accuracy(preds, out_label_ids)
         result = {"eval_acc": acc, "eval_loss": eval_loss}
         #result = {"eval_loss": eval_loss}
         preds_temp = {'preds':preds.tolist()}
-        #preds_score_temp = {'preds_score': preds_score}
+        preds_score_temp = {'preds_score':preds_score}
         results.update(result)
         preds_single.update(preds_temp)
-        #preds_score_single.update(preds_score_temp)
+        preds_score_single.update(preds_score_temp)
         output_eval_file = os.path.join(eval_output_dir, "is_test_" + str(test).lower() + "_eval_results.txt")
 
         with open(output_eval_file, "w") as writer:
@@ -342,7 +342,7 @@ def evaluate(args, model, tokenizer, prefix="", test=False):
             for key in sorted(result.keys()):
                 logger.info("  %s = %s", key, str(result[key]))
                 writer.write("%s = %s\n" % (key, str(result[key])))
-    return results, preds_single
+    return results, preds_single, preds_score_single
 
 
 def load_and_cache_examples(args, task, tokenizer, evaluate=False, test=False):
@@ -694,7 +694,7 @@ def main():
     # Evaluation
     results = {}
     preds_all = {}
-    #preds_score_all = {}
+    preds_score_all = {}
     if args.do_eval and args.local_rank in [-1, 0]:
         if not args.do_train:
             args.output_dir = args.model_name_or_path
@@ -711,13 +711,15 @@ def main():
 
             model = model_class.from_pretrained(checkpoint)
             model.to(args.device)
-            result, preds_single = evaluate(args, model, tokenizer, prefix=prefix)
+            result, preds_single, preds_score_single = evaluate(args, model, tokenizer, prefix=prefix)
             result = dict((k + "_{}".format(global_step), v) for k, v in result.items())
             #preds = dict((k + "_{}".format(global_step), v) for k, v in preds.items())
             preds_single = dict((k + "_{}".format(global_step), v) for k, v in preds_single.items())
+            preds_score_single = dict((k + "_{}".format(global_step), v) for k, v in preds_score_single.items())
             results.update(result)
             #preds_all.update(preds)
             preds_all.update(preds_single)
+            preds_score_all.update(preds_score_single)
         output_eval_file = os.path.join(args.output_dir, "eval_results.txt")
         with open(output_eval_file, "w") as writer:
             for key in results.keys():
@@ -725,9 +727,9 @@ def main():
         output_preds_eval_file = os.path.join(args.output_dir, "eval_preds.json")
         with open(output_preds_eval_file, "w") as writer_:
             json.dump(preds_all, writer_)
-        #output_preds_score_eval_file = os.path.join(args.output_dir, "eval_preds_score.json")
-        #with open(output_preds_score_eval_file, "w") as writer__:
-        #    json.dump(preds_score_all, writer__)
+        output_preds_score_eval_file = os.path.join(args.output_dir, "eval_preds_score.json")
+        with open(output_preds_score_eval_file, "w") as writer__:
+            json.dump(preds_score_all, writer__)
     if args.do_test and args.local_rank in [-1, 0]:
         if not args.do_train:
             args.output_dir = args.model_name_or_path
