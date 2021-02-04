@@ -59,6 +59,7 @@ for idx, prediction in enumerate(value):
     prediction_values = index_to_tile_relative(prediction, 10, min_bound, max_bound)
     geometry = make_polygon(geom, prediction_values)
     if entity_id == "GL155_072":
+        print(prediction_values)
         print(geometry)
     #print(prediction_values)
     #prediction_values = [[[prediction_values[0] - 26 / 2, prediction_values[1] - 26 / 2], [prediction_values[0] - 26 / 2, prediction_values[1] + 26 / 2]], [[prediction_values[0] + 26 / 2, prediction_values[1] + 26 / 2], [prediction_values[0] + 26 / 2, prediction_values[1] - 26 / 2]]]
