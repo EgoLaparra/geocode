@@ -58,7 +58,6 @@ for idx, prediction in enumerate(value):
     min_bound, max_bound = entityID2boundary[entity_id]
     prediction_values = index_to_tile_relative(prediction, 10, min_bound, max_bound)
     geometry = make_polygon(geom, prediction_values)
-    print(entity_id)
     if entity_id == "GL155_072":
         print(geometry)
     #print(prediction_values)
