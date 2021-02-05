@@ -827,6 +827,24 @@ class BertForNextSentencePrediction(BertPreTrainedModel):
 
         return outputs  # (next_sentence_loss), seq_relationship_score, (hidden_states), (attentions)
 
+class Initialized_Conv1d(nn.Module):
+    def __init__(self, in_channels, out_channels, kernel_size = 1, stride = 1,
+                 padding = 0, groups = 1, bias = True, relu=False):
+        super().__init__()
+        self.out = nn.Conv1d(in_channels, out_channels, kernel_size, stride = stride, padding = padding,
+                             groups=groups, bias=bias)
+        if relu is True:
+            self.relu = True
+            nn.init.kaiming_normal_(self.out.weight, nonlinearity = 'relu')
+        else:
+            self.relu = False
+            nn.init.xavier_uniform_(self.out.weight)
+
+    def forward(self, x):
+        if self.relu is True:
+            return nn.functional.relu(self.out(x))
+        else:
+            return self.out(x)
 
 @add_start_docstrings("""Bert Model transformer with a sequence classification/regression head on top (a linear layer on top of
     the pooled output) e.g. for GLUE tasks. """,
@@ -866,7 +884,8 @@ class BertForSequenceClassification(BertPreTrainedModel):
         self.bert = BertModel(config)
         self.dropout = nn.Dropout(config.hidden_dropout_prob)
         self.classifier_1 = nn.Linear(config.hidden_size + 3 * 3 * 2, config.hidden_size + 3 * 3 * 2)
-        self.classifier_2 = nn.Linear(config.hidden_size + 3 * 3 * 2, self.num_labels)
+        self.classifier_2 = nn.Linear(config.hidden_size + 3 * 3 * 2, config.hidden_size + 3 * 3 * 2)
+        self.classifier_final = nn.Linear(config.hidden_size + 3 * 3 * 2, self.num_labels)
         self.init_weights()
 
     def forward(self, input_ids, attention_mask=None, token_type_ids=None,
@@ -887,14 +906,20 @@ class BertForSequenceClassification(BertPreTrainedModel):
         # print(pooled_output.shape)
         pooled_output = pooled_output.unsqueeze(1).expand([pooled_output.shape[0], links_num, 768])
         final_pooled_output = torch.cat([pooled_output, para_links], dim=2)
-        output_1 = self.classifier_1(final_pooled_output)
-        output_1 = nn.functional.tanh(output_1)
+        final_pooled_output = self.dropout(final_pooled_output)
+        #output_1 = self.classifier_1(final_pooled_output)
+        output_1 = nn.functional.tanh(final_pooled_output)
+        #output_1 = self.dropout(output_1)
         output_1 = torch.max(output_1, dim =1 ).values
-        logits = self.classifier_2(output_1)
+        output_1 = self.dropout(output_1)
+        output_2 = self.classifier_2(output_1)
+        output_2 = torch.tanh(output_2)
+        output_2 = self.dropout(output_2)
+        logits = self.classifier_final(output_2)
         # temp_logits = self.classifier(final_pooled_output)
         # logits = torch.sum(temp_logits, dim=1)
         outputs = (logits,) + outputs[2:]
-        print('logits shape: ',logits.shape)
+        #print('logits shape: ',logits.shape)
 
         if labels is not None:
             if self.num_labels == 1:
