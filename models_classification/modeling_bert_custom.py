@@ -908,7 +908,7 @@ class BertForSequenceClassification(BertPreTrainedModel):
         final_pooled_output = torch.cat([pooled_output, para_links], dim=2)
         final_pooled_output = self.dropout(final_pooled_output)
         #output_1 = self.classifier_1(final_pooled_output)
-        output_1 = nn.functional.tanh(final_pooled_output)
+        output_1 = nn.functional.relu(final_pooled_output)
         #output_1 = self.dropout(output_1)
         output_1 = torch.max(output_1, dim =1 ).values
         output_1 = self.dropout(output_1)
