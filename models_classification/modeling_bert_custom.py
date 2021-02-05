@@ -913,7 +913,7 @@ class BertForSequenceClassification(BertPreTrainedModel):
         output_1 = torch.max(output_1, dim =1 ).values
         output_1 = self.dropout(output_1)
         output_2 = self.classifier_2(output_1)
-        output_2 = torch.tanh(output_2)
+        output_2 = torch.relu(output_2)
         output_2 = self.dropout(output_2)
         logits = self.classifier_final(output_2)
         # temp_logits = self.classifier(final_pooled_output)
