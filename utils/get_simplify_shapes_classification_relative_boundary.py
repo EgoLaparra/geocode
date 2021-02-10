@@ -45,17 +45,17 @@ if __name__ == '__main__':
                         help='path of data collections')
     parser.add_argument('--sample_size', default=50, type=int,
                         help='number of sample datas')
-    parser.add_argument('--output_target_train', default='../../geocode-data/collection_samples/model_input_target_classification_relative_boundary_10_LOCATION_train.pkl', type=str,
+    parser.add_argument('--output_target_train', default='../../geocode-data/collection_samples/model_input_target_classification_relative_boundary_10_train.pkl', type=str,
                         help='path of data collections samples')
-    parser.add_argument('--output_paras_train', default='../../geocode-data/collection_samples/model_input_paras_classification_relative_boundary_10_LOCATION_train.pkl',
+    parser.add_argument('--output_paras_train', default='../../geocode-data/collection_samples/model_input_paras_classification_relative_boundary_10_train.pkl',
                         type=str,
                         help='path of data collections samples')
     parser.add_argument('--output_desc_train',
-                        default='../../geocode-data/collection_samples/model_input_desc_classification_relative_boundary_10_LOCATION_train.pkl',
+                        default='../../geocode-data/collection_samples/model_input_desc_classification_relative_boundary_10_train.pkl',
                         type=str,
                         help='path of data collections samples')
     parser.add_argument('--output_boundary_train',
-                        default='../../geocode-data/collection_samples/model_input_boundary_classification_relative_boundary_10_LOCATION_train.pkl',
+                        default='../../geocode-data/collection_samples/model_input_boundary_classification_relative_boundary_10_train.pkl',
                         type=str,
                         help='path of data collections samples')
     parser.add_argument('--polygon_size',
@@ -102,8 +102,8 @@ if __name__ == '__main__':
             entity_central_coordinates = geom.get_coordinates(entity_central_point)
             geometries.append(entity_geometry)
             min_bound, max_bound = geometry_group_bounds(geom, geometries, squared=True)
-            min_bound = (max(min_bound[0], -180), max(min_bound[1], -90))
-            max_bound = (min(max_bound[0], 180), min(max_bound[1], 90))
+            min_bound = (max(min_bound[0], -179.999999), max(min_bound[1], -89.999999))
+            max_bound = (min(max_bound[0], 179.999999), min(max_bound[1], 89.999999))
             #if min_bound[0] < -180 or min_bound[1] < -90 or max_bound[0] > 180 or max_bound[1] > 90:
             #    min_bound, max_bound = geometry_group_bounds(geom, geometries, squared=False)
             print('entity central point: ', entity_central_coordinates)
