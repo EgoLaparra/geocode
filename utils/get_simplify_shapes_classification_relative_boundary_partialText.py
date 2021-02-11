@@ -106,7 +106,7 @@ if __name__ == '__main__':
                     if e >= 1:
                         break
                     linkID = link.get("id")
-                    text = get_partial_text(entity, link)
+                    #text = get_partial_text(entity, link)
                     link_geometry = geom.get_entity_geometry(link)
                     simplified_link_geometry = geom.simplify_geometry(link_geometry, segments=2)
                     link_coordinates_list = []
