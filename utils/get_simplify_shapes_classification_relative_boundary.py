@@ -1,5 +1,6 @@
 from geometries import Geometries
 from preprocess import coord_to_index_relative, geometry_group_bounds
+from collections import OrderedDict
 from lxml import etree
 from tqdm import tqdm
 from itertools import chain
@@ -78,10 +79,10 @@ if __name__ == '__main__':
         geometries = []
         try:
             # process paras entities
-            pID2links = {}
+            pID2links = OrderedDict()
             for p in entity.xpath('./p'):
                 pID = p.get("id")
-                linkID2coordinates = {}
+                linkID2coordinates = OrderedDict()
                 for e, link in enumerate(p.xpath('./link')):
                     linkID = link.get("id")
                     link_geometry = geom.get_entity_geometry(link)
