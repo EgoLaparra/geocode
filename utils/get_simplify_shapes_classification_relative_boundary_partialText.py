@@ -95,7 +95,7 @@ if __name__ == '__main__':
                     linkID = link.get("id")
                     link_geometry = geom.get_entity_geometry(link)
                     geometries.append(link_geometry)
-
+            print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
             pID2links = OrderedDict()
             for pid, p in enumerate(entity.xpath('./p')):
                 if p >= 1:
@@ -118,7 +118,7 @@ if __name__ == '__main__':
                     linkID2coordinates[linkID] = link_coordinates_list
                 pID2links[pID] = linkID2coordinates
             ##process target entity
-
+            print("****************************")
             entity_geometry = geom.get_entity_geometry(entity)
             entity_central_point = geom.get_centrality(entity_geometry, metric="centroid")
             entity_central_coordinates = geom.get_coordinates(entity_central_point)
