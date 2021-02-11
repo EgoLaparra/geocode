@@ -106,7 +106,7 @@ if __name__ == '__main__':
                     if e >= 1:
                         break
                     linkID = link.get("id")
-                    #text = get_partial_text(entity, link)
+                    text = get_partial_text(entity, link)
                     link_geometry = geom.get_entity_geometry(link)
                     simplified_link_geometry = geom.simplify_geometry(link_geometry, segments=2)
                     link_coordinates_list = []
@@ -123,7 +123,7 @@ if __name__ == '__main__':
             entity_central_point = geom.get_centrality(entity_geometry, metric="centroid")
             entity_central_coordinates = geom.get_coordinates(entity_central_point)
             geometries.append(entity_geometry)
-            limit_to_inner_boundaries(geom, geometries)
+            #limit_to_inner_boundaries(geom, geometries)
             min_bound, max_bound = geometry_group_bounds(geom, geometries, squared=True)
             min_bound = (max(min_bound[0], -179.999999), max(min_bound[1], -89.999999))
             max_bound = (min(max_bound[0], 179.999999), min(max_bound[1], 89.999999))
