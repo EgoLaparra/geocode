@@ -130,7 +130,7 @@ if __name__ == '__main__':
             entity_geometry = geom.get_entity_geometry(entity)
             entity_central_point = geom.get_centrality(entity_geometry, metric="centroid")
             entity_central_coordinates = geom.get_coordinates(entity_central_point)
-            geometries.append(entity_geometry)
+            #geometries.append(entity_geometry)
             limit_to_inner_boundaries(geom, geometries)
             min_bound, max_bound = geometry_group_bounds(geom, geometries, squared=True)
             min_bound = (max(min_bound[0], -179.999999), max(min_bound[1], -89.999999))
