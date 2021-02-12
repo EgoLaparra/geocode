@@ -106,7 +106,7 @@ if __name__ == '__main__':
 
             pID2links = OrderedDict()
             for pid, p in enumerate(entity.xpath('./p')):
-                if p >= 1:
+                if pid >= 1:
                     break
                 pID = p.get("id")
                 linkID2coordinates = OrderedDict()
