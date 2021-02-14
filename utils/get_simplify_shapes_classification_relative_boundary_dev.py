@@ -34,8 +34,8 @@ def get_entities_fromXML(xml_filepath):
     return all_entities
 
 def get_text(node):
-    if not node.text.isspace() and not node.tail.isspace():
-        node.text = 'LOCATION'
+    #if not node.text.isspace() and not node.tail.isspace():
+    #    node.text = 'LOCATION'
     parts = ([node.text] + list(chain(*(get_text(c) for c in node.getchildren()))) + [node.tail])
 
     return ''.join(filter(None, parts))
@@ -46,17 +46,17 @@ if __name__ == '__main__':
                         help='path of data collections')
     parser.add_argument('--sample_size', default=50, type=int,
                         help='number of sample datas')
-    parser.add_argument('--output_target_dev', default='../../geocode-data/collection_samples/model_input_target_classification_relative_boundary_10_LOCATION_dev.pkl', type=str,
+    parser.add_argument('--output_target_dev', default='../../geocode-data/collection_samples/model_input_target_classification_relative_boundary_10_dev.pkl', type=str,
                         help='path of data collections samples')
-    parser.add_argument('--output_paras_dev', default='../../geocode-data/collection_samples/model_input_paras_classification_relative_boundary_10_LOCATION_dev.pkl',
+    parser.add_argument('--output_paras_dev', default='../../geocode-data/collection_samples/model_input_paras_classification_relative_boundary_10_dev.pkl',
                         type=str,
                         help='path of data collections samples')
     parser.add_argument('--output_desc_dev',
-                        default='../../geocode-data/collection_samples/model_input_desc_classification_relative_boundary_10_LOCATION_dev.pkl',
+                        default='../../geocode-data/collection_samples/model_input_desc_classification_relative_boundary_10_dev.pkl',
                         type=str,
                         help='path of data collections samples')
     parser.add_argument('--output_boundary_dev',
-                        default='../../geocode-data/collection_samples/model_input_boundary_classification_relative_boundary_10_LOCATION_dev.pkl',
+                        default='../../geocode-data/collection_samples/model_input_boundary_classification_relative_boundary_10_dev.pkl',
                         type=str,
                         help='path of data collections samples')
     parser.add_argument('--polygon_size',
