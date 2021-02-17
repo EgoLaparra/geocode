@@ -109,7 +109,8 @@ class Database:
             print("\tException: %s" % e)
 
     def open(self):
-        self.conn = psycopg2.connect("dbname=geometries user=guest password=guest host=localhost")
+        self.conn = psycopg2.connect("dbname=geometries user=guest password=guest host=10.140.86.3 port=5432")
+        #self.conn = psycopg2.connect("dbname=geometries user=guest password=guest host=localhost")
 
     def close(self):
         self.conn.close()
