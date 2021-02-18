@@ -4,6 +4,7 @@ from collections import OrderedDict
 from lxml import etree
 from tqdm import tqdm
 from itertools import chain
+from time import sleep
 import argparse
 import pickle
 import sys
@@ -68,60 +69,77 @@ if __name__ == '__main__':
     geom = Geometries()
 
     entities = get_entities_fromXML(args.xml_filepath_train)
-    print("entity numbers: ", len(entities))
+    num_entities = len(entities)
+    print("entity numbers: ", num_entities)
     entityID2target = {}
     entityID2paras = {}
     entityID2desc = {}
     entityID2boundary = {}
-    for entity in tqdm(entities, desc='Entities'):
-        entity_id = entity.get("id")
-        print(entity_id)
-        geometries = []
-        try:
-            # process paras entities
-            for p in entity.xpath('./p'):
-                for e, link in enumerate(p.xpath('./link')):
-                    link_geometry = geom.get_entity_geometry(link)
-                    geometries.append(link_geometry)
+    entities = iter(entities)
+    with tqdm(total=num_entities, desc='Entities') as progress_bar:
+        entity = next(entities, None)
+        while entity is not None:
+            entity_id = entity.get("id")
+            print(entity_id)
+            geometries = []
+            try:
+                # process paras entities
+                for p in entity.xpath('./p'):
+                    for e, link in enumerate(p.xpath('./link')):
+                        link_geometry = geom.get_entity_geometry(link)
+                        geometries.append(link_geometry)
 
-            # limit_to_inner_boundaries(geom, geometries)
-            min_bound, max_bound = geometry_group_bounds(geom, geometries, squared=True)
-            min_bound = (max(min_bound[0], -179.999999), max(min_bound[1], -89.999999))
-            max_bound = (min(max_bound[0], 179.999999), min(max_bound[1], 89.999999))
-            pID2links = OrderedDict()
-            for p in entity.xpath('./p'):
-                pID = p.get("id")
-                linkID2coordinates = OrderedDict()
-                for e, link in enumerate(p.xpath('./link')):
-                    linkID = link.get("id")
-                    link_geometry = geom.get_entity_geometry(link)
-                    link_central_point = geom.get_centrality(link_geometry, metric="centroid")
-                    link_central_x, link_central_y = geom.get_coordinates(link_central_point)
-                    link_classification_label = coord_to_index_relative((link_central_x, link_central_y), args.polygon_size, min_bound, max_bound)
-                    linkID2coordinates[linkID] = link_classification_label
-                pID2links[pID] = linkID2coordinates
+                # limit_to_inner_boundaries(geom, geometries)
+                min_bound, max_bound = geometry_group_bounds(geom, geometries, squared=True)
+                min_bound = (max(min_bound[0], -179.999999), max(min_bound[1], -89.999999))
+                max_bound = (min(max_bound[0], 179.999999), min(max_bound[1], 89.999999))
+                pID2links = OrderedDict()
+                for p in entity.xpath('./p'):
+                    pID = p.get("id")
+                    linkID2coordinates = OrderedDict()
+                    for e, link in enumerate(p.xpath('./link')):
+                        linkID = link.get("id")
+                        link_geometry = geom.get_entity_geometry(link)
+                        link_central_point = geom.get_centrality(link_geometry, metric="centroid")
+                        link_central_x, link_central_y = geom.get_coordinates(link_central_point)
+                        link_classification_label = coord_to_index_relative((link_central_x, link_central_y), args.polygon_size, min_bound, max_bound)
+                        linkID2coordinates[linkID] = link_classification_label
+                    pID2links[pID] = linkID2coordinates
 
-            ##process target entity
-            entity_geometry = geom.get_entity_geometry(entity)
-            entity_central_point = geom.get_centrality(entity_geometry, metric="centroid")
-            entity_central_x, entity_central_y = geom.get_coordinates(entity_central_point)
-            print('entity central point: ', (entity_central_x, entity_central_y))
-            entity_classification_label = coord_to_index_relative((entity_central_x, entity_central_y), args.polygon_size, min_bound, max_bound)
-            print('classification_label: ', entity_classification_label)
+                ##process target entity
+                entity_geometry = geom.get_entity_geometry(entity)
+                entity_central_point = geom.get_centrality(entity_geometry, metric="centroid")
+                entity_central_x, entity_central_y = geom.get_coordinates(entity_central_point)
+                print('entity central point: ', (entity_central_x, entity_central_y))
+                entity_classification_label = coord_to_index_relative((entity_central_x, entity_central_y), args.polygon_size, min_bound, max_bound)
+                print('classification_label: ', entity_classification_label)
 
-            ##process entity description
-            # temp_text = " ".join(entity.xpath('./p/text()'))
-            # print('temp_text: ', temp_text)
-            text = get_text(entity)
-            print('text: ', text)
-            entityID2desc[entity_id] = text
-            entityID2paras[entity_id] = pID2links
-            entityID2target[entity_id] = entity_classification_label
-            entityID2boundary[entity_id] = [min_bound, max_bound]
-        except Exception as e:
-            print("Error processing %s" % (entity_id))
-            print(e)
-            geom = Geometries()
+                ##process entity description
+                # temp_text = " ".join(entity.xpath('./p/text()'))
+                # print('temp_text: ', temp_text)
+                text = get_text(entity)
+                print('text: ', text)
+                entityID2desc[entity_id] = text
+                entityID2paras[entity_id] = pID2links
+                entityID2target[entity_id] = entity_classification_label
+                entityID2boundary[entity_id] = [min_bound, max_bound]
+                progress_bar.update(1)
+                entity = next(entities, None)
+            except Exception as e:
+                print("Error processing %s" % (entity_id))
+                print(e)
+                print(geom.database.conn.closed)
+                if not geom.database.conn.closed:
+                    progress_bar.update(1)
+                    entity = next(entities, None)
+                else:
+                    while geom.database.conn.closed:
+                        try:
+                            sleep(5)
+                            geom = Geometries()
+                        except:
+                            pass
+
     print(len(list(entityID2desc.keys())))
     print(len(list(entityID2target.keys())))
     print(len(list(entityID2paras.keys())))

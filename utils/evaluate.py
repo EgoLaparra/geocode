@@ -41,7 +41,16 @@ def to_km(value, area=False):
     else:
         return value / 1000
 
-
+def out_of_limits(geom, geometry):
+    bounding_diagonal = geom.get_bounding_diagonal(geometry)
+    lower_point, upper_point = geom.dump_points(bounding_diagonal)
+    lower_x, lower_y = geom.get_coordinates(lower_point)
+    upper_x, upper_y = geom.get_coordinates(upper_point)
+    if lower_x < -180 or lower_y < -90 or upper_x > 180 or upper_y > 90:
+        return True
+    else:
+        return False
+    
 def transform_to_geography(geom, gold_geometry, predicted_geometry):
     gold_geography = geom.transform_geometry(gold_geometry)
     predicted_geography = geom.transform_geometry(predicted_geometry)
@@ -161,6 +170,8 @@ def evaluate(gold_file, prediction_table):
             gold_geometry = geom.get_entity_geometry(gold_entity)
             predicted_geometry = geom.get_predicted_geometry(prediction_table, gold_entity.get("id"))
             if len(predicted_geometry) > 0 and not geom.geometry_isempty(predicted_geometry):
+                if out_of_limits(geom, predicted_geometry):
+                    raise Exception("Latitude or longitude exceeded limits.")
                 entity_scores = score(geom, gold_geometry, predicted_geometry, False)
                 print_scores(entity_scores, tabular="\t")
                 update_scores(scores, entity_scores)
