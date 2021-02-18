@@ -1,0 +1,326 @@
+ROOTS [Location]
+
+
+// ====================================================================================
+// expressions that appear in other places in the grammar but can sometimes be ignored
+// (if an expression occurs nowhere in the grammar, it does not need to be listed here)
+// ====================================================================================
+[Nil] ||| a ||| ||| 1.0
+[Nil] ||| is ||| ||| 1.0
+[Nil] ||| located ||| ||| 1.0
+[Nil] ||| situated ||| ||| 1.0
+[Nil] ||| the ||| ||| 1.0
+[Nil] ||| in ||| ||| 1.0
+[Nil] ||| at ||| ||| 1.0
+[Nil] ||| of ||| ||| 1.0
+[Nil] ||| on ||| ||| 1.0
+[Nil] ||| by ||| ||| 1.0
+[Nil] ||| to ||| ||| 1.0
+[Nil] ||| with ||| ||| 1.0
+[Nil] ||| which ||| ||| 1.0
+[Nil] ||| that ||| ||| 1.0
+[Nil] ||| , ||| ||| 1.0
+[Nil] ||| - ||| ||| 1.0
+[Nil] ||| ( ||| ||| 1.0
+[Nil] ||| ) ||| ||| 1.0
+[Nil] ||| and ||| ||| 1.0
+[Nil] ||| [Region] ||| ||| 1.0
+[Nil] ||| [Int] ||| ||| 1.0
+[Nil] ||| [Int] st ||| ||| 1.0
+[Nil] ||| [Int] nd ||| ||| 1.0
+[Nil] ||| [Int] rd ||| ||| 1.0
+[Nil] ||| [Int] th ||| ||| 1.0
+
+
+// ============================================
+// expressions that identify a Cardinals
+// ============================================
+[Cardinal] ||| north ||| N ||| 1.0
+[Cardinal] ||| north - central ||| N ||| 1.0
+[Cardinal] ||| north central ||| N ||| 1.0
+[Cardinal] ||| central - north ||| N ||| 1.0
+[Cardinal] ||| central north ||| N ||| 1.0
+[Cardinal] ||| south ||| S ||| 1.0
+[Cardinal] ||| south - central ||| S ||| 1.0
+[Cardinal] ||| south central ||| S ||| 1.0
+[Cardinal] ||| central - south ||| S ||| 1.0
+[Cardinal] ||| central south ||| S ||| 1.0
+[Cardinal] ||| east ||| E ||| 1.0
+[Cardinal] ||| east - central ||| E ||| 1.0
+[Cardinal] ||| east central ||| E ||| 1.0
+[Cardinal] ||| central - east ||| E ||| 1.0
+[Cardinal] ||| central east ||| E ||| 1.0
+[Cardinal] ||| west ||| W ||| 1.0
+[Cardinal] ||| west - central ||| W ||| 1.0
+[Cardinal] ||| west central ||| W ||| 1.0
+[Cardinal] ||| central - west ||| W ||| 1.0
+[Cardinal] ||| central west ||| W ||| 1.0
+[Cardinal] ||| northeast ||| NE ||| 1.0
+[Cardinal] ||| north - east ||| NE ||| 1.0
+[Cardinal] ||| north east ||| NE ||| 1.0
+[Cardinal] ||| north - northeast ||| NE ||| 1.0
+[Cardinal] ||| north northeast ||| NE ||| 1.0
+[Cardinal] ||| northwest ||| NW ||| 1.
+[Cardinal] ||| north - west ||| NW ||| 1.0
+[Cardinal] ||| north west ||| NW ||| 1.0
+[Cardinal] ||| north - northwest ||| NW ||| 1.0
+[Cardinal] ||| north northwest ||| NW ||| 1.0
+[Cardinal] ||| southeast ||| SE ||| 1.0
+[Cardinal] ||| south - east ||| SE ||| 1.0
+[Cardinal] ||| south east ||| SE ||| 1.0
+[Cardinal] ||| south - southeast ||| SE ||| 1.0
+[Cardinal] ||| south southeast ||| SE ||| 1.0
+[Cardinal] ||| southwest ||| SW ||| 1.0
+[Cardinal] ||| south - west ||| SW ||| 1.0
+[Cardinal] ||| south west ||| SW ||| 1.0
+[Cardinal] ||| south - southwest ||| SW ||| 1.0
+[Cardinal] ||| south southwest ||| SW ||| 1.0
+[Cardinal] ||| northern ||| N ||| 1.0
+[Cardinal] ||| southern ||| S ||| 1.0
+[Cardinal] ||| eastern ||| E ||| 1.0
+[Cardinal] ||| western ||| W ||| 1.0
+[Cardinal] ||| northeastern ||| NE ||| 1.0
+[Cardinal] ||| northwestern ||| NW ||| 1.0
+[Cardinal] ||| southeastern ||| SE ||| 1.0
+[Cardinal] ||| southwestern ||| SW ||| 1.0
+[Cardinal] ||| north eastern ||| NE ||| 1.0
+[Cardinal] ||| north western ||| NW ||| 1.0
+[Cardinal] ||| south eastern ||| SE ||| 1.0
+[Cardinal] ||| south western ||| SW ||| 1.0
+[Cardinal] ||| north eastern ||| NE ||| 1.0
+[Cardinal] ||| north western ||| NW ||| 1.0
+[Cardinal] ||| south eastern ||| SE ||| 1.0
+[Cardinal] ||| south western ||| SW ||| 1.0
+[Cardinal] ||| center ||| C ||| 1.0
+[Cardinal] ||| central ||| C ||| 1.0
+
+[Cardinal] ||| left ||| E ||| 1.0
+[Cardinal] ||| right ||| W ||| 1.0
+
+
+// ============================================
+// expressions that identify a Regions
+// ============================================
+[Region] ||| region ||| ||| 1.0
+[Region] ||| part ||| ||| 1.0
+[Region] ||| coast ||| ||| 1.0
+[Region] ||| mountain ||| ||| 1.0
+[Region] ||| slope ||| ||| 1.0
+[Region] ||| slopes ||| ||| 1.0
+[Region] ||| city ||| ||| 1.0
+[Region] ||| town ||| ||| 1.0
+[Region] ||| towns ||| ||| 1.0
+[Region] ||| suburb ||| ||| 1.0
+[Region] ||| district ||| ||| 1.0
+[Region] ||| municipality ||| ||| 1.0
+[Region] ||| province ||| ||| 1.0
+[Region] ||| village ||| ||| 1.0
+[Region] ||| commune ||| ||| 1.0
+[Region] ||| state ||| ||| 1.0
+[Region] ||| slopes ||| ||| 1.0
+[Region] ||| seat ||| ||| 1.0
+[Region] ||| school ||| ||| 1.0
+[Region] ||| river ||| ||| 1.0
+[Region] ||| area ||| ||| 1.0
+[Region] ||| areas ||| ||| 1.0
+[Region] ||| capital ||| ||| 1.0
+[Region] ||| recreation center ||| ||| 1.0
+[Region] ||| central business district ||| ||| 1.0
+
+
+// =========================================
+// expressions that identify a distance unit
+// =========================================
+[Unit] ||| km ||| KM ||| 1.0
+[Unit] ||| kilometer ||| KM ||| 1.0
+[Unit] ||| kilometre ||| KM ||| 1.0
+[Unit] ||| kilometers ||| KM ||| 1.0
+[Unit] ||| kilometres ||| KM ||| 1.0
+[Unit] ||| ml ||| MI ||| 1.0
+[Unit] ||| mile ||| MI ||| 1.0
+[Unit] ||| miles ||| MI ||| 1.0
+
+[Unit] ||| nautical mile ||| NMI ||| 1.0
+[Unit] ||| nautical miles ||| NMI ||| 1.0
+[Unit] ||| minute ||| KM ||| 1.0
+
+
+// ============================================
+// expressions that identify a Toponym
+// ============================================
+[Location:Toponym] ||| SHP [Int] ||| Toponym [Int] ||| 1.0
+
+
+// ============================================
+// expressions that identify a Location
+// ============================================
+[Location:Simple] ||| [Location:Toponym] ||| Simple [Location:Toponym] ||| 1.0
+[Location:Simple] ||| [Cardinal] [Location:Toponym] ||| Simple [Location:Toponym] [Cardinal] ||| 1.0
+[Location:Simple] ||| [Cardinal] of [Location:Toponym] ||| Simple [Location:Toponym] [Cardinal] ||| 1.0
+[Location:Simple] ||| [Cardinal] part of [Location:Toponym] ||| Simple [Location:Toponym] [Cardinal] ||| 1.0
+[Location:Simple] ||| [Location:Simple,2] capital [Location:Simple,1] ||| Simple [Location:Simple,1] ||| 1.0
+[Location:Simple] ||| [Location:Simple,1] in [Location:Simple,2] ||| Simple [Location:Simple,1] ||| 1.0
+[Location:Simple] ||| [Location:Simple,1] on [Location:Simple,2] ||| Simple [Location:Simple,1] ||| 1.0
+[Location:Simple] ||| [Location:Simple,1] at [Location:Simple,2] ||| Simple [Location:Simple,1] ||| 1.0
+[Location:Simple] ||| [Location:Simple,1] within [Location:Simple,2] ||| Simple [Location:Simple,1] ||| 1.0
+[Location:Simple] ||| [Location:Simple,1] of [Location:Simple,2] ||| Simple [Location:Simple,1] ||| 1.0
+[Location:Simple] ||| [Location:Simple,1] ( [Location:Simple,2] ) ||| Simple [Location:Simple,1] ||| 1.0
+[Location:Simple] ||| [Location:Simple,1] , [Location:Simple,2] ||| Simple [Location:Simple,1] ||| 1.0
+[Location:Simple] ||| [Location:Simple,1] in [Location:Simple,2] [Location:Toponym,3] ||| Simple [Location:Simple,1] ||| 1.0
+[Location:Simple] ||| [Location:Simple,1] , [Location:Simple,2] , [Location:Toponym,3] ||| Simple [Location:Simple,1] ||| 1.0
+
+
+// ================================================
+// expressions that identify a SubLocation relation
+// ================================================ 	
+[Location:SubLocation] ||| located [Location:Simple] ||| SubLocation [Location:Simple] ||| 1.0
+[Location:SubLocation] ||| is a [Location:Simple] ||| SubLocation [Location:Simple] ||| 1.0
+[Location:SubLocation] ||| is an [Location:Simple] ||| SubLocation [Location:Simple] ||| 1.0
+[Location:SubLocation] ||| is the [Location:Simple] ||| SubLocation [Location:Simple] ||| 1.0
+[Location:SubLocation] ||| within [Location:Simple] ||| SubLocation [Location:Simple] ||| 1.0
+[Location:SubLocation] ||| in [Location:Simple] ||| SubLocation [Location:Simple] ||| 1.0
+[Location:SubLocation] ||| on [Location:Simple] ||| SubLocation [Location:Simple] ||| 1.0
+[Location:SubLocation] ||| at [Location:Simple] ||| SubLocation [Location:Simple] ||| 1.0
+[Location:SubLocation] ||| belongs to [Location:Simple] ||| SubLocation [Location:Simple] ||| 1.0
+[Location:SubLocation] ||| from [Location:Simple] ||| SubLocation [Location:Simple] ||| 1.0
+[Location:SubLocation] ||| [Region] of [Location:Simple] ||| SubLocation [Location:Simple] ||| 1.0
+
+
+// ============================================
+// expressions that identify a Between relation
+// ============================================
+[Location:Between] ||| between [Location:Simple,1] and [Location:Simple,2] ||| Between [Location:Simple,1] [Location:Simple,2] ||| 1.0
+[Location:Between] ||| from [Location:Simple,1] to [Location:Simple,2] ||| Between [Location:Simple,1] [Location:Simple,2] ||| 1.0
+[Location:Between] ||| links [Location:Simple,1] with [Location:Simple,2] ||| Between [Location:Simple,1] [Location:Simple,2] ||| 1.0
+[Location:Between] ||| links [Location:Simple,1] and [Location:Simple,2] ||| Between [Location:Simple,1] [Location:Simple,2] ||| 1.0
+[Location:Between] ||| linking [Location:Simple,1] with [Location:Simple,2] ||| Between [Location:Simple,1] [Location:Simple,2] ||| 1.0
+[Location:Between] ||| linking [Location:Simple,1] and [Location:Simple,2] ||| Between [Location:Simple,1] [Location:Simple,2] ||| 1.0
+[Location:Between] ||| connects [Location:Simple,1] with [Location:Simple,2] ||| Between [Location:Simple,1] [Location:Simple,2] ||| 1.0
+[Location:Between] ||| connects [Location:Simple,1] and [Location:Simple,2] ||| Between [Location:Simple,1] [Location:Simple,2] ||| 1.0
+[Location:Between] ||| connecting [Location:Simple,1] with [Location:Simple,2] ||| Between [Location:Simple,1] [Location:Simple,2] ||| 1.0
+[Location:Between] ||| connecting [Location:Simple,1] and [Location:Simple,2] ||| Between [Location:Simple,1] [Location:Simple,2] ||| 1.0
+
+
+// =============================================
+// expressions that identify a Proximate relation
+// =============================================
+[Location:ProximateInside] ||| [Location:Simple] ||| Proximate [Location:Simple] ||| 1.0
+[Location:ProximateInside] ||| with [Location:Simple] ||| Proximate [Location:Simple] ||| 1.0
+[Location:ProximateInside] ||| to [Location:Simple] ||| Proximate [Location:Simple] ||| 1.0
+[Location:ProximateInside] ||| the border of [Location:Simple] ||| Proximate [Location:Simple] ||| 1.0
+[Location:ProximateInside] ||| the border to [Location:Simple] ||| Proximate [Location:Simple] ||| 1.0
+[Location:ProximateBegin] ||| surroundings of [Location:Simple] ||| Proximate [Location:Simple] ||| 1.0
+[Location:ProximateBegin] ||| opposite [Location:Simple] ||| Proximate [Location:Simple] ||| 1.0
+[Location:ProximateBegin] ||| near [Location:Simple] ||| Proximate [Location:Simple] ||| 1.0
+[Location:ProximateBegin] ||| close to [Location:Simple] ||| Proximate [Location:Simple] ||| 1.0
+[Location:ProximateBegin] ||| adjacent to [Location:Simple] ||| Proximate [Location:Simple] ||| 1.0
+[Location:ProximateBegin] ||| next to [Location:Simple] ||| Proximate [Location:Simple] ||| 1.0
+[Location:ProximateBegin] ||| close to the border to [Location:Simple] ||| Proximate [Location:Simple] ||| 1.0
+[Location:ProximateBegin] ||| close to the border with [Location:Simple] ||| Proximate [Location:Simple] ||| 1.0
+[Location:ProximateBegin] ||| in the border of [Location:Simple] ||| Proximate [Location:Simple] ||| 1.0
+[Location:ProximateBegin] ||| in the border with [Location:Simple] ||| Proximate [Location:Simple] ||| 1.0
+[Location:ProximateBegin] ||| on the border of [Location:Simple] ||| Proximate [Location:Simple] ||| 1.0
+[Location:ProximateBegin] ||| on the border with [Location:Simple] ||| Proximate [Location:Simple] ||| 1.0
+[Location:ProximateBegin] ||| on the shore of [Location:Simple] ||| Proximate [Location:Simple] ||| 1.0
+[Location:ProximateBegin] ||| on the shores of [Location:Simple] ||| Proximate [Location:Simple] ||| 1.0
+[Location:Proximate] ||| [Location:ProximateBegin] and [Location:ProximateInside] ||| Intersection [Location:ProximateBegin] [Location:ProximateInside] ||| 1.0
+[Location:Proximate] ||| [Location:ProximateBegin] ||| [Location:ProximateBegin] ||| 1.0
+
+
+// ======================================================
+// expressions that identify a Cardinal Adjacent relation
+// ======================================================
+[Location:AdjacentInside] ||| [Location:Simple] ||| Adjacent [Location:Simple] ||| 1.0
+[Location:AdjacentInside] ||| with [Location:Simple] ||| Adjacent [Location:Simple] ||| 1.0
+[Location:AdjacentInside] ||| by [Location:Simple] on [Cardinal] ||| Adjacent [Location:Simple] ||| 1.0
+[Location:AdjacentBegin] ||| borders [Location:Simple] ||| Adjacent [Location:Simple] ||| 1.0
+[Location:AdjacentBegin] ||| borders with [Location:Simple] ||| Adjacent [Location:Simple] ||| 1.0
+[Location:AdjacentBegin] ||| bordered by [Location:Simple] ||| Adjacent [Location:Simple] ||| 1.0
+[Location:AdjacentInside] ||| [Location:Simple] to [Cardinal] ||| Adjacent [Location:Simple] Opposite [Cardinal] ||| 1.0
+[Location:AdjacentInside] ||| [Location:Simple] on [Cardinal] ||| Adjacent [Location:Simple] Opposite [Cardinal] ||| 1.0
+[Location:AdjacentInside] ||| with [Location:Simple] to [Cardinal] ||| Adjacent [Location:Simple] Opposite [Cardinal] ||| 1.0
+[Location:AdjacentInside] ||| by [Location:Simple] on [Cardinal] ||| Adjacent [Location:Simple] Opposite [Cardinal] ||| 1.0
+[Location:AdjacentInside] ||| to the [Cardinal] by [Location:Simple] ||| Adjacent [Location:Simple] Opposite [Cardinal] ||| 1.0
+[Location:AdjacentBegin] ||| neighboring are [Location:Simple] to [Cardinal] ||| Adjacent [Location:Simple] Opposite [Cardinal] ||| 1.0
+[Location:AdjacentBegin] ||| bordered by [Location:Simple] on [Cardinal] ||| Adjacent [Location:Simple] Opposite [Cardinal] ||| 1.0
+[Location:AdjacentBegin] ||| bordered to the [Cardinal] by [Location:Simple] ||| Adjacent [Location:Simple] Opposite [Cardinal] ||| 1.0
+[Location:AdjacentBegin] ||| [Cardinal] border with [Location:Simple] ||| Adjacent [Location:Simple] Opposite [Cardinal] ||| 1.0
+[Location:AdjacentBegin] ||| to the [Cardinal] is [Location:Simple] ||| Adjacent [Location:Simple] Opposite [Cardinal] ||| 1.0
+[Location:AdjacentBegin] ||| borders [Location:Simple] to [Cardinal] ||| Adjacent [Location:Simple] Opposite [Cardinal] ||| 1.0
+[Location:AdjacentBegin] ||| borders with [Location:Simple] to [Cardinal] ||| Adjacent [Location:Simple] Opposite [Cardinal] ||| 1.0
+[Location:AdjacentBegin] ||| located on [Cardinal] of [Location:Simple] ||| Adjacent [Location:Simple] [Cardinal] ||| 1.0
+[Location:AdjacentBegin] ||| situated on [Cardinal] of [Location:Simple] ||| Adjacent [Location:Simple] [Cardinal] ||| 1.0
+[Location:AdjacentBegin] ||| to the [Cardinal] of [Location:Simple] ||| Adjacent [Location:Simple] [Cardinal] ||| 1.0
+[Location:AdjacentBegin] ||| [Cardinal] border of [Location:Simple] ||| Adjacent [Location:Simple] [Cardinal] ||| 1.0
+[Location:Adjacent] ||| [Location:AdjacentBegin] and [Location:AdjacentInside] ||| Intersection [Location:AdjacentBegin] [Location:AdjacentInside] ||| 1.0
+[Location:Adjacent] ||| [Location:AdjacentBegin] ||| [Location:AdjacentBegin] ||| 1.0
+
+[Location:AdjacentSet2] |||  [Location:AdjacentInside,1] , [Location:AdjacentInside,2] ||| Intersection [Location:AdjacentInside,1] [Location:AdjacentInside,2] ||| 1.0
+[Location:AdjacentSet2] |||  [Location:AdjacentInside,1] and [Location:AdjacentInside,2] ||| Intersection [Location:AdjacentInside,1] [Location:AdjacentInside,2] ||| 1.0
+[Location:AdjacentSet3] |||  [Location:AdjacentInside] , [Location:AdjacentSet2] ||| Intersection [Location:AdjacentInside] [Location:AdjacentSet2] ||| 1.0
+[Location:AdjacentSet4] |||  [Location:AdjacentInside] , [Location:AdjacentSet3] ||| Intersection [Location:AdjacentInside] [Location:AdjacentSet3] ||| 1.0
+[Location:AdjacentSet5] |||  [Location:AdjacentInside] , [Location:AdjacentSet4] ||| Intersection [Location:AdjacentInside] [Location:AdjacentSet4] ||| 1.0
+[Location:AdjacentSet6] |||  [Location:AdjacentInside] , [Location:AdjacentSet5] ||| Intersection [Location:AdjacentInside] [Location:AdjacentSet5] ||| 1.0
+[Location:AdjacentSet7] |||  [Location:AdjacentInside] , [Location:AdjacentSet6] ||| Intersection [Location:AdjacentInside] [Location:AdjacentSet6] ||| 1.0
+[Location:Adjacent] ||| [Location:AdjacentBegin] , [Location:AdjacentSet2] ||| Intersection [Location:AdjacentBegin] [Location:AdjacentSet2] ||| 1.0
+[Location:Adjacent] ||| [Location:AdjacentBegin] , [Location:AdjacentSet3] ||| Intersection [Location:AdjacentBegin] [Location:AdjacentSet3] ||| 1.0
+[Location:Adjacent] ||| [Location:AdjacentBegin] , [Location:AdjacentSet4] ||| Intersection [Location:AdjacentBegin] [Location:AdjacentSet4] ||| 1.0
+[Location:Adjacent] ||| [Location:AdjacentBegin] , [Location:AdjacentSet5] ||| Intersection [Location:AdjacentBegin] [Location:AdjacentSet5] ||| 1.0
+[Location:Adjacent] ||| [Location:AdjacentBegin] , [Location:AdjacentSet6] ||| Intersection [Location:AdjacentBegin] [Location:AdjacentSet6] ||| 1.0
+[Location:Adjacent] ||| [Location:AdjacentBegin] , [Location:AdjacentSet7] ||| Intersection [Location:AdjacentBegin] [Location:AdjacentSet7] ||| 1.0
+
+
+// ======================================================
+// expressions that identify a Intersection relation
+// ======================================================
+[Location:Distance] ||| [Location:Simple,1] over [Location:Simple,2] ||| Intersection [Location:Simple,1] [Location:Simple,2] ||| 1.0
+
+
+// ======================================================
+// expressions that identify a Cardinal Distance relation
+// ======================================================
+[Location:Distance] ||| [Int] [Unit] of [Location:Simple] ||| Distance [Location:Simple] [Int] [Unit] ||| 1.0
+[Location:Distance] ||| [Int] [Unit] from [Location:Simple] ||| Distance [Location:Simple] [Int] [Unit] ||| 1.0
+[Location:Distance] ||| [Int] [Unit] [Cardinal] of [Location:Simple] ||| Distance [Location:Simple] [Int] [Unit] [Cardinal] ||| 1.0
+[Location:Distance] ||| [Int] [Unit] [Cardinal] from [Location:Simple] ||| Distance [Location:Simple] [Int] [Unit] [Cardinal] ||| 1.0
+
+
+// ===========================================
+// expressions that identify a single Location
+// ===========================================
+[Location:Single] ||| [Location:Between] ||| [Location:Between] ||| 1.0
+[Location:Single] ||| [Location:Adjacent] ||| [Location:Adjacent] ||| 1.0
+[Location:Single] ||| [Location:Proximate] ||| [Location:Proximate] ||| 1.0
+[Location:Single] ||| [Location:Distance] ||| [Location:Distance] ||| 1.0
+[Location:Single] ||| [Location:SubLocation] ||| [Location:SubLocation] ||| 1.0
+
+
+// ===================================================
+// expressions that identify a composition of Location
+// ===================================================
+[Location:Composition2] ||| [Location:Single,1] which [Location:Single,2] ||| Intersection [Location:Single,1] [Location:Single,2] ||| 1.0
+[Location:Composition2] ||| [Location:Single,1] that [Location:Single,2] ||| Intersection [Location:Single,1] [Location:Single,2] ||| 1.0
+[Location:Composition2] ||| [Location:Single,1] and [Location:Single,2] ||| Intersection [Location:Single,1] [Location:Single,2] ||| 1.0
+[Location:Composition2] ||| [Location:Single,1] , [Location:Single,2] ||| Intersection [Location:Single,1] [Location:Single,2] ||| 1.0
+[Location:Composition2] ||| [Location:Single,1] ; [Location:Single,2] ||| Intersection [Location:Single,1] [Location:Single,2] ||| 1.0
+[Location:Composition3] ||| [Location:Single] , [Location:Composition2] ||| Intersection [Location:Single] [Location:Composition2] ||| 1.0
+[Location:Composition3] ||| [Location:Single] and [Location:Composition2] ||| Intersection [Location:Single] [Location:Composition2] ||| 1.0
+[Location:Composition4] ||| [Location:Single] , [Location:Composition3] ||| Intersection [Location:Single] [Location:Composition3] ||| 1.0
+[Location:Composition4] ||| [Location:Single] and [Location:Composition3] ||| Intersection [Location:Single] [Location:Composition3] ||| 1.0
+[Location:Composition5] ||| [Location:Single] , [Location:Composition4] ||| Intersection [Location:Single] [Location:Composition4] ||| 1.0
+[Location:Composition5] ||| [Location:Single] and [Location:Composition4] ||| Intersection [Location:Single] [Location:Composition4] ||| 1.0
+[Location:Composition] ||| [Location:Composition2] ||| [Location:Composition2] ||| 1.0
+[Location:Composition] ||| [Location:Composition3] ||| [Location:Composition3] ||| 1.0
+[Location:Composition] ||| [Location:Composition4] ||| [Location:Composition4] ||| 1.0
+[Location:Composition] ||| [Location:Composition5] ||| [Location:Composition5] ||| 1.0
+
+[Location:CompositionSimple] ||| [Location:Simple] ||| SubLocation [Location:Simple] ||| 1.0
+[Location:Composition] ||| [Location:Single] and [Location:CompositionSimple] ||| Intersection [Location:Single] [Location:CompositionSimple] ||| 1.0
+
+
+// ===================================
+// expressions that identify Location
+// ===================================
+[Location] ||| [Location:Route] ||| [Location:Route] ||| 1.0
+[Location] ||| [Location:Single] ||| [Location:Single] ||| 1.0
+[Location] ||| [Location:Composition] ||| [Location:Composition] ||| 1.0
