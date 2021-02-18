@@ -92,11 +92,8 @@ class Database:
     cursor = None
 
     def __init__(self):
-        try:
-            self.open()
-            self.cursor = self.conn.cursor()
-        except Exception as e:
-            print("\tException: %s" % e)
+        self.open()
+        self.cursor = self.conn.cursor()
 
     def open(self):
         self.conn = psycopg2.connect("dbname=geometries user=guest password=guest host=localhost")
@@ -113,29 +110,27 @@ class Database:
             else:
                 fetched = self.cursor.fetchall()
             return fetched
-        except Exception as e:
+        except:
             self.close()
-            print("\tException: %s" % e)
-            return []
+            raise
 
     def insert_in_table(self, table, record_id, entity_id, geom):
         try:
             sql_insert_query = "insert into %s (id, entity_id, geom) values ('%s', '%s', '%s');"
             self.cursor.execute(sql_insert_query % (table, record_id, entity_id, geom))
             self.conn.commit()
-        except Exception as e:
+        except:
             self.close()
-            print("\tException: %s" % e)
+            raise
 
     def select_from_table(self, table, entity_id):
         try:
             sql_select_query = "select geom from %s where entity_id = '%s';"
             self.cursor.execute(sql_select_query % (table, entity_id))
             return self.cursor.fetchone()
-        except Exception as e:
+        except:
             self.close()
-            print("\tException: %s" % e)
-            return None
+            raise
 
     @staticmethod
     def get_value_list(geometry_list):
@@ -145,8 +140,7 @@ class Database:
         try:
             sql_query = SQL["geography"]
             return dataframe.from_postgis(sql_query["query"] % geometry, self.conn)
-        except Exception as e:
+        except:
             self.close()
-            print("\tException: %s" % e)
-            return None
+            raise
 
