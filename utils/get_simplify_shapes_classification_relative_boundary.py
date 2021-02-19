@@ -5,10 +5,13 @@ from lxml import etree
 from tqdm import tqdm
 from itertools import chain
 from time import sleep
+from psycopg2 import OperationalError
 import argparse
 import pickle
 import sys
 import os
+import traceback
+
 
 def pickle_dump_large_file(obj, filepath):
     max_bytes = 2**31 - 1
@@ -125,20 +128,22 @@ if __name__ == '__main__':
                 entityID2boundary[entity_id] = [min_bound, max_bound]
                 progress_bar.update(1)
                 entity = next(entities, None)
+            except OperationalError as e:
+                print("OperationalError processing %s" % (entity_id))
+                print(e)
+                traceback.print_exc(file=sys.stdout)
+                while geom.database.conn.closed:
+                    try:
+                        sleep(5)
+                        geom = Geometries()
+                    except:
+                        pass
             except Exception as e:
                 print("Error processing %s" % (entity_id))
                 print(e)
-                print(geom.database.conn.closed)
-                if not geom.database.conn.closed:
-                    progress_bar.update(1)
-                    entity = next(entities, None)
-                else:
-                    while geom.database.conn.closed:
-                        try:
-                            sleep(5)
-                            geom = Geometries()
-                        except:
-                            pass
+                traceback.print_exc(file=sys.stdout)
+                progress_bar.update(1)
+                entity = next(entities, None)
 
     print(len(list(entityID2desc.keys())))
     print(len(list(entityID2target.keys())))
