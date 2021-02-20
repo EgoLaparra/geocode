@@ -144,6 +144,7 @@ if __name__ == '__main__':
                 traceback.print_exc(file=sys.stdout)
                 progress_bar.update(1)
                 entity = next(entities, None)
+                geom = Geometries()
 
     print(len(list(entityID2desc.keys())))
     print(len(list(entityID2target.keys())))
