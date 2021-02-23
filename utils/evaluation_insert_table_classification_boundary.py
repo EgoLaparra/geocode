@@ -49,7 +49,7 @@ entityID2boundary = pickle_load_large_file('../../geocode-data/collection_sample
 entityIds = list(entity2desc.keys())
 print(output_raw.keys())
 #value = output_raw['preds_Compositional_classification_relative_boundary/output_10_large']
-value = output_raw['Compositional_classification_relative_boundary/output_100_large_epoch50']
+value = output_raw['preds_Compositional_classification_relative_boundary/output_100_large_epoch50']
 #print(value)
 print(len(value))
 
