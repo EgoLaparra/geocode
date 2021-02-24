@@ -368,7 +368,7 @@ def load_and_cache_examples(args, task, tokenizer, evaluate=False, test=False):
                 str(task),
                 "relative",
                 "boundary",
-                "descriptOnly",
+                "referrenceOnly",
                 str(args.num_tiles)
             ),
         )
@@ -381,7 +381,7 @@ def load_and_cache_examples(args, task, tokenizer, evaluate=False, test=False):
                 str(args.max_seq_length),
                 str(task),
                 "relative",
-                "descriptOnly",
+                "referrenceOnly",
                 str(args.num_tiles)
             ),
         )
@@ -393,7 +393,7 @@ def load_and_cache_examples(args, task, tokenizer, evaluate=False, test=False):
                 list(filter(None, args.model_name_or_path.split("/"))).pop(),
                 str(args.max_seq_length),
                 str(task),
-                "descriptOnly",
+                "referrenceOnly",
             ),
         )
 
