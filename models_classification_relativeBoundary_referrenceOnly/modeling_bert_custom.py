@@ -886,9 +886,9 @@ class BertForSequenceClassification(BertPreTrainedModel):
         #self.conv = nn.Conv1d(in_channels=3 * 3 * 2, out_channels=3 * 3 * 2, kernel_size=2, stride=2, padding=0,
         #                     groups=1, bias=True)
         #self.convs = nn.ModuleList(nn.Sequential(nn.Conv1d(in_channels=3 * 3 * 2, out_channels=3 * 3 * 2, kernel_size=h), nn.ReLU(), nn.MaxPool1d(kernel_size=22-h+1)) for h in [2,3,4,5])
-        self.classifier_1 = nn.Linear(config.hidden_size + self.num_labels, config.hidden_size + self.num_labels)
-        self.classifier_2 = nn.Linear(config.hidden_size + self.num_labels, config.hidden_size + self.num_labels)
-        self.classifier_final = nn.Linear(config.hidden_size + self.num_labels, self.num_labels)
+        self.classifier_1 = nn.Linear(self.num_labels, self.num_labels)
+        self.classifier_2 = nn.Linear(self.num_labels, self.num_labels)
+        self.classifier_final = nn.Linear(self.num_labels, self.num_labels)
         self.init_weights()
 
     def forward(self, input_ids, attention_mask=None, token_type_ids=None,
@@ -912,10 +912,10 @@ class BertForSequenceClassification(BertPreTrainedModel):
         # out_para_links = torch.relu(out_para_links)
         # out_para_links = torch.max(out_para_links, dim=1).values
 
-        pooled_output = pooled_output.unsqueeze(1).expand([pooled_output.shape[0], links_num, 768])
-        final_pooled_output = torch.cat([pooled_output, para_links], dim=2)
-        final_pooled_output = self.dropout(final_pooled_output)
-        output_1 = self.classifier_1(final_pooled_output)
+        #pooled_output = pooled_output.unsqueeze(1).expand([pooled_output.shape[0], links_num, 768])
+        #final_pooled_output = torch.cat([pooled_output, para_links], dim=2)
+        #final_pooled_output = self.dropout(final_pooled_output)
+        output_1 = self.classifier_1(para_links)
         output_1 = torch.relu(output_1)
         output_1 = torch.max(output_1, dim=1).values
         output_1 = self.dropout(output_1)
