@@ -902,7 +902,7 @@ class BertForSequenceClassification(BertPreTrainedModel):
 
         pooled_output = outputs[1]
         links_num = para_links.shape[1]
-        para_links = para_links.view(-1, links_num, self.num_labels)
+        para_links = para_links.view(-1, links_num, 2*self.num_labels)
         #para_links = para_links.permute(0, 2, 1)
         #out_para_links = [conv(para_links) for conv in self.convs]
         #out_para_links = torch.cat(out_para_links, dim=1)
