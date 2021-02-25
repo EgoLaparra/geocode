@@ -123,7 +123,7 @@ if __name__ == '__main__':
                 print('text: ', text)
                 entityID2desc[entity_id] = text
                 entityID2paras[entity_id] = pID2links
-                entityID2target[entity_id] = target_geometry_from_bitmap
+                entityID2target[entity_id] = target_bitmap
                 entityID2boundary[entity_id] = [min_bound, max_bound]
                 progress_bar.update(1)
                 entity = next(entities, None)
