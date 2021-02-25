@@ -112,9 +112,9 @@ if __name__ == '__main__':
                 ##process target entity
                 entity_geometry = geom.get_entity_geometry(entity)
                 target_bitmap = geometry_to_bitmap(geom, grid, entity_geometry)
-                target_geometry_from_bitmap = bitmap_to_geometry(geom, grid, target_bitmap)
-                print('target_geometry_from_bitmap: ', target_geometry_from_bitmap)
-                print('length', len(target_geometry_from_bitmap))
+                #target_geometry_from_bitmap = bitmap_to_geometry(geom, grid, target_bitmap)
+                print('target_geometry_from_bitmap: ', target_bitmap)
+                #print('length', len(target_geometry_from_bitmap))
 
                 ##process entity description
                 # temp_text = " ".join(entity.xpath('./p/text()'))
@@ -123,7 +123,7 @@ if __name__ == '__main__':
                 print('text: ', text)
                 entityID2desc[entity_id] = text
                 entityID2paras[entity_id] = pID2links
-                entityID2target[entity_id] = target_geometry_from_bitmap
+                entityID2target[entity_id] = target_bitmap
                 entityID2boundary[entity_id] = [min_bound, max_bound]
                 progress_bar.update(1)
                 entity = next(entities, None)
