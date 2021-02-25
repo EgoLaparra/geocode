@@ -105,8 +105,8 @@ if __name__ == '__main__':
                         linkID = link.get("id")
                         link_geometry = geom.get_entity_geometry(link)
                         link_bitmap = geometry_to_bitmap(geom, grid, link_geometry)
-                        link_geometry_from_bitmap = bitmap_to_geometry(geom, grid, link_bitmap)
-                        linkID2coordinates[linkID] = link_geometry_from_bitmap
+                        #link_geometry_from_bitmap = bitmap_to_geometry(geom, grid, link_bitmap)
+                        linkID2coordinates[linkID] = link_bitmap
                     pID2links[pID] = linkID2coordinates
 
                 ##process target entity
