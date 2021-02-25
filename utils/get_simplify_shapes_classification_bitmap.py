@@ -113,8 +113,8 @@ if __name__ == '__main__':
                 entity_geometry = geom.get_entity_geometry(entity)
                 target_bitmap = geometry_to_bitmap(geom, grid, entity_geometry)
                 target_geometry_from_bitmap = bitmap_to_geometry(geom, grid, target_bitmap)
-                print('classification_label: ', target_geometry_from_bitmap)
-                print(len(target_geometry_from_bitmap))
+                print('target_geometry_from_bitmap: ', target_geometry_from_bitmap)
+                print('length', len(target_geometry_from_bitmap))
 
                 ##process entity description
                 # temp_text = " ".join(entity.xpath('./p/text()'))
