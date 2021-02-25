@@ -96,7 +96,7 @@ if __name__ == '__main__':
                 min_bound, max_bound = geometry_group_bounds(geom, geometries, squared=True)
                 min_bound = (max(min_bound[0], -179.999999), max(min_bound[1], -89.999999))
                 max_bound = (min(max_bound[0], 179.999999), min(max_bound[1], 89.999999))
-                grid = bounded_grid(geom, 10, min_bound, max_bound)
+                grid = bounded_grid(geom, args.polygon_size, min_bound, max_bound)
                 pID2links = OrderedDict()
                 for p in entity.xpath('./p'):
                     pID = p.get("id")
@@ -114,6 +114,7 @@ if __name__ == '__main__':
                 target_bitmap = geometry_to_bitmap(geom, grid, entity_geometry)
                 target_geometry_from_bitmap = bitmap_to_geometry(geom, grid, target_bitmap)
                 print('classification_label: ', target_geometry_from_bitmap)
+                print(len(target_geometry_from_bitmap))
 
                 ##process entity description
                 # temp_text = " ".join(entity.xpath('./p/text()'))
