@@ -97,8 +97,10 @@ if __name__ == '__main__':
                 min_bound = (max(min_bound[0], -179.999999), max(min_bound[1], -89.999999))
                 max_bound = (min(max_bound[0], 179.999999), min(max_bound[1], 89.999999))
                 grid = bounded_grid(geom, args.polygon_size, min_bound, max_bound)
-                print("grid: ", grid)
+                #print("grid: ", grid)
                 print("grid length: ", len(grid))
+                print("min_bound: ", min_bound)
+                print("max_bound: ", max_bound)
                 pID2links = OrderedDict()
                 for p in entity.xpath('./p'):
                     pID = p.get("id")
