@@ -112,6 +112,7 @@ if __name__ == '__main__':
                 target_bitmap = geometry_to_bitmap(geom, grid, entity_geometry)
                 # target_geometry_from_bitmap = bitmap_to_geometry(geom, grid, target_bitmap)
                 print('target_geometry_from_bitmap: ', target_bitmap)
+                print(len(target_bitmap))
                 # print('length', len(target_geometry_from_bitmap))
 
                 ##process entity description
