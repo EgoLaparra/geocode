@@ -71,15 +71,15 @@ class InputFeatures(object):
 class DataProcessor(object):
     """Base class for data converters for multiple choice data sets."""
 
-    def get_train_examples(self, data_dir):
+    def get_train_examples(self, data_dir, num_tiles, num_links_topairs):
         """Gets a collection of `InputExample`s for the train set."""
         raise NotImplementedError()
 
-    def get_dev_examples(self, data_dir):
+    def get_dev_examples(self, data_dir, num_tiles, num_links_topairs):
         """Gets a collection of `InputExample`s for the dev set."""
         raise NotImplementedError()
 
-    def get_test_examples(self, data_dir):
+    def get_test_examples(self, data_dir, num_tiles, num_links_topairs):
         """Gets a collection of `InputExample`s for the test set."""
         raise NotImplementedError()
 
@@ -90,26 +90,26 @@ class DataProcessor(object):
 class GeoComposeProcessor(DataProcessor):
     """Processor for the Toponym data set."""
 
-    def get_train_examples(self, data_dir):
+    def get_train_examples(self, data_dir, num_tiles, num_links_topairs):
         """See base class."""
         logger.info("LOOKING AT {} train".format(data_dir))
-        return self._create_examples(self.pickle_load_large_file(os.path.join(data_dir, "model_input_desc_classification_relative_boundary_10_large_train.pkl")),
-                                     self.pickle_load_large_file(os.path.join(data_dir, "model_input_paras_classification_relative_boundary_10_large_train.pkl")),
-                                     self.pickle_load_large_file(os.path.join(data_dir, "model_input_target_classification_relative_boundary_10_large_train.pkl")),"train")
+        return self._create_examples(self.pickle_load_large_file(os.path.join(data_dir, "model_input_desc_classification_relative_boundary_"+str(num_tiles)+"_large_train.pkl")),
+                                     self.pickle_load_large_file(os.path.join(data_dir, "model_input_paras_classification_relative_boundary_"+str(num_tiles)+"_large_train.pkl")),
+                                     self.pickle_load_large_file(os.path.join(data_dir, "model_input_target_classification_relative_boundary_"+str(num_tiles)+"_large_train.pkl")),"train", num_links_topairs)
 
-    def get_dev_examples(self, data_dir):
+    def get_dev_examples(self, data_dir, num_tiles, num_links_topairs):
         """See base class."""
         logger.info("LOOKING AT {} dev".format(data_dir))
-        return self._create_examples(self.pickle_load_large_file(os.path.join(data_dir, "model_input_desc_classification_relative_boundary_10_dev.pkl")),
-                                     self.pickle_load_large_file(os.path.join(data_dir, "model_input_paras_classification_relative_boundary_10_dev.pkl")),
-                                     self.pickle_load_large_file(os.path.join(data_dir, "model_input_target_classification_relative_boundary_10_dev.pkl")), "dev")
+        return self._create_examples(self.pickle_load_large_file(os.path.join(data_dir, "model_input_desc_classification_relative_boundary_"+str(num_tiles)+"_dev.pkl")),
+                                     self.pickle_load_large_file(os.path.join(data_dir, "model_input_paras_classification_relative_boundary_"+str(num_tiles)+"_dev.pkl")),
+                                     self.pickle_load_large_file(os.path.join(data_dir, "model_input_target_classification_relative_boundary_"+str(num_tiles)+"_dev.pkl")), "dev", num_links_topairs)
 
-    def get_test_examples(self, data_dir):
+    def get_test_examples(self, data_dir, num_tiles, num_links_topairs):
         """See base class."""
         logger.info("LOOKING AT {} test".format(data_dir))
         return self._create_examples(self.pickle_load_large_file(os.path.join(data_dir, "model_input_desc_dev.pkl")),
                                      self.pickle_load_large_file(os.path.join(data_dir, "model_input_paras_dev.pkl")),
-                                     self.pickle_load_large_file(os.path.join(data_dir, "model_input_target_dev.pkl")), "test")
+                                     self.pickle_load_large_file(os.path.join(data_dir, "model_input_target_dev.pkl")), "test", num_links_topairs)
 
     def get_labels(self, n_labels):
         """See base class."""
@@ -142,7 +142,7 @@ class GeoComposeProcessor(DataProcessor):
                 lines.append(line)
             return lines
 
-    def _create_examples(self, desciptions, paras, targets, type: str):
+    def _create_examples(self, desciptions, paras, targets, type: str, num_links_topairs):
         """Creates examples for the training and dev sets."""
         examples = []
         max_links_num = 0
@@ -174,17 +174,19 @@ class GeoComposeProcessor(DataProcessor):
             for single_para in para.keys():
                 for link_id in para[single_para].keys():
                     para_entities.append(para[single_para][link_id])
-            para_entities = para_entities[0:10]
+            para_entities = para_entities[0:num_links_topairs]
             pairs_para_entities = list(itertools.combinations(para_entities, 2))
+            num_total_pairs = len(list(itertools.combinations([i for i in range(num_links_topairs)],2)))
+
             para_entities_vector = []
             for (pair_1, pair_2) in pairs_para_entities:
                 single_pair_vector = np.eye(self.n_labels)[pair_1].tolist()+np.eye(self.n_labels)[pair_2].tolist()
                 para_entities_vector.append(single_pair_vector)
             #para_entities_vector = np.eye(self.n_labels)[para_entities].tolist()
-            if len(para_entities_vector) < 45:
+            if len(para_entities_vector) < num_total_pairs:
                 para_entities_vector = para_entities_vector + [np.zeros(2*self.n_labels).tolist()] * (
-                            45 - len(para_entities_vector))
-            assert len(para_entities_vector) == 45
+                            num_total_pairs - len(para_entities_vector))
+            assert len(para_entities_vector) == num_total_pairs
             examples.append(InputExample(
                 example_id=str(idx),
                 text_a=text,
