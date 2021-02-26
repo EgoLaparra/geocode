@@ -361,26 +361,28 @@ def load_and_cache_examples(args, task, tokenizer, evaluate=False, test=False):
     if args.do_relative and args.do_boundary:
         cached_features_file = os.path.join(
             args.data_dir,
-            "cached_{}_{}_{}_{}_{}_{}_{}".format(
+            "cached_{}_{}_{}_{}_{}_{}_{}_{}".format(
                 cached_mode,
                 list(filter(None, args.model_name_or_path.split("/"))).pop(),
                 str(args.max_seq_length),
                 str(task),
                 "relative",
                 "boundary",
-                str(args.num_tiles)
+                str(args.num_tiles),
+                str(args.num_links_topairs),
             ),
         )
     elif args.do_relative and not args.do_boundary:
         cached_features_file = os.path.join(
             args.data_dir,
-            "cached_{}_{}_{}_{}_{}_{}".format(
+            "cached_{}_{}_{}_{}_{}_{}_{}".format(
                 cached_mode,
                 list(filter(None, args.model_name_or_path.split("/"))).pop(),
                 str(args.max_seq_length),
                 str(task),
                 "relative",
-                str(args.num_tiles)
+                str(args.num_tiles),
+                str(args.num_links_topairs),
             ),
         )
     else:
@@ -401,11 +403,11 @@ def load_and_cache_examples(args, task, tokenizer, evaluate=False, test=False):
         logger.info("Creating features from dataset file at %s", args.data_dir)
         label_list = processor.get_labels(args.n_labels)
         if evaluate:
-            examples = processor.get_dev_examples(args.data_dir)
+            examples = processor.get_dev_examples(args.data_dir, args.num_tiles, args.num_links_topairs)
         elif test:
-            examples = processor.get_test_examples(args.data_dir)
+            examples = processor.get_test_examples(args.data_dir, args.num_tiles, args.num_links_topairs)
         else:
-            examples = processor.get_train_examples(args.data_dir)
+            examples = processor.get_train_examples(args.data_dir, args.num_tiles, args.num_links_topairs)
         logger.info("Training number: %s", str(len(examples)))
         features = convert_examples_to_features(
             examples,
@@ -503,7 +505,8 @@ def main():
     parser.add_argument("--do_test", action="store_true", help="Whether to run test on the test set")
     parser.add_argument("--do_relative", action="store_true", help="Whether to run model on the relative")
     parser.add_argument("--do_boundary", action="store_true", help="Whether to run model on the boundary")
-    parser.add_argument("--num_tiles", default=26, type=int, help="Whether to run model on the boundary")
+    parser.add_argument("--num_tiles", default=10, type=int, help="Whether to run model on the boundary")
+    parser.add_argument("--num_links_topairs", default=10, type=int, help="Whether to run model on the boundary")
     parser.add_argument(
         "--evaluate_during_training", action="store_true", help="Run evaluation during training at each logging step."
     )
