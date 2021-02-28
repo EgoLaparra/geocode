@@ -1,5 +1,5 @@
 from geometries import Geometries
-from preprocess import index_to_tile_relative, make_polygon
+from preprocess import index_to_tile_relative, make_polygon, bitmap_to_geometry, bounded_grid
 from lxml import etree
 from tqdm import tqdm
 from itertools import chain
@@ -8,26 +8,6 @@ import pickle
 import json
 import sys
 import os
-
-def index_to_coord(index, polygon_size):
-    """
-    Convert index (output of the prediction model) back to coordinates.
-    :param index: of the polygon/tile in map_vector array (given by model prediction)
-    :param polygon_size: size of each polygon/tile i.e. resolution of the world
-    :return: pair of (latitude, longitude)
-    """
-    x = int(index / (360 / polygon_size))
-    y = index % int(360 / polygon_size)
-    if x > int(90 / polygon_size):
-        x = -int((x - (90 / polygon_size)) * polygon_size)
-    else:
-        x = int(((90 / polygon_size) - x) * polygon_size)
-    if y < int(180 / polygon_size):
-        y = -int(((180 / polygon_size) - y) * polygon_size)
-    else:
-        y = int((y - (180 / polygon_size)) * polygon_size)
-    prediction_values = [[[y, x], [y, x - polygon_size]], [[y + polygon_size, x - polygon_size], [y + polygon_size, x]]]
-    return prediction_values
 
 def pickle_load_large_file(filepath):
     max_bytes = 2**31 - 1
@@ -41,15 +21,15 @@ def pickle_load_large_file(filepath):
 
 geom = Geometries()
 
-with open('classification_relative_boundary_pairReferrence_results/eval_preds_10_10_epoch400.json', 'r') as file:
+with open('classification_bitmap_results/eval_preds_10_epoch200.json', 'r') as file:
     output_raw = json.load(file)
 
-entity2desc = pickle_load_large_file('../../geocode-data/collection_samples/model_input_desc_classification_relative_boundary_10_dev.pkl')
-entityID2boundary = pickle_load_large_file('../../geocode-data/collection_samples/model_input_boundary_classification_relative_boundary_10_dev.pkl')
+entity2desc = pickle_load_large_file('../../geocode-data/collection_samples/model_input_desc_classification_bitmap_10_dev.pkl')
+entityID2boundary = pickle_load_large_file('../../geocode-data/collection_samples/model_input_boundary_classification_bitmap_10_dev.pkl')
 entityIds = list(entity2desc.keys())
 print(output_raw.keys())
 #value = output_raw['preds_Compositional_classification_relative_boundary/output_10_large']
-value = output_raw['preds_32000']
+value = output_raw['preds_26000']
 #print(value)
 print(len(value))
 
@@ -59,8 +39,8 @@ for idx, prediction in enumerate(value):
     min_bound, max_bound = entityID2boundary[entity_id]
     min_bound = (max(min_bound[0], -179.999999), max(min_bound[1], -89.999999))
     max_bound = (min(max_bound[0], 179.999999), min(max_bound[1], 89.999999))
-    prediction_values = index_to_tile_relative(prediction, 10, min_bound, max_bound)
-    geometry = make_polygon(geom, prediction_values)
+    grid = bounded_grid(geom, 10, min_bound, max_bound)
+    target_geometry = bitmap_to_geometry(geom, grid, prediction)
     #print(prediction_values)
     #prediction_values = [[[prediction_values[0] - 26 / 2, prediction_values[1] - 26 / 2], [prediction_values[0] - 26 / 2, prediction_values[1] + 26 / 2]], [[prediction_values[0] + 26 / 2, prediction_values[1] + 26 / 2], [prediction_values[0] + 26 / 2, prediction_values[1] - 26 / 2]]]
     # print(prediction_values)
@@ -70,7 +50,7 @@ for idx, prediction in enumerate(value):
     #         print(" ".join(map(str, point)))
     #geometry = geom.from_text("POLYGON((%s))" % ", ".join([" ".join(map(str, point)) for e1, row in enumerate(prediction_values) for e2, point in enumerate(row)] + ["%s %s" % (prediction_values[0][0][0],prediction_values[0][0][1])]))
 
-    geom.database.insert_in_table("output_table", idx, entity_id, geometry)
+    geom.database.insert_in_table("output_table", idx, entity_id, target_geometry)
 
 
 # for key, value in output_raw.items():
