@@ -41,15 +41,15 @@ def pickle_load_large_file(filepath):
 
 geom = Geometries()
 
-with open('classification_relative_boundary_pairReferrence_results/eval_preds_10_6_epoch100.json', 'r') as file:
+with open('classification_relative_boundary_pairReferrence_results/eval_preds_26_6_epoch400.json', 'r') as file:
     output_raw = json.load(file)
 
-entity2desc = pickle_load_large_file('../../geocode-data/collection_samples/model_input_desc_classification_relative_boundary_10_dev.pkl')
-entityID2boundary = pickle_load_large_file('../../geocode-data/collection_samples/model_input_boundary_classification_relative_boundary_10_dev.pkl')
+entity2desc = pickle_load_large_file('../../geocode-data/collection_samples/model_input_desc_classification_relative_boundary_26_dev.pkl')
+entityID2boundary = pickle_load_large_file('../../geocode-data/collection_samples/model_input_boundary_classification_relative_boundary_26_dev.pkl')
 entityIds = list(entity2desc.keys())
 print(output_raw.keys())
 #value = output_raw['preds_Compositional_classification_relative_boundary/output_10_large']
-value = output_raw['preds_6000']
+value = output_raw['preds_49000']
 #print(value)
 print(len(value))
 
@@ -59,7 +59,7 @@ for idx, prediction in enumerate(value):
     min_bound, max_bound = entityID2boundary[entity_id]
     min_bound = (max(min_bound[0], -179.999999), max(min_bound[1], -89.999999))
     max_bound = (min(max_bound[0], 179.999999), min(max_bound[1], 89.999999))
-    prediction_values = index_to_tile_relative(prediction, 10, min_bound, max_bound)
+    prediction_values = index_to_tile_relative(prediction, 26, min_bound, max_bound)
     geometry = make_polygon(geom, prediction_values)
     #print(prediction_values)
     #prediction_values = [[[prediction_values[0] - 26 / 2, prediction_values[1] - 26 / 2], [prediction_values[0] - 26 / 2, prediction_values[1] + 26 / 2]], [[prediction_values[0] + 26 / 2, prediction_values[1] + 26 / 2], [prediction_values[0] + 26 / 2, prediction_values[1] - 26 / 2]]]
