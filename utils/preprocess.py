@@ -140,11 +140,11 @@ def geometry_to_bitmap(geom, grid, geometry):
     return bitmap
 
 
-def bitmap_to_geometry(geom, grid, bitmap):
+def bitmap_to_geometry(geom, grid, bitmap, threshold=.5):
     polygons = []
     for grid_row, bitmap_row in zip(grid, bitmap):
         polygons.extend([
-            polygon for polygon, bit in zip(grid_row, bitmap_row) if bit > .5
+            polygon for polygon, bit in zip(grid_row, bitmap_row) if bit > threshold
         ])
     return geom.unite_geometries(polygons)
 
