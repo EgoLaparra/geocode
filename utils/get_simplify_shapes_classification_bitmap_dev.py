@@ -45,7 +45,7 @@ def get_text(node):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--xml_filepath_dev', default='../../geocode-data/collection_samples/dev_subsamples.xml', type=str,
+    parser.add_argument('--xml_filepath_dev', default='../../geocode-data/collection_samples/dev_samples.xml', type=str,
                         help='path of data collections')
     parser.add_argument('--sample_size', default=50, type=int,
                         help='number of sample datas')
