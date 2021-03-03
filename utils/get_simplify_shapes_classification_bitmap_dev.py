@@ -109,6 +109,11 @@ if __name__ == '__main__':
 
                 ##process target entity
                 entity_geometry = geom.get_entity_geometry(entity)
+                entity_points = geom.dump_points(geom.get_envelope(entity_geometry))
+                entity_min = geom.get_coordinates(entity_points[0])
+                entity_max = geom.get_coordinates(entity_points[2])
+                if entity_max[0] < min_bound[0] or entity_max[1] < min_bound[1] or entity_min[0] > max_bound[0] or entity_min[1] > max_bound[1]:
+                    raise Exception("OUT_OF_BOUNDS!")
                 target_bitmap = geometry_to_bitmap(geom, grid, entity_geometry)
                 # target_geometry_from_bitmap = bitmap_to_geometry(geom, grid, target_bitmap)
                 print('target_geometry_from_bitmap: ', target_bitmap)
