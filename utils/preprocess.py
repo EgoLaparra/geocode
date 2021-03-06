@@ -4,7 +4,7 @@ def normalize(coordinates, min_limit=(-180, -90), max_limit=(180, 90)):
     x = (2. * coordinates[0] - (xmax + xmin)) / (xmax - xmin)
     y = (2. * coordinates[1] - (ymax + ymin)) / (ymax - ymin)
     if -1 <= x <= 1 and -1 <= y <= 1:
-        return (x, y)
+        return x, y
     else:
         raise Exception(u"Coordinates exceed limits!!")
 
@@ -15,7 +15,7 @@ def denormalize(norm_coordinates, min_limit=(-180, -90), max_limit=(180, 90)):
     x = (norm_coordinates[0] * (xmax - xmin) + (xmax + xmin)) / 2
     y = (norm_coordinates[1] * (ymax - ymin) + (ymax + ymin)) / 2
     if xmin <= x <= xmax and ymin <= y <= ymax:
-        return (x, y)
+        return x, y
     else:
         raise Exception(u"Coordinates exceed limits!!")
 
@@ -110,42 +110,33 @@ def make_polygon(geom, coordinates):
 def bounded_grid(geom, num_tiles, min_limit=(-180, -90), max_limit=(180, 90)):
     xstep = (max_limit[0] - min_limit[0]) / num_tiles
     ystep = (max_limit[1] - min_limit[1]) / num_tiles
-    grid = []
-    ypos = max_limit[1]
-    while len(grid) < num_tiles:
-        grid_row = []
-        xpos = min_limit[0]
-        while len(grid_row) < num_tiles:
-            coordinates = [
-                [[xpos, ypos], [xpos + xstep, ypos]],
-                [[xpos + xstep, ypos - ystep], [xpos, ypos - ystep]]
-            ]
-            polygon = make_polygon(geom, coordinates)
-            grid_row.append(polygon)
-            xpos += xstep
-        grid.append(grid_row)
-        ypos -= ystep
+    grid = geom.make_raster(num_tiles, num_tiles, min_limit[0], max_limit[1], xstep, -ystep)
     return grid
 
 
 def geometry_to_bitmap(geom, grid, geometry):
-    bitmap = []
-    for grid_row in grid:
-        bitmap_row = []
-        for polygon in grid_row:
-            bitmap_row.append(
-                1. if geom.instersects(geometry, polygon) else 0.
-            )
-        bitmap.append(bitmap_row)
+    num_tiles = geom.raster_width(grid)
+    bitmap = [[0.]*num_tiles for i in range(num_tiles)]
+    geometry_raster = geom.geometry_as_raster(geometry, grid)
+    raster_union = geom.unite_rasters(grid, geometry_raster)
+    for pixel in geom.raster_pixels(raster_union):
+        x = pixel[0] - 1
+        y = pixel[1] - 1
+        bitmap[y][x] = 1.
     return bitmap
 
 
 def bitmap_to_geometry(geom, grid, bitmap, threshold=.5):
+    pixels = [(i, j) for i, bitmap_row in enumerate(bitmap) 
+              for j, bit in enumerate(bitmap_row) 
+              if bit > threshold]
     polygons = []
-    for grid_row, bitmap_row in zip(grid, bitmap):
-        polygons.extend([
-            polygon for polygon, bit in zip(grid_row, bitmap_row) if bit > threshold
-        ])
+    for pixel in pixels:
+        x = pixel[1] + 1
+        y = pixel[0] + 1
+        polygons.append(
+            geom.pixel_as_polygon(grid, x, y)
+        )
     return geom.unite_geometries(polygons)
 
 
@@ -177,7 +168,7 @@ def geometry_group_bounds(geom, geometries, squared=True):
         bounding_diagonal = geom.get_bounding_diagonal(
             geom.get_bounding_circle(bounding_diagonal)
         )
-    lower_point, upper_point = geom.dump_points(bounding_diagonal)
+        lower_point, upper_point = geom.dump_points(bounding_diagonal)
     min_coordinates = geom.get_coordinates(lower_point)
     max_coordinates = geom.get_coordinates(upper_point)
     return min_coordinates, max_coordinates
