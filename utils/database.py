@@ -14,13 +14,13 @@ SQL = {"geometry":          {"query": """select geom from geometries
                              "single_output": True},
        "y":                 {"query": """select st_y('%s');""",
                              "single_output": True},
-       "maxx":              {"query": """select st_xmax('%s');""",
+       "xmax":              {"query": """select st_xmax('%s');""",
                              "single_output": True},
-       "maxy":              {"query": """select st_ymax('%s');""",
+       "ymax":              {"query": """select st_ymax('%s');""",
                              "single_output": True},
-       "minx":              {"query": """select st_xmin('%s');""",
+       "xmin":              {"query": """select st_xmin('%s');""",
                              "single_output": True},
-       "miny":              {"query": """select st_ymin('%s');""",
+       "ymin":              {"query": """select st_ymin('%s');""",
                              "single_output": True},
        "area":              {"query": """select st_area('%s');""",
                              "single_output": True},
@@ -92,7 +92,23 @@ SQL = {"geometry":          {"query": """select geom from geometries
                              "single_output": True},
        "prediction":        {"query": """select geom from %s 
                                 where entity_id = '%s';""",
-                             "single_output": False}
+                             "single_output": False},
+       "makeemptyraster":   {"query": """select st_makeemptyraster(%s, %s, %s, %s, %s, %s, 0, 0);""",
+                             "single_output": True},
+       "width":             {"query": """select st_width('%s');""", 
+                             "single_output": True},
+       "asraster":          {"query": """select st_asraster('%s', '%s', touched => true);""", 
+                             "single_output": True},
+       "uniterasters":      {"query": """select st_union(raster::raster, 'MAX'::text) from 
+                                (select ('%s') as raster UNION select ('%s') as raster) foo;""",
+                             "single_output": True},
+       "rasteraspixels":    {"query": """select (pixels).* from (select st_pixelofvalue('%s',  1) as pixels) as foo;""", 
+                             "single_output": False},
+       "pixelaspolygon":    {"query": """select st_pixelaspolygon('%s', %s, %s);""", 
+                             "single_output": True},
+       "pixelaspolygons":    {"query": """select (polygons).geom from 
+                                (select st_pixelaspolygons('%s') as polygons) as foo;""",
+                              "single_output": False}
        }
 
 
@@ -112,16 +128,16 @@ class Database:
     def close(self):
         self.conn.close()
 
-    def execute_query(self, sql_query_key, geometry):
+    def execute_query(self, sql_query_key, parameters):
         try:
             sql_query = SQL[sql_query_key]
-            self.cursor.execute(sql_query["query"] % geometry)
+            self.cursor.execute(sql_query["query"] % parameters)
             if sql_query["single_output"]:
                 fetched = self.cursor.fetchone()[0]
             else:
                 fetched = self.cursor.fetchall()
             return fetched
-        except:
+        except Exception:
             self.close()
             raise
 
@@ -130,7 +146,7 @@ class Database:
             sql_insert_query = "insert into %s (id, entity_id, geom) values ('%s', '%s', '%s');"
             self.cursor.execute(sql_insert_query % (table, record_id, entity_id, geom))
             self.conn.commit()
-        except:
+        except Exception:
             self.close()
             raise
 
@@ -139,7 +155,7 @@ class Database:
             sql_select_query = "select geom from %s where entity_id = '%s';"
             self.cursor.execute(sql_select_query % (table, entity_id))
             return self.cursor.fetchone()
-        except:
+        except Exception:
             self.close()
             raise
 
@@ -151,7 +167,7 @@ class Database:
         try:
             sql_query = SQL["geography"]
             return dataframe.from_postgis(sql_query["query"] % geometry, self.conn)
-        except:
+        except Exception:
             self.close()
             raise
 

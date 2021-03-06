@@ -187,7 +187,6 @@ class Geometries:
         elif len(entity_geometry) > 1:
             return self.unite_geometries(entity_geometry)
         else:
-            #return None
             raise Exception("No geometries for %s %s" % (" ".join(osm_ids), " ".join(osm_types)))
 
     def get_geometries(self, osm, otype):
@@ -205,6 +204,27 @@ class Geometries:
         geodataframe = self.database.dataframe_from_sql(geometry, dataframe)
         geodataframe = geodataframe.to_crs(epsg=3857)
         return geodataframe
+
+    def make_raster(self, width, height, left_x, upper_y, scale_x, scale_y):
+        return self.database.execute_query("makeemptyraster", (width, height, left_x, upper_y, scale_x, scale_y))
+
+    def raster_width(self, raster):
+        return self.database.execute_query("width", (raster))
+
+    def geometry_as_raster(self, geometry, raster):
+        return self.database.execute_query("asraster", (geometry, raster))
+
+    def unite_rasters(self, raster1, raster2):
+        return self.database.execute_query("uniterasters", (raster1, raster2))
+
+    def raster_pixels(self, raster):
+        return self.database.execute_query("rasteraspixels", (raster))
+
+    def pixel_as_polygon(self, raster, x, y):
+        return self.database.execute_query("pixelaspolygon", (raster, x, y))
+
+    def pixel_as_polygons(self, raster):
+        return self.database.execute_query("pixelaspolygons", (raster))
 
     def close_connection(self):
         self.database.close()
