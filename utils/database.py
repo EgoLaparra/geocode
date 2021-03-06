@@ -99,11 +99,15 @@ SQL = {"geometry":          {"query": """select geom from geometries
                              "single_output": True},
        "asraster":          {"query": """select st_asraster('%s', '%s', touched => true);""", 
                              "single_output": True},
+       "uniterasters":      {"query": """select st_union(raster::raster, 'MAX'::text) from 
+                                (select ('%s') as raster UNION select ('%s') as raster) foo;""", 
+                             "single_output": True},
        "rasteraspixels":    {"query": """select (pixels).* from (select st_pixelofvalue('%s',  1) as pixels) as foo;""", 
                              "single_output": False},
        "pixelaspolygon":    {"query": """select st_pixelaspolygon('%s', %s, %s);""", 
-                             "single_output": True}
-
+                             "single_output": True},
+       "pixelaspolygons":    {"query": """select (polygons).geom from (select st_pixelaspolygons('%s') as polygons) as foo;""", 
+                             "single_output": False}
        }
 
 

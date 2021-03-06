@@ -110,7 +110,8 @@ def make_polygon(geom, coordinates):
 def bounded_grid(geom, num_tiles, min_limit=(-180, -90), max_limit=(180, 90)):
     xstep = (max_limit[0] - min_limit[0]) / num_tiles
     ystep = (max_limit[1] - min_limit[1]) / num_tiles
-    grid = geom.make_raster(num_tiles, num_tiles, min_limit[0], -max_limit[1], xstep, ystep)
+    print(num_tiles, num_tiles, min_limit[0], max_limit[1], xstep, -ystep)
+    grid = geom.make_raster(num_tiles, num_tiles, min_limit[0], max_limit[1], xstep, -ystep)
     return grid
 
 
@@ -118,9 +119,10 @@ def geometry_to_bitmap(geom, grid, geometry):
     num_tiles = geom.raster_width(grid)
     bitmap = [[0.]*num_tiles for i in range(num_tiles)]
     geometry_raster = geom.geometry_as_raster(geometry, grid)
-    for pixel in geom.raster_pixels(geometry_raster):
-        x = pixel[0]
-        y = pixel[1]
+    raster_union = geom.unite_rasters(grid, geometry_raster)
+    for pixel in geom.raster_pixels(raster_union):
+        x = pixel[0] - 1
+        y = pixel[1] - 1
         bitmap[y][x] = 1.
     return bitmap
 
@@ -131,8 +133,8 @@ def bitmap_to_geometry(geom, grid, bitmap, threshold=.5):
               if bit > threshold]
     polygons = []
     for pixel in pixels:
-        x = pixel[1]
-        y = pixel[0]
+        x = pixel[1] + 1
+        y = pixel[0] + 1
         polygons.append(
             geom.pixel_as_polygon(grid, x, y)
         )
