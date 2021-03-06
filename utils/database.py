@@ -100,14 +100,15 @@ SQL = {"geometry":          {"query": """select geom from geometries
        "asraster":          {"query": """select st_asraster('%s', '%s', touched => true);""", 
                              "single_output": True},
        "uniterasters":      {"query": """select st_union(raster::raster, 'MAX'::text) from 
-                                (select ('%s') as raster UNION select ('%s') as raster) foo;""", 
+                                (select ('%s') as raster UNION select ('%s') as raster) foo;""",
                              "single_output": True},
        "rasteraspixels":    {"query": """select (pixels).* from (select st_pixelofvalue('%s',  1) as pixels) as foo;""", 
                              "single_output": False},
        "pixelaspolygon":    {"query": """select st_pixelaspolygon('%s', %s, %s);""", 
                              "single_output": True},
-       "pixelaspolygons":    {"query": """select (polygons).geom from (select st_pixelaspolygons('%s') as polygons) as foo;""", 
-                             "single_output": False}
+       "pixelaspolygons":    {"query": """select (polygons).geom from 
+                                (select st_pixelaspolygons('%s') as polygons) as foo;""",
+                              "single_output": False}
        }
 
 
@@ -135,7 +136,7 @@ class Database:
             else:
                 fetched = self.cursor.fetchall()
             return fetched
-        except:
+        except Exception:
             self.close()
             raise
 
@@ -144,7 +145,7 @@ class Database:
             sql_insert_query = "insert into %s (id, entity_id, geom) values ('%s', '%s', '%s');"
             self.cursor.execute(sql_insert_query % (table, record_id, entity_id, geom))
             self.conn.commit()
-        except:
+        except Exception:
             self.close()
             raise
 
@@ -153,7 +154,7 @@ class Database:
             sql_select_query = "select geom from %s where entity_id = '%s';"
             self.cursor.execute(sql_select_query % (table, entity_id))
             return self.cursor.fetchone()
-        except:
+        except Exception:
             self.close()
             raise
 
@@ -165,7 +166,7 @@ class Database:
         try:
             sql_query = SQL["geography"]
             return dataframe.from_postgis(sql_query["query"] % geometry, self.conn)
-        except:
+        except Exception:
             self.close()
             raise
 

@@ -4,7 +4,7 @@ def normalize(coordinates, min_limit=(-180, -90), max_limit=(180, 90)):
     x = (2. * coordinates[0] - (xmax + xmin)) / (xmax - xmin)
     y = (2. * coordinates[1] - (ymax + ymin)) / (ymax - ymin)
     if -1 <= x <= 1 and -1 <= y <= 1:
-        return (x, y)
+        return x, y
     else:
         raise Exception(u"Coordinates exceed limits!!")
 
@@ -15,7 +15,7 @@ def denormalize(norm_coordinates, min_limit=(-180, -90), max_limit=(180, 90)):
     x = (norm_coordinates[0] * (xmax - xmin) + (xmax + xmin)) / 2
     y = (norm_coordinates[1] * (ymax - ymin) + (ymax + ymin)) / 2
     if xmin <= x <= xmax and ymin <= y <= ymax:
-        return (x, y)
+        return x, y
     else:
         raise Exception(u"Coordinates exceed limits!!")
 
@@ -110,7 +110,6 @@ def make_polygon(geom, coordinates):
 def bounded_grid(geom, num_tiles, min_limit=(-180, -90), max_limit=(180, 90)):
     xstep = (max_limit[0] - min_limit[0]) / num_tiles
     ystep = (max_limit[1] - min_limit[1]) / num_tiles
-    print(num_tiles, num_tiles, min_limit[0], max_limit[1], xstep, -ystep)
     grid = geom.make_raster(num_tiles, num_tiles, min_limit[0], max_limit[1], xstep, -ystep)
     return grid
 
@@ -169,7 +168,7 @@ def geometry_group_bounds(geom, geometries, squared=True):
         bounding_diagonal = geom.get_bounding_diagonal(
             geom.get_bounding_circle(bounding_diagonal)
         )
-    lower_point, upper_point = geom.dump_points(bounding_diagonal)
+        lower_point, upper_point = geom.dump_points(bounding_diagonal)
     min_coordinates = geom.get_coordinates(lower_point)
     max_coordinates = geom.get_coordinates(upper_point)
     return min_coordinates, max_coordinates
