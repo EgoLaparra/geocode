@@ -42,12 +42,21 @@ class Geometries:
         centrality = self.database.execute_query(metric, geometry)
         return self.database.execute_query("closest_point", (geometry, centrality))
 
+    def get_max(self, geometry):
+        xmax = self.database.execute_query("xmax", geometry)
+        ymax = self.database.execute_query("ymax", geometry)
+        return xmax, ymax
+
+    def get_min(self, geometry):
+        xmin = self.database.execute_query("xmin", geometry)
+        ymin = self.database.execute_query("ymin", geometry)
+        return xmin, ymin
+
     def get_point_on_surface(self, geometry):
         return self.database.execute_query("point_on_surface", geometry)
 
     def get_envelope(self, geometry):
-        envelope = self.database.execute_query("envelope", geometry)
-        return self.database.execute_query("dump", envelope)
+        return self.database.execute_query("envelope", geometry)
 
     def get_oriented_envelope(self, geometry):
         return self.database.execute_query("oriented_envelope", geometry)
@@ -60,6 +69,9 @@ class Geometries:
 
     def contains(self, geometry_a, geometry_b):
         return self.database.execute_query("contains", (geometry_a, geometry_b))
+
+    def instersects(self, geometry_a, geometry_b):
+        return self.database.execute_query("intersects", (geometry_a, geometry_b))
 
     def calculate_distance(self, geometry_a, geometry_b):
         return self.database.execute_query("distance", (geometry_a, geometry_b))
@@ -173,7 +185,7 @@ class Geometries:
         elif len(entity_geometry) > 1:
             return self.unite_geometries(entity_geometry)
         else:
-            raise Exception("No geometries for %s %s" % (" ".join(osm_ids), " ".join(osm_types)))
+            raise None
 
     def get_geometries(self, osm, otype):
         return self.database.execute_query("geometry", (osm, otype))
@@ -190,6 +202,21 @@ class Geometries:
         geodataframe = self.database.dataframe_from_sql(geometry, dataframe)
         geodataframe = geodataframe.to_crs(epsg=3857)
         return geodataframe
+
+    def make_raster(self, width, height, left_x, upper_y, scale_x, scale_y):
+        return self.database.execute_query("makeemptyraster", (width, height, left_x, upper_y, scale_x, scale_y))
+
+    def raster_width(self, raster):
+        return self.database.execute_query("width", (raster))
+
+    def geometry_as_raster(self, geometry, raster):
+        return self.database.execute_query("asraster", (geometry, raster))
+
+    def raster_pixels(self, raster):
+        return self.database.execute_query("rasteraspixels", (raster))
+
+    def pixel_as_polygon(self, raster, x, y):
+        return self.database.execute_query("pixelaspolygon", (raster, x, y))
 
     def close_connection(self):
         self.database.close()

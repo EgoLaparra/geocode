@@ -110,42 +110,32 @@ def make_polygon(geom, coordinates):
 def bounded_grid(geom, num_tiles, min_limit=(-180, -90), max_limit=(180, 90)):
     xstep = (max_limit[0] - min_limit[0]) / num_tiles
     ystep = (max_limit[1] - min_limit[1]) / num_tiles
-    grid = []
-    ypos = max_limit[1]
-    while len(grid) < num_tiles:
-        grid_row = []
-        xpos = min_limit[0]
-        while len(grid_row) < num_tiles:
-            coordinates = [
-                [[xpos, ypos], [xpos + xstep, ypos]],
-                [[xpos + xstep, ypos - ystep], [xpos, ypos - ystep]]
-            ]
-            polygon = make_polygon(geom, coordinates)
-            grid_row.append(polygon)
-            xpos += xstep
-        grid.append(grid_row)
-        ypos -= ystep
+    grid = geom.make_raster(num_tiles, num_tiles, min_limit[0], -max_limit[1], xstep, ystep)
     return grid
 
 
 def geometry_to_bitmap(geom, grid, geometry):
-    bitmap = []
-    for grid_row in grid:
-        bitmap_row = []
-        for polygon in grid_row:
-            bitmap_row.append(
-                1. if geom.instersects(geometry, polygon) else 0.
-            )
-        bitmap.append(bitmap_row)
+    num_tiles = geom.raster_width(grid)
+    bitmap = [[0.]*num_tiles for i in range(num_tiles)]
+    geometry_raster = geom.geometry_as_raster(geometry, grid)
+    for pixel in geom.raster_pixels(geometry_raster):
+        x = pixel[0]
+        y = pixel[1]
+        bitmap[y][x] = 1.
     return bitmap
 
 
 def bitmap_to_geometry(geom, grid, bitmap, threshold=.5):
+    pixels = [(i, j) for i, bitmap_row in enumerate(bitmap) 
+              for j, bit in enumerate(bitmap_row) 
+              if bit > threshold]
     polygons = []
-    for grid_row, bitmap_row in zip(grid, bitmap):
-        polygons.extend([
-            polygon for polygon, bit in zip(grid_row, bitmap_row) if bit > threshold
-        ])
+    for pixel in pixels:
+        x = pixel[1]
+        y = pixel[0]
+        polygons.append(
+            geom.pixel_as_polygon(grid, x, y)
+        )
     return geom.unite_geometries(polygons)
 
 
