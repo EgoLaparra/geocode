@@ -93,9 +93,9 @@ class GeoComposeProcessor(DataProcessor):
     def get_train_examples(self, data_dir, num_tiles, num_links_topairs):
         """See base class."""
         logger.info("LOOKING AT {} train".format(data_dir))
-        return self._create_examples(self.pickle_load_large_file(os.path.join(data_dir, "model_input_desc_classification_bitmap_"+str(num_tiles)+"_train.pkl")),
-                                     self.pickle_load_large_file(os.path.join(data_dir, "model_input_paras_classification_bitmap_"+str(num_tiles)+"_train.pkl")),
-                                     self.pickle_load_large_file(os.path.join(data_dir, "model_input_target_classification_bitmap_"+str(num_tiles)+"_train.pkl")),"train", num_tiles, num_links_topairs)
+        return self._create_examples(self.pickle_load_large_file(os.path.join(data_dir, "model_input_desc_classification_bitmap_"+str(num_tiles)+"_large_train.pkl")),
+                                     self.pickle_load_large_file(os.path.join(data_dir, "model_input_paras_classification_bitmap_"+str(num_tiles)+"_large_train.pkl")),
+                                     self.pickle_load_large_file(os.path.join(data_dir, "model_input_target_classification_bitmap_"+str(num_tiles)+"_large_train.pkl")),"train", num_tiles, num_links_topairs)
 
     def get_dev_examples(self, data_dir, num_tiles, num_links_topairs):
         """See base class."""
