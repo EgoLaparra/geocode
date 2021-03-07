@@ -120,6 +120,8 @@ def geometry_to_bitmap(geom, grid, geometry):
     geometry_raster = geom.geometry_as_raster(geometry, grid)
     raster_union = geom.unite_rasters(grid, geometry_raster)
     for pixel in geom.raster_pixels(raster_union):
+        if pixel[0] > num_tiles or pixel[1] > num_tiles:
+            continue
         x = pixel[0] - 1
         y = pixel[1] - 1
         bitmap[y][x] = 1.
