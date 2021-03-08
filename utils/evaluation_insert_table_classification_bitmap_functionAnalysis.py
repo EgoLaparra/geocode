@@ -23,8 +23,8 @@ geom = Geometries()
 
 
 
-entity2target = pickle_load_large_file('../../geocode-data/collection_samples/model_input_target_classification_bitmap_70_dev.pkl')
-entityID2boundary = pickle_load_large_file('../../geocode-data/collection_samples/model_input_boundary_classification_bitmap_70_dev.pkl')
+entity2target = pickle_load_large_file('../../geocode-data/collection_samples/model_input_target_classification_bitmap_100_dev.pkl')
+entityID2boundary = pickle_load_large_file('../../geocode-data/collection_samples/model_input_boundary_classification_bitmap_100_dev.pkl')
 
 
 
@@ -32,7 +32,7 @@ for idx,(entity_id, target_bitmap) in enumerate(entity2target.items()):
     min_bound, max_bound = entityID2boundary[entity_id]
     min_bound = (max(min_bound[0], -179.999999), max(min_bound[1], -89.999999))
     max_bound = (min(max_bound[0], 179.999999), min(max_bound[1], 89.999999))
-    grid = bounded_grid(geom, 70, min_bound, max_bound)
+    grid = bounded_grid(geom, 100, min_bound, max_bound)
     print("entity_id: ", entity_id)
     print("target_bitmap: ", target_bitmap)
     target_geometry = bitmap_to_geometry(geom, grid, target_bitmap)
