@@ -139,7 +139,10 @@ def bitmap_to_geometry(geom, grid, bitmap, threshold=.5):
         polygons.append(
             geom.pixel_as_polygon(grid, x, y)
         )
-    return geom.unite_geometries(polygons)
+    geometry = geom.unite_geometries(polygons)
+    return geom.unite_geometry(
+        geom.apply_buffer(geometry, 1e-10)
+    )
 
 
 def limit_to_inner_boundaries(geom, geometries):
