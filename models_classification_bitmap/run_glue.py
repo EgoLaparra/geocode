@@ -314,7 +314,7 @@ def evaluate(args, model, tokenizer, prefix="", test=False):
         print(out_label_ids)
         print(out_label_ids.shape)
         preds_score = preds.tolist()
-        acc = simple_accuracy((preds >= 0.2).astype(int), out_label_ids)
+        acc = simple_accuracy((final_preds >= 0.2).astype(int), out_label_ids)
         result = {"eval_acc": acc, "eval_loss": eval_loss}
         #result = {"eval_loss": eval_loss}
         preds_temp = {'preds':final_preds.tolist()}
