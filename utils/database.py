@@ -106,9 +106,9 @@ SQL = {"geometry":          {"query": """select geom from geometries
                              "single_output": False},
        "pixelaspolygon":    {"query": """select st_pixelaspolygon('%s', %s, %s);""", 
                              "single_output": True},
-       "pixelaspolygons":    {"query": """select (polygons).geom from 
+       "pixelaspolygons":   {"query": """select (polygons).geom from 
                                 (select st_pixelaspolygons('%s') as polygons) as foo;""",
-                              "single_output": False}
+                             "single_output": False}
        }
 
 
