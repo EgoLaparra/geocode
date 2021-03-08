@@ -172,6 +172,7 @@ def evaluate(gold_file, prediction_table):
             if len(predicted_geometry) > 0 and not geom.geometry_isempty(predicted_geometry):
                 if out_of_limits(geom, predicted_geometry):
                     raise Exception("Latitude or longitude exceeded limits.")
+                predicted_geometry = geom.unite_geometry(geom.from_text(geom.as_text(predicted_geometry)))
                 entity_scores = score(geom, gold_geometry, predicted_geometry, False)
                 print_scores(entity_scores, tabular="\t")
                 update_scores(scores, entity_scores)
