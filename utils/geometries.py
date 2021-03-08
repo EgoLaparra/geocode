@@ -88,6 +88,9 @@ class Geometries:
             result = self.database.execute_query("intersection", (result, geometry))
         return result
 
+    def unite_geometry(self, geometry):
+        return self.database.execute_query("union", geometry)
+
     def unite_geometries(self, geometry_list):
         geometry_values = self.database.get_value_list(geometry_list)
         return self.database.execute_query("union_list", geometry_values)
