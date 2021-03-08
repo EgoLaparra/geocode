@@ -41,7 +41,7 @@ for idx, prediction in enumerate(value):
     max_bound = (min(max_bound[0], 179.999999), min(max_bound[1], 89.999999))
     grid = bounded_grid(geom, 10, min_bound, max_bound)
     print(prediction)
-    target_geometry = bitmap_to_geometry(geom, grid, prediction, threshold=.03)
+    target_geometry = bitmap_to_geometry(geom, grid, prediction, threshold=.035)
     #print(prediction_values)
     #prediction_values = [[[prediction_values[0] - 26 / 2, prediction_values[1] - 26 / 2], [prediction_values[0] - 26 / 2, prediction_values[1] + 26 / 2]], [[prediction_values[0] + 26 / 2, prediction_values[1] + 26 / 2], [prediction_values[0] + 26 / 2, prediction_values[1] - 26 / 2]]]
     # print(prediction_values)
