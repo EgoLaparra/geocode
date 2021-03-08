@@ -24,6 +24,7 @@ import random
 import json
 import numpy as np
 import torch
+import torch.nn.functional as F
 from torch.utils.data import DataLoader, RandomSampler, SequentialSampler, TensorDataset
 from torch.utils.data.distributed import DistributedSampler
 from tqdm import tqdm, trange
@@ -295,7 +296,7 @@ def evaluate(args, model, tokenizer, prefix="", test=False):
                 }
                 outputs = model(**inputs)
                 tmp_eval_loss, logits = outputs[:2]
-
+                logits = F.sigmoid(logits)
                 eval_loss += tmp_eval_loss.mean().item()
             nb_eval_steps += 1
             if preds is None:
