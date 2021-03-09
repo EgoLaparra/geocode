@@ -32,7 +32,7 @@ print(output_raw.keys())
 value = output_raw['preds_Compositional_classification_bitmap/output_10_6_large_epoch100']
 #print(value)
 print(len(value))
-threshold = .07
+threshold = .08
 #0.06
 for idx, prediction in enumerate(value):
     entity_id = entityIds[idx]
