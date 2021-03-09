@@ -32,7 +32,7 @@ print(output_raw.keys())
 value = output_raw['preds_Compositional_classification_bitmap/output_10_6_large_epoch100']
 #print(value)
 print(len(value))
-
+threshold = .035
 
 for idx, prediction in enumerate(value):
     entity_id = entityIds[idx]
@@ -40,8 +40,14 @@ for idx, prediction in enumerate(value):
     min_bound = (max(min_bound[0], -179.999999), max(min_bound[1], -89.999999))
     max_bound = (min(max_bound[0], 179.999999), min(max_bound[1], 89.999999))
     grid = bounded_grid(geom, 10, min_bound, max_bound)
-    print(prediction)
-    target_geometry = bitmap_to_geometry(geom, grid, prediction, threshold=.035)
+    temp_flag = 0
+    for each_row in prediction:
+        for item in each_row:
+            if item > threshold:
+                temp_flag = 1
+    if temp_flag == 0:
+        continue
+    target_geometry = bitmap_to_geometry(geom, grid, prediction, threshold=threshold)
     #print(prediction_values)
     #prediction_values = [[[prediction_values[0] - 26 / 2, prediction_values[1] - 26 / 2], [prediction_values[0] - 26 / 2, prediction_values[1] + 26 / 2]], [[prediction_values[0] + 26 / 2, prediction_values[1] + 26 / 2], [prediction_values[0] + 26 / 2, prediction_values[1] - 26 / 2]]]
     # print(prediction_values)
