@@ -32,8 +32,9 @@ print(output_raw.keys())
 value = output_raw['preds_output_bitmap_26_6_epoch100']
 #print(value)
 print(len(value))
-threshold = .16
+threshold = .17
 #0.06
+num_table_inserted = 0
 for idx, prediction in enumerate(value):
     entity_id = entityIds[idx]
     min_bound, max_bound = entityID2boundary[entity_id]
@@ -47,8 +48,7 @@ for idx, prediction in enumerate(value):
                 temp_flag = 1
     if temp_flag == 0:
         continue
-    if entity_id == 'GL049_208':
-        print(prediction)
+    num_table_inserted+=1
     target_geometry = bitmap_to_geometry(geom, grid, prediction, threshold=threshold)
     #print(prediction_values)
     #prediction_values = [[[prediction_values[0] - 26 / 2, prediction_values[1] - 26 / 2], [prediction_values[0] - 26 / 2, prediction_values[1] + 26 / 2]], [[prediction_values[0] + 26 / 2, prediction_values[1] + 26 / 2], [prediction_values[0] + 26 / 2, prediction_values[1] - 26 / 2]]]
@@ -61,7 +61,7 @@ for idx, prediction in enumerate(value):
 
     geom.database.insert_in_table("output_table", idx, entity_id, target_geometry)
 
-
+print(num_table_inserted)
 # for key, value in output_raw.items():
 #     for idx, prediction in enumerate(value):
 #         entity_id = entityIds[idx]
