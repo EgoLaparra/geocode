@@ -32,7 +32,7 @@ print(output_raw.keys())
 value = output_raw['preds_output_bitmap_26_6_epoch100']
 #print(value)
 print(len(value))
-threshold = .16
+threshold = .17
 #0.06
 num_table_inserted = 0
 for idx, prediction in enumerate(value):
