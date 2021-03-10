@@ -48,7 +48,7 @@ for idx, prediction in enumerate(value):
     if temp_flag == 0:
         continue
     print(idx)
-    if idx == 'GL049_208':
+    if entity_id == 'GL049_208':
         print(prediction)
     target_geometry = bitmap_to_geometry(geom, grid, prediction, threshold=threshold)
     #print(prediction_values)
