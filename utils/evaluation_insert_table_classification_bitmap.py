@@ -32,7 +32,7 @@ print(output_raw.keys())
 value = output_raw['preds_output_bitmap_26_6_epoch100']
 #print(value)
 print(len(value))
-threshold = .15
+threshold = .16
 #0.06
 for idx, prediction in enumerate(value):
     entity_id = entityIds[idx]
