@@ -23,8 +23,8 @@ geom = Geometries()
 
 
 
-entity2target = pickle_load_large_file('../../geocode-data/collection_samples/model_input_target_classification_bitmap_256_dev.pkl')
-entityID2boundary = pickle_load_large_file('../../geocode-data/collection_samples/model_input_boundary_classification_bitmap_256_dev.pkl')
+entity2target = pickle_load_large_file('/xdisk/bethard/zeyuzhang/Geo-Compositional_data/model_input_target_classification_bitmap_256_dev.pkl')
+entityID2boundary = pickle_load_large_file('/xdisk/bethard/zeyuzhang/Geo-Compositional_data/model_input_boundary_classification_bitmap_256_dev.pkl')
 
 
 
