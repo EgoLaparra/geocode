@@ -1001,7 +1001,7 @@ class BertForSequenceClassification(BertPreTrainedModel):
         x4 = self.down3(x3)
         #print("self.down4: ", x4.shape)
         x5 = self.down4(x4)
-
+        print("self.down4: ", x5.shape)
         x5_o, x5_w, x5_h = x5.shape[1], x5.shape[2], x5.shape[3]
         x5 = x5.view(batch_size, pairs_num, x5_o*x5_w*x5_h)
 
