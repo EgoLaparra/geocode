@@ -47,6 +47,8 @@ for idx, prediction in enumerate(value):
                 temp_flag = 1
     if temp_flag == 0:
         continue
+    if idx == 'GL049_208':
+        print(prediction)
     target_geometry = bitmap_to_geometry(geom, grid, prediction, threshold=threshold)
     #print(prediction_values)
     #prediction_values = [[[prediction_values[0] - 26 / 2, prediction_values[1] - 26 / 2], [prediction_values[0] - 26 / 2, prediction_values[1] + 26 / 2]], [[prediction_values[0] + 26 / 2, prediction_values[1] + 26 / 2], [prediction_values[0] + 26 / 2, prediction_values[1] - 26 / 2]]]
