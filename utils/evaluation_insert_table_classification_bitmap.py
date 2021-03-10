@@ -21,15 +21,15 @@ def pickle_load_large_file(filepath):
 
 geom = Geometries()
 
-with open('classification_bitmap_results/eval_preds_10_6_epoch100.json', 'r') as file:
+with open('classification_bitmap_unet_results/eval_preds_26_6_epoch100.json', 'r') as file:
     output_raw = json.load(file)
 
-entity2desc = pickle_load_large_file('../../geocode-data/collection_samples/model_input_desc_classification_bitmap_10_dev.pkl')
-entityID2boundary = pickle_load_large_file('../../geocode-data/collection_samples/model_input_boundary_classification_bitmap_10_dev.pkl')
+entity2desc = pickle_load_large_file('/xdisk/bethard/zeyuzhang/Geo-Compositional_data/model_input_desc_classification_bitmap_26_dev.pkl')
+entityID2boundary = pickle_load_large_file('/xdisk/bethard/zeyuzhang/Geo-Compositional_data/model_input_boundary_classification_bitmap_26_dev.pkl')
 entityIds = list(entity2desc.keys())
 print(output_raw.keys())
 #value = output_raw['preds_Compositional_classification_relative_boundary/output_10_large']
-value = output_raw['preds_Compositional_classification_bitmap/output_10_6_large_epoch100']
+value = output_raw['preds_Compositional_classification_bitmap/output_26_6_large_epoch100']
 #print(value)
 print(len(value))
 threshold = .3
@@ -39,7 +39,7 @@ for idx, prediction in enumerate(value):
     min_bound, max_bound = entityID2boundary[entity_id]
     min_bound = (max(min_bound[0], -179.999999), max(min_bound[1], -89.999999))
     max_bound = (min(max_bound[0], 179.999999), min(max_bound[1], 89.999999))
-    grid = bounded_grid(geom, 10, min_bound, max_bound)
+    grid = bounded_grid(geom, 26, min_bound, max_bound)
     temp_flag = 0
     for each_row in prediction:
         for item in each_row:
