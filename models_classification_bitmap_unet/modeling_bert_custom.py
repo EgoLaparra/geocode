@@ -973,9 +973,9 @@ class BertForSequenceClassification(BertPreTrainedModel):
         self.num_tiles = config.num_tiles
         self.bert = BertModel(config)
         self.dropout = nn.Dropout(config.hidden_dropout_prob)
-        self.classifier_1 = nn.Linear(config.hidden_size + 512, config.hidden_size + 512)
-        self.classifier_2 = nn.Linear(config.hidden_size + 512, config.hidden_size + 512)
-        self.classifier_final = nn.Linear(config.hidden_size + 512, 512)
+        self.classifier_1 = nn.Linear(config.hidden_size + 512*256, config.hidden_size + 512*256)
+        self.classifier_2 = nn.Linear(config.hidden_size + 512*256, config.hidden_size + 512*256)
+        self.classifier_final = nn.Linear(config.hidden_size + 512*256, 512*256)
         self.init_weights()
 
     def forward(self, input_ids, attention_mask=None, token_type_ids=None,
@@ -1001,7 +1001,7 @@ class BertForSequenceClassification(BertPreTrainedModel):
         x4 = self.down3(x3)
         #print("self.down4: ", x4.shape)
         x5 = self.down4(x4)
-
+        print("self.down4: ", x5.shape)
         x5_o, x5_w, x5_h = x5.shape[1], x5.shape[2], x5.shape[3]
         x5 = x5.view(batch_size, pairs_num, x5_o*x5_w*x5_h)
 
