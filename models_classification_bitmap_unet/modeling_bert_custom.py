@@ -1003,10 +1003,11 @@ class BertForSequenceClassification(BertPreTrainedModel):
         x5 = self.down4(x4)
         print("self.down4: ", x5.shape)
         x5_o, x5_w, x5_h = x5.shape[1], x5.shape[2], x5.shape[3]
-        x5 = x5.view(batch_size, pairs_num, x5_o*x5_w*x5_h)
-
-        pooled_output = pooled_output.unsqueeze(1).expand([pooled_output.shape[0], pairs_num, 768])
-        final_pooled_output = torch.cat([pooled_output, x5], dim=2)
+        #x5 = x5.view(batch_size, pairs_num, x5_o*x5_w*x5_h)
+        x5 = x5.view(batch_size, x5_o * x5_w * x5_h)
+        final_pooled_output = torch.cat([pooled_output, x5], dim=1)
+        #pooled_output = pooled_output.unsqueeze(1).expand([pooled_output.shape[0], pairs_num, 768])
+        #final_pooled_output = torch.cat([pooled_output, x5], dim=2)
         final_pooled_output = self.dropout(final_pooled_output)
         output_1 = self.classifier_1(final_pooled_output)
         output_1 = torch.relu(output_1)
