@@ -168,22 +168,22 @@ class GeoComposeProcessor(DataProcessor):
                 for link_id in para[single_para].keys():
                     para_entities.append([item for item in para[single_para][link_id]])
             para_entities = para_entities[0:num_links_topairs]
-            pairs_para_entities = list(itertools.combinations([i for i in range(len(para_entities))], 2))
-            num_total_pairs = len(list(itertools.combinations([i for i in range(num_links_topairs)],2)))
+            #pairs_para_entities = list(itertools.combinations([i for i in range(len(para_entities))], 2))
+            #num_total_pairs = len(list(itertools.combinations([i for i in range(num_links_topairs)],2)))
 
-            para_entities_vector = []
-            for (pair_1, pair_2) in pairs_para_entities:
-                single_pair_vector = [para_entities[pair_1], para_entities[pair_2]]
-                para_entities_vector.append(single_pair_vector)
-            if len(para_entities_vector) < num_total_pairs:
-                para_entities_vector = para_entities_vector + [np.zeros((2, num_tiles, num_tiles), dtype=float).tolist()] * (
-                            num_total_pairs - len(para_entities_vector))
-            assert len(para_entities_vector) == num_total_pairs
+            #para_entities_vector = []
+            #for (pair_1, pair_2) in pairs_para_entities:
+            #    single_pair_vector = [para_entities[pair_1], para_entities[pair_2]]
+            #    para_entities_vector.append(single_pair_vector)
+            #if len(para_entities_vector) < num_total_pairs:
+            #    para_entities_vector = para_entities_vector + [np.zeros((2, num_tiles, num_tiles), dtype=float).tolist()] * (
+            #                num_total_pairs - len(para_entities_vector))
+            #assert len(para_entities_vector) == num_total_pairs
             examples.append(InputExample(
                 example_id=str(idx),
                 text_a=text,
                 text_b="",
-                para_links=para_entities_vector,
+                para_links=para_entities,
                 label=target,
             ))
         print(len(examples))
