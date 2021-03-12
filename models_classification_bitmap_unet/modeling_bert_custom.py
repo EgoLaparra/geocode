@@ -1026,9 +1026,10 @@ class BertForSequenceClassification(BertPreTrainedModel):
         x = self.up4(x, x1)
         temp_logits = self.outc(x)
         print("temp_logits: ", temp_logits.shape)
-        temp_logits = temp_logits.view(batch_size, pairs_num, -1)
-        print("temp_logits: ", temp_logits.shape)
-        logits = torch.max(temp_logits, dim=1).values
+        logits=temp_logits
+        #temp_logits = temp_logits.view(batch_size, pairs_num, -1)
+        #print("temp_logits: ", temp_logits.shape)
+        #logits = torch.max(temp_logits, dim=1).values
         outputs = (logits,) + outputs[2:]
         #print('logits shape: ',logits.shape)
         if labels is not None:
