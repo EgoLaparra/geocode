@@ -171,7 +171,7 @@ class GeoComposeProcessor(DataProcessor):
 
             if len(para_entities) < num_links_topairs:
                 para_entities = para_entities+[np.zeros((num_tiles, num_tiles))]*(num_links_topairs-len(para_entities))
-
+            assert len(para_entities) == num_links_topairs
 
             #pairs_para_entities = list(itertools.combinations([i for i in range(len(para_entities))], 2))
             #num_total_pairs = len(list(itertools.combinations([i for i in range(num_links_topairs)],2)))
