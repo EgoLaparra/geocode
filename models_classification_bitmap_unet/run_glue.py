@@ -642,7 +642,7 @@ def main():
         finetuning_task=args.task_name,
         cache_dir=args.cache_dir if args.cache_dir else None,
     )
-    temp_config = {"num_tiles": args.num_tiles,"n_channels": 2, "n_classes": 1, "bilinear": True}
+    temp_config = {"num_tiles": args.num_tiles,"n_channels": 6, "n_classes": 1, "bilinear": True}
     config.update(temp_config)
     tokenizer = tokenizer_class.from_pretrained(
         args.tokenizer_name if args.tokenizer_name else args.model_name_or_path,
