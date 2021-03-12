@@ -855,10 +855,10 @@ class DoubleConv(nn.Module):
         if not mid_channels:
             mid_channels = out_channels
         self.double_conv = nn.Sequential(
-            nn.Conv2d(in_channels, mid_channels, kernel_size=3, padding=1),
+            nn.Conv2d(in_channels, mid_channels, kernel_size=3, stride=1, padding=1),
             nn.BatchNorm2d(mid_channels),
             nn.ReLU(inplace=True),
-            nn.Conv2d(mid_channels, out_channels, kernel_size=3, padding=1),
+            nn.Conv2d(mid_channels, out_channels, kernel_size=3, stride=2, padding=1),
             nn.BatchNorm2d(out_channels),
             nn.ReLU(inplace=True)
         )
@@ -973,9 +973,9 @@ class BertForSequenceClassification(BertPreTrainedModel):
         self.num_tiles = config.num_tiles
         self.bert = BertModel(config)
         self.dropout = nn.Dropout(config.hidden_dropout_prob)
-        self.classifier_1 = nn.Linear(config.hidden_size + 512*256, config.hidden_size + 512*256)
-        self.classifier_2 = nn.Linear(config.hidden_size + 512*256, config.hidden_size + 512*256)
-        self.classifier_final = nn.Linear(config.hidden_size + 512*256, 512*256)
+        self.classifier_1 = nn.Linear(config.hidden_size + 512, config.hidden_size + 512)
+        self.classifier_2 = nn.Linear(config.hidden_size + 512, config.hidden_size + 512)
+        self.classifier_final = nn.Linear(config.hidden_size + 512, 512)
         self.init_weights()
 
     def forward(self, input_ids, attention_mask=None, token_type_ids=None,
