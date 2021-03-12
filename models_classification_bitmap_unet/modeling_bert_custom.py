@@ -992,8 +992,8 @@ class BertForSequenceClassification(BertPreTrainedModel):
         batch_size = para_links.shape[0]
         #print("paris num: ", pairs_num)
         #print("batch size: ", batch_size)
-        para_links = para_links.view(-1, 2, self.num_tiles, self.num_tiles)
-        #print("para links: ", para_links.shape)
+        #para_links = para_links.view(-1, 2, self.num_tiles, self.num_tiles)
+        para_links = para_links.view(-1, pairs_num, self.num_tiles, self.num_tiles)
         x1 = self.inc(para_links)
         #print("x1: ", x1.shape)
         x2 = self.down1(x1)
