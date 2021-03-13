@@ -32,7 +32,7 @@ print(output_raw.keys())
 value = output_raw['preds_Compositional_classification_bitmap_unet/output_256_6_large_epoch100']
 #print(value)
 print(len(value))
-threshold = .2
+threshold = .4
 #0.06
 num_table_inserted = 0
 for idx, prediction in enumerate(value):
