@@ -29,7 +29,7 @@ entityID2boundary = pickle_load_large_file('/xdisk/bethard/zeyuzhang/Geo-Composi
 entityIds = list(entity2desc.keys())
 print(output_raw.keys())
 #value = output_raw['preds_Compositional_classification_relative_boundary/output_10_large']
-value = output_raw['preds_output_bitmap_256_6_epoch100']
+value = output_raw['preds_Compositional_classification_bitmap_unet/output_256_6_large_epoch100']
 #print(value)
 print(len(value))
 threshold = .17
