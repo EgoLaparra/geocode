@@ -42,11 +42,17 @@ for idx, prediction in enumerate(value):
     max_bound = (min(max_bound[0], 179.999999), min(max_bound[1], 89.999999))
     grid = bounded_grid(geom, 256, min_bound, max_bound)
     temp_flag = 0
+    over_flag = []
     for each_row in prediction:
         for item in each_row:
             if item > threshold:
                 temp_flag = 1
+                over_flag.append(1)
+            else:
+                over_flag.append(0)
     if temp_flag == 0:
+        continue
+    if 0 not in over_flag:
         continue
     num_table_inserted+=1
     target_geometry = bitmap_to_geometry(geom, grid, prediction, threshold=threshold)
