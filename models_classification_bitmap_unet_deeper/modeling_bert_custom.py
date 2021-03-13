@@ -1012,7 +1012,7 @@ class BertForSequenceClassification(BertPreTrainedModel):
 
         x8_o, x8_w, x8_h = x8.shape[1], x8.shape[2], x8.shape[3]
         #x5 = x5.view(batch_size, pairs_num, x5_o*x5_w*x5_h)
-        x5 = x5.view(batch_size, x8_o * x8_w * x8_h)
+        x8 = x8.view(batch_size, x8_o * x8_w * x8_h)
         final_pooled_output = torch.cat([pooled_output, x8], dim=1)
         #pooled_output = pooled_output.unsqueeze(1).expand([pooled_output.shape[0], pairs_num, 768])
         #final_pooled_output = torch.cat([pooled_output, x5], dim=2)
