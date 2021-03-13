@@ -44,12 +44,17 @@ for idx, prediction in enumerate(value):
     temp_flag = 0
     over_flag = []
     for each_row in prediction:
+        temp_result = []
         for item in each_row:
             if item > threshold:
                 temp_flag = 1
                 over_flag.append(1)
+                temp_result.append(1)
             else:
                 over_flag.append(0)
+                temp_result.append(0)
+        if entity_id == 'GL461_410':
+            print(temp_result)
     if temp_flag == 0:
         continue
     if 0 not in over_flag:
