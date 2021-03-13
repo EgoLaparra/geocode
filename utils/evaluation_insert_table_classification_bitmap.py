@@ -54,7 +54,10 @@ for idx, prediction in enumerate(value):
                 over_flag.append(0)
                 temp_result.append(0)
         if entity_id == 'GL461_410':
-            print(temp_result)
+            #print(temp_result)
+            assert len(temp_result)==256
+            if 1 in temp_result:
+                print(temp_result)
     if temp_flag == 0:
         continue
     if 0 not in over_flag:
