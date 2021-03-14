@@ -44,24 +44,15 @@ for idx, prediction in enumerate(value):
     temp_flag = 0
     over_flag = []
     for each_row in prediction:
-        temp_result = []
         for item in each_row:
             if item > threshold:
                 temp_flag = 1
-                over_flag.append(1)
-                temp_result.append(1)
-            else:
-                over_flag.append(0)
-                temp_result.append(0)
-        if entity_id == 'GL461_410':
-            #print(temp_result)
-            assert len(temp_result)==256
-            if 1 in temp_result:
-                print(temp_result)
+    if entity_id == 'GL461_410':
+        continue
     if temp_flag == 0:
         continue
-    if 0 not in over_flag:
-        continue
+    #if 0 not in over_flag:
+    #    continue
     num_table_inserted+=1
     target_geometry = bitmap_to_geometry(geom, grid, prediction, threshold=threshold)
     #print(prediction_values)
