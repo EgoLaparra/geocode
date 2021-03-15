@@ -21,7 +21,7 @@ def pickle_load_large_file(filepath):
 
 geom = Geometries()
 
-with open('/xdisk/bethard/zeyuzhang/Geo-Compositional_classification_bitmap_unet/output_256_6_large_epoch100/eval_preds.json', 'r') as file:
+with open('/xdisk/bethard/zeyuzhang/Geo-Compositional_classification_bitmap_unet/output_256_6_large_epoch200/eval_preds.json', 'r') as file:
     output_raw = json.load(file)
 
 entity2desc = pickle_load_large_file('/xdisk/bethard/zeyuzhang/Geo-Compositional_data/model_input_desc_classification_bitmap_256_dev.pkl')
@@ -29,7 +29,7 @@ entityID2boundary = pickle_load_large_file('/xdisk/bethard/zeyuzhang/Geo-Composi
 entityIds = list(entity2desc.keys())
 print(output_raw.keys())
 #value = output_raw['preds_Compositional_classification_relative_boundary/output_10_large']
-value = output_raw['preds_Compositional_classification_bitmap_unet/output_256_6_large_epoch100']
+value = output_raw['preds_Compositional_classification_bitmap_unet/output_256_6_large_epoch200']
 #print(value)
 print(len(value))
 threshold = .21
@@ -47,8 +47,8 @@ for idx, prediction in enumerate(value):
         for item in each_row:
             if item > threshold:
                 temp_flag = 1
-    if entity_id == 'GL461_410' or entity_id == "GL336_180":
-        continue
+    #if entity_id == 'GL461_410' or entity_id == "GL336_180":
+    #    continue
     if temp_flag == 0:
         continue
     #if 0 not in over_flag:
