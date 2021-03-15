@@ -1009,7 +1009,7 @@ class BertForSequenceClassification(BertPreTrainedModel):
         x6 = self.down5(x5)
         x7 = self.down6(x6)
         #x8 = self.down7(x7)
-
+        print("x7 shape: ", x7.shape)
         x7_o, x7_w, x7_h = x7.shape[1], x7.shape[2], x7.shape[3]
 
         x7 = x7.view(batch_size, x7_o * x7_w * x7_h)
@@ -1035,8 +1035,9 @@ class BertForSequenceClassification(BertPreTrainedModel):
         x = self.up5(x, x2)
         x = self.up6(x, x1)
         #x = self.up7(x, x1)
-
+        print("x.shape: ", x.shape)
         temp_logits = self.outc(x)
+        print("temp_logits: ", temp_logits.shape)
         logits=temp_logits
         #temp_logits = temp_logits.view(batch_size, pairs_num, -1)
         #print("temp_logits: ", temp_logits.shape)
