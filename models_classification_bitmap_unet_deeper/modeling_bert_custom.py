@@ -970,7 +970,7 @@ class BertForSequenceClassification(BertPreTrainedModel):
         self.up3 = Up(256, 128 // factor, self.bilinear)
         self.up4 = Up(128, 64 // factor, self.bilinear)
         self.up5 = Up(64, 32 // factor, self.bilinear)
-        self.up6 = Up(32, 16 // factor, self.bilinear)
+        self.up6 = Up(32, 16, self.bilinear)
 
         #self.up7 = Up(16, 8, self.bilinear)
         self.outc = OutConv(16, self.n_classes)
