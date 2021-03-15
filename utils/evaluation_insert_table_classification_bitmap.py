@@ -58,6 +58,7 @@ for idx, prediction in enumerate(value):
     if entity_id == 'GL461_410':
         pickle_dump_large_file(grid, "./debug_grid.pkl")
         pickle_dump_large_file(prediction, "./debug_bitmap.pkl")
+        continue
     #if entity_id == 'GL461_410' or entity_id == "GL336_180":
     #    continue
     if temp_flag == 0:
