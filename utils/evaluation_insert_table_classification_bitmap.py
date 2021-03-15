@@ -9,6 +9,14 @@ import json
 import sys
 import os
 
+def pickle_dump_large_file(obj, filepath):
+    max_bytes = 2**31 - 1
+    bytes_out = pickle.dumps(obj)
+    n_bytes = sys.getsizeof(bytes_out)
+    with open(filepath, 'wb') as f_out:
+        for idx in range(0, n_bytes, max_bytes):
+            f_out.write(bytes_out[idx:idx + max_bytes])
+
 def pickle_load_large_file(filepath):
     max_bytes = 2**31 - 1
     input_size = os.path.getsize(filepath)
@@ -47,6 +55,10 @@ for idx, prediction in enumerate(value):
         for item in each_row:
             if item > threshold:
                 temp_flag = 1
+    if entity_id == 'GL461_410':
+        pickle_dump_large_file(grid, "./debug_grid.pkl")
+        pickle_dump_large_file(prediction, "./debug_bitmap.pkl")
+        continue
     #if entity_id == 'GL461_410' or entity_id == "GL336_180":
     #    continue
     if temp_flag == 0:
