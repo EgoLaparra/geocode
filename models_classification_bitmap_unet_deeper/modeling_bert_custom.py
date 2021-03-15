@@ -956,15 +956,15 @@ class BertForSequenceClassification(BertPreTrainedModel):
         self.n_classes = config.n_classes
         self.bilinear = config.bilinear
 
-        self.inc = DoubleConv(self.n_channels, 8)
-        self.down1 = Down(8, 16)
-        self.down2 = Down(16, 32)
-        self.down3 = Down(32, 64)
-        self.down4 = Down(64, 128)
-        self.down5 = Down(128, 256)
-        self.down6 = Down(256, 512)
+        self.inc = DoubleConv(self.n_channels, 16)
+        #self.down1 = Down(8, 16)
+        self.down1 = Down(16, 32)
+        self.down2 = Down(32, 64)
+        self.down3 = Down(64, 128)
+        self.down4 = Down(128, 256)
+        self.down5 = Down(256, 512)
         factor = 2 if self.bilinear else 1
-        self.down7 = Down(512, 1024 // factor)
+        self.down6 = Down(512, 1024 // factor)
         self.up1 = Up(1024, 512 // factor, self.bilinear)
         self.up2 = Up(512, 256 // factor, self.bilinear)
         self.up3 = Up(256, 128 // factor, self.bilinear)
@@ -972,17 +972,17 @@ class BertForSequenceClassification(BertPreTrainedModel):
         self.up5 = Up(64, 32 // factor, self.bilinear)
         self.up6 = Up(32, 16 // factor, self.bilinear)
 
-        self.up7 = Up(16, 8, self.bilinear)
-        self.outc = OutConv(8, self.n_classes)
+        #self.up7 = Up(16, 8, self.bilinear)
+        self.outc = OutConv(16, self.n_classes)
 
 
         self.num_labels = config.num_labels
         self.num_tiles = config.num_tiles
         self.bert = BertModel(config)
         self.dropout = nn.Dropout(config.hidden_dropout_prob)
-        self.classifier_1 = nn.Linear(config.hidden_size + 512*2*2, config.hidden_size + 512*2*2)
-        self.classifier_2 = nn.Linear(config.hidden_size + 512*2*2, config.hidden_size + 512*2*2)
-        self.classifier_final = nn.Linear(config.hidden_size + 512*2*2, 512*2*2)
+        self.classifier_1 = nn.Linear(config.hidden_size + 512*1*1, config.hidden_size + 512*1*1)
+        self.classifier_2 = nn.Linear(config.hidden_size + 512*1*1, config.hidden_size + 512*1*1)
+        self.classifier_final = nn.Linear(config.hidden_size + 512*1*1, 512*1*1)
         self.init_weights()
 
     def forward(self, input_ids, attention_mask=None, token_type_ids=None,
@@ -1008,12 +1008,12 @@ class BertForSequenceClassification(BertPreTrainedModel):
         x5 = self.down4(x4)
         x6 = self.down5(x5)
         x7 = self.down6(x6)
-        x8 = self.down7(x7)
+        #x8 = self.down7(x7)
 
-        x8_o, x8_w, x8_h = x8.shape[1], x8.shape[2], x8.shape[3]
-        #x5 = x5.view(batch_size, pairs_num, x5_o*x5_w*x5_h)
-        x8 = x8.view(batch_size, x8_o * x8_w * x8_h)
-        final_pooled_output = torch.cat([pooled_output, x8], dim=1)
+        x7_o, x7_w, x7_h = x7.shape[1], x7.shape[2], x7.shape[3]
+
+        x7 = x7.view(batch_size, x7_o * x7_w * x7_h)
+        final_pooled_output = torch.cat([pooled_output, x7], dim=1)
         #pooled_output = pooled_output.unsqueeze(1).expand([pooled_output.shape[0], pairs_num, 768])
         #final_pooled_output = torch.cat([pooled_output, x5], dim=2)
         final_pooled_output = self.dropout(final_pooled_output)
@@ -1024,17 +1024,17 @@ class BertForSequenceClassification(BertPreTrainedModel):
         output_2 = torch.relu(output_2)
         output_2 = self.dropout(output_2)
 
-        final_x8 = self.classifier_final(output_2)
-        final_x8 = final_x8.view(-1, x8_o, x8_w, x8_h)
+        final_x7 = self.classifier_final(output_2)
+        final_x7 = final_x7.view(-1, x7_o, x7_w, x7_h)
         #print("self.down5: ", final_x5.shape)
 
-        x = self.up1(final_x8, x7)
-        x = self.up2(x, x6)
-        x = self.up3(x, x5)
-        x = self.up4(x, x4)
-        x = self.up5(x, x3)
-        x = self.up6(x, x2)
-        x = self.up7(x, x1)
+        x = self.up1(final_x7, x6)
+        x = self.up2(x, x5)
+        x = self.up3(x, x4)
+        x = self.up4(x, x3)
+        x = self.up5(x, x2)
+        x = self.up6(x, x1)
+        #x = self.up7(x, x1)
 
         temp_logits = self.outc(x)
         logits=temp_logits
