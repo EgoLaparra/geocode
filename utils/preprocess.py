@@ -177,3 +177,17 @@ def geometry_group_bounds(geom, geometries, squared=True):
     min_coordinates = geom.get_coordinates(lower_point)
     max_coordinates = geom.get_coordinates(upper_point)
     return min_coordinates, max_coordinates
+
+
+def snapshot_bounds(geom, geometries):
+    envelopes = [geom.get_envelope(geometry)
+                 for geometry in geometries]
+    envelopes_points = [point
+                        for envelope in envelopes 
+                        for point in geom.dump_points(envelope)]
+    centroid = geom.get_centrality(
+        geom.collect_geometries(envelopes_points)
+    )
+    print(geom.as_text(centroid))
+    for envelope in envelopes:
+        print(geom.as_text(envelope))
