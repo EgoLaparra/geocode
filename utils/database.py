@@ -48,6 +48,8 @@ SQL = {"geometry":          {"query": """select geom from geometries
                              "single_output": True},
        "isclosed_list":     {"query": """select st_isclosed(geom) from (values %s) as t (geom);""",
                              "single_output": False},
+       "isvalid":           {"query": """select st_isvalid('%s'::geometry);""",
+                             "single_output": True},
        "contains":          {"query": """select st_contains('%s', '%s');""",
                              "single_output": True},
        "intersects":        {"query": """select st_intersects('%s', '%s');""",
@@ -89,6 +91,8 @@ SQL = {"geometry":          {"query": """select geom from geometries
        "geography":         {"query": """select Geography('%s') as geom;""",
                              "single_output": True},
        "buffer":            {"query": """select st_makevalid(st_buffer('%s', %s));""",
+                             "single_output": True},
+       "make_valid":        {"query": """select st_makevalid('%s');""",
                              "single_output": True},
        "prediction":        {"query": """select geom from %s 
                                 where entity_id = '%s';""",

@@ -52,8 +52,12 @@ def out_of_limits(geom, geometry):
         return False
     
 def transform_to_geography(geom, gold_geometry, predicted_geometry):
-    gold_geography = geom.transform_geometry(gold_geometry)
-    predicted_geography = geom.transform_geometry(predicted_geometry)
+    gold_geography = geom.make_valid(
+        geom.transform_geometry(gold_geometry)
+    )
+    predicted_geography = geom.make_valid(
+        geom.transform_geometry(predicted_geometry)
+    )
     return gold_geography, predicted_geography
 
 
@@ -130,7 +134,7 @@ def score(geom, gold_geometry, predicted_geometry, skip_transform=False, print_i
         gold_geometry = buffer_geometry(geom, gold_geometry)
         predicted_geometry = buffer_geometry(geom, predicted_geometry)
 
-    if geom.geometry_isempty(predicted_geometry):
+    if geom.geometry_is_empty(predicted_geometry):
         return None
     else:
         overlap = score_overlap(geom, gold_geometry, predicted_geometry,
@@ -169,7 +173,7 @@ def evaluate(gold_file, prediction_table):
             print("Gold entity: %s %s" % (gold_entity.get("id"), gold_entity.get("wikipedia")))
             gold_geometry = geom.get_entity_geometry(gold_entity)
             predicted_geometry = geom.get_predicted_geometry(prediction_table, gold_entity.get("id"))
-            if len(predicted_geometry) > 0 and not geom.geometry_isempty(predicted_geometry):
+            if len(predicted_geometry) > 0 and not geom.geometry_is_empty(predicted_geometry):
                 if out_of_limits(geom, predicted_geometry):
                     raise Exception("Latitude or longitude exceeded limits.")
                 entity_scores = score(geom, gold_geometry, predicted_geometry, False)
