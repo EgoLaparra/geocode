@@ -40,7 +40,7 @@ print(output_raw.keys())
 value = output_raw['preds_Compositional_classification_bitmap_unet_deeper/output_100_6_large_epoch100']
 #print(value)
 print(len(value))
-threshold = .25
+threshold = .21
 #0.06
 num_table_inserted = 0
 for idx, prediction in enumerate(value):
@@ -66,6 +66,7 @@ for idx, prediction in enumerate(value):
     #if 0 not in over_flag:
     #    continue
     num_table_inserted+=1
+    print(entity_id)
     target_geometry = bitmap_to_geometry(geom, grid, prediction, threshold=threshold)
     #print(prediction_values)
     #prediction_values = [[[prediction_values[0] - 26 / 2, prediction_values[1] - 26 / 2], [prediction_values[0] - 26 / 2, prediction_values[1] + 26 / 2]], [[prediction_values[0] + 26 / 2, prediction_values[1] + 26 / 2], [prediction_values[0] + 26 / 2, prediction_values[1] - 26 / 2]]]
