@@ -21,8 +21,14 @@ class Geometries:
     def apply_buffer(self, geometry, offset):
         return self.database.execute_query("buffer", (geometry, offset))
 
-    def geometry_isempty(self, geometry):
+    def geometry_is_empty(self, geometry):
         return self.database.execute_query("isempty", geometry)
+
+    def geometry_is_valid(self, geometry):
+        return self.database.execute_query("is_valid", geometry)
+
+    def make_valid(self, geometry):
+        return self.database.execute_query("make_valid", geometry)
 
     def get_geometry_type(self, geometry):
         return self.database.execute_query("type", geometry)
