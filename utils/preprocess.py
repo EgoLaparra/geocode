@@ -147,12 +147,17 @@ def bitmap_to_geometry(geom, grid, bitmap, threshold=.5):
 
 def limit_to_inner_boundaries(geom, geometries):
     largest_geometry = (None, 0)
+    geometries_are_points = []
     for i, geometry in enumerate(geometries):
+        geometries_are_points.append(
+            geom.get_geometry_type(geometry) == "ST_Point"
+        )
         geometry_area = geom.get_geometry_area(geometry)
         if geometry_area > largest_geometry[1]:
             largest_geometry = (i, geometry_area)
     i, _ = largest_geometry
-    if i is not None:
+    all_geometries_are_points = all(geometries_are_points[:i]) and all(geometries_are_points[i+1:]) if i is not None else False
+    if i is not None and not all_geometries_are_points:
         geometry = geom.get_envelope(geometries[i])
         rest = geom.unite_geometries(
             [geom.get_envelope(geometry)
@@ -177,3 +182,4 @@ def geometry_group_bounds(geom, geometries, squared=True):
     min_coordinates = geom.get_coordinates(lower_point)
     max_coordinates = geom.get_coordinates(upper_point)
     return min_coordinates, max_coordinates
+
