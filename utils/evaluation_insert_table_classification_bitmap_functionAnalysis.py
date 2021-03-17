@@ -23,8 +23,8 @@ geom = Geometries()
 
 
 
-entity2target = pickle_load_large_file('/xdisk/bethard/zeyuzhang/Geo-Compositional_data/model_input_target_classification_bitmap_boundary_100_dev.pkl')
-entityID2boundary = pickle_load_large_file('/xdisk/bethard/zeyuzhang/Geo-Compositional_data/model_input_boundary_classification_bitmap_boundary_100_dev.pkl')
+entity2target = pickle_load_large_file('/xdisk/bethard/zeyuzhang/Geo-Compositional_data/model_input_target_classification_bitmap_boundary_200_dev.pkl')
+entityID2boundary = pickle_load_large_file('/xdisk/bethard/zeyuzhang/Geo-Compositional_data/model_input_boundary_classification_bitmap_boundary_200_dev.pkl')
 
 
 num_table_inserted = 0
@@ -32,7 +32,7 @@ for idx,(entity_id, target_bitmap) in enumerate(entity2target.items()):
     min_bound, max_bound = entityID2boundary[entity_id]
     min_bound = (max(min_bound[0], -179.999999), max(min_bound[1], -89.999999))
     max_bound = (min(max_bound[0], 179.999999), min(max_bound[1], 89.999999))
-    grid = bounded_grid(geom, 100, min_bound, max_bound)
+    grid = bounded_grid(geom, 200, min_bound, max_bound)
     print("entity_id: ", entity_id)
 
     temp_flag = 0
