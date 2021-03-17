@@ -39,7 +39,7 @@ for idx,(entity_id, target_bitmap) in enumerate(entity2target.items()):
     over_flag = []
     for each_row in target_bitmap:
         for item in each_row:
-            if item > target_bitmap:
+            if item > 0.5:
                 temp_flag = 1
     if temp_flag == 0:
         continue
