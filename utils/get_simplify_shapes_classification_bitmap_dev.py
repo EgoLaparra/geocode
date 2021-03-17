@@ -49,21 +49,21 @@ if __name__ == '__main__':
                         help='path of data collections')
     parser.add_argument('--sample_size', default=50, type=int,
                         help='number of sample datas')
-    parser.add_argument('--output_target_dev', default='/xdisk/bethard/zeyuzhang/Geo-Compositional_data/model_input_target_classification_bitmap_boundary_70_dev.pkl', type=str,
+    parser.add_argument('--output_target_dev', default='/xdisk/bethard/zeyuzhang/Geo-Compositional_data/model_input_target_classification_bitmap_boundary_100_dev.pkl', type=str,
                         help='path of data collections samples')
-    parser.add_argument('--output_paras_dev', default='/xdisk/bethard/zeyuzhang/Geo-Compositional_data/model_input_paras_classification_bitmap_boundary_70_dev.pkl',
+    parser.add_argument('--output_paras_dev', default='/xdisk/bethard/zeyuzhang/Geo-Compositional_data/model_input_paras_classification_bitmap_boundary_100_dev.pkl',
                         type=str,
                         help='path of data collections samples')
     parser.add_argument('--output_desc_dev',
-                        default='/xdisk/bethard/zeyuzhang/Geo-Compositional_data/model_input_desc_classification_bitmap_boundary_70_dev.pkl',
+                        default='/xdisk/bethard/zeyuzhang/Geo-Compositional_data/model_input_desc_classification_bitmap_boundary_100_dev.pkl',
                         type=str,
                         help='path of data collections samples')
     parser.add_argument('--output_boundary_dev',
-                        default='/xdisk/bethard/zeyuzhang/Geo-Compositional_data/model_input_boundary_classification_bitmap_boundary_70_dev.pkl',
+                        default='/xdisk/bethard/zeyuzhang/Geo-Compositional_data/model_input_boundary_classification_bitmap_boundary_100_dev.pkl',
                         type=str,
                         help='path of data collections samples')
     parser.add_argument('--polygon_size',
-                        default=70,
+                        default=100,
                         type=int,
                         help="polygon size of coor_2_index")
     args = parser.parse_args()
