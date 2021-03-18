@@ -25,6 +25,7 @@ import json
 import numpy as np
 import torch
 import torch.nn.functional as F
+from sklearn.metrics import f1_score
 from torch.utils.data import DataLoader, RandomSampler, SequentialSampler, TensorDataset
 from torch.utils.data.distributed import DistributedSampler
 from tqdm import tqdm, trange
@@ -310,13 +311,13 @@ def evaluate(args, model, tokenizer, prefix="", test=False):
 
         final_preds = preds.reshape(-1, args.num_tiles, args.num_tiles)
         # out_label_ids = out_label_ids.reshape(-1, args.n_labels)
-        print(final_preds)
+        #print(final_preds)
         print(final_preds.shape)
-        print(out_label_ids)
+        #print(out_label_ids)
         print(out_label_ids.shape)
         preds_score = preds.tolist()
-        acc = simple_accuracy((final_preds >= 0.2).astype(int), out_label_ids)
-        result = {"eval_acc": acc, "eval_loss": eval_loss}
+        f1 = f1_score(out_label_ids, (final_preds >= 0.2).astype(int), pos_label=1, average='binary')
+        result = {"eval_acc": f1, "eval_loss": eval_loss}
         # result = {"eval_loss": eval_loss}
         preds_temp = {'preds': final_preds.tolist()}
         preds_score_temp = {'preds_score': preds_score}

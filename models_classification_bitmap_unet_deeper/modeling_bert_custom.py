@@ -956,33 +956,30 @@ class BertForSequenceClassification(BertPreTrainedModel):
         self.n_classes = config.n_classes
         self.bilinear = config.bilinear
 
-        self.inc = DoubleConv(self.n_channels, 16)
-        #self.down1 = Down(8, 16)
-        self.down1 = Down(16, 32)
-        self.down2 = Down(32, 64)
-        self.down3 = Down(64, 128)
-        self.down4 = Down(128, 256)
-        self.down5 = Down(256, 512)
+        self.inc = DoubleConv(self.n_channels, 32)
+
+        self.down1 = Down(32, 64)
+        self.down2 = Down(64, 128)
+        self.down3 = Down(128, 256)
+        self.down4 = Down(256, 512)
         factor = 2 if self.bilinear else 1
-        self.down6 = Down(512, 1024 // factor)
+        self.down5 = Down(512, 1024 // factor)
         self.up1 = Up(1024, 512 // factor, self.bilinear)
         self.up2 = Up(512, 256 // factor, self.bilinear)
         self.up3 = Up(256, 128 // factor, self.bilinear)
         self.up4 = Up(128, 64 // factor, self.bilinear)
-        self.up5 = Up(64, 32 // factor, self.bilinear)
-        self.up6 = Up(32, 16, self.bilinear)
+        self.up5 = Up(64, 32, self.bilinear)
 
-        #self.up7 = Up(16, 8, self.bilinear)
-        self.outc = OutConv(16, self.n_classes)
+        self.outc = OutConv(32, self.n_classes)
 
 
         self.num_labels = config.num_labels
         self.num_tiles = config.num_tiles
         self.bert = BertModel(config)
         self.dropout = nn.Dropout(config.hidden_dropout_prob)
-        self.classifier_1 = nn.Linear(config.hidden_size + 512*1*1, config.hidden_size + 512*1*1)
-        self.classifier_2 = nn.Linear(config.hidden_size + 512*1*1, config.hidden_size + 512*1*1)
-        self.classifier_final = nn.Linear(config.hidden_size + 512*1*1, 512*1*1)
+        self.classifier_1 = nn.Linear(config.hidden_size + 512*2*2, config.hidden_size + 512*2*2)
+        self.classifier_2 = nn.Linear(config.hidden_size + 512*2*2, config.hidden_size + 512*2*2)
+        self.classifier_final = nn.Linear(config.hidden_size + 512*2*2, 512*2*2)
         self.init_weights()
 
     def forward(self, input_ids, attention_mask=None, token_type_ids=None,
@@ -1007,13 +1004,11 @@ class BertForSequenceClassification(BertPreTrainedModel):
         x4 = self.down3(x3)
         x5 = self.down4(x4)
         x6 = self.down5(x5)
-        x7 = self.down6(x6)
-        #x8 = self.down7(x7)
-        print("x7 shape: ", x7.shape)
-        x7_o, x7_w, x7_h = x7.shape[1], x7.shape[2], x7.shape[3]
 
-        x7 = x7.view(batch_size, x7_o * x7_w * x7_h)
-        final_pooled_output = torch.cat([pooled_output, x7], dim=1)
+        x6_o, x6_w, x6_h = x6.shape[1], x6.shape[2], x6.shape[3]
+
+        x6 = x6.view(batch_size, x6_o * x6_w * x6_h)
+        final_pooled_output = torch.cat([pooled_output, x6], dim=1)
         #pooled_output = pooled_output.unsqueeze(1).expand([pooled_output.shape[0], pairs_num, 768])
         #final_pooled_output = torch.cat([pooled_output, x5], dim=2)
         final_pooled_output = self.dropout(final_pooled_output)
@@ -1024,20 +1019,19 @@ class BertForSequenceClassification(BertPreTrainedModel):
         output_2 = torch.relu(output_2)
         output_2 = self.dropout(output_2)
 
-        final_x7 = self.classifier_final(output_2)
-        final_x7 = final_x7.view(-1, x7_o, x7_w, x7_h)
+        final_x6 = self.classifier_final(output_2)
+        final_x6 = final_x6.view(-1, x6_o, x6_w, x6_h)
         #print("self.down5: ", final_x5.shape)
 
-        x = self.up1(final_x7, x6)
-        x = self.up2(x, x5)
-        x = self.up3(x, x4)
-        x = self.up4(x, x3)
-        x = self.up5(x, x2)
-        x = self.up6(x, x1)
-        #x = self.up7(x, x1)
-        print("x.shape: ", x.shape)
+        x = self.up1(final_x6, x5)
+        x = self.up2(x, x4)
+        x = self.up3(x, x3)
+        x = self.up4(x, x2)
+        x = self.up5(x, x1)
+
+        #print("x.shape: ", x.shape)
         temp_logits = self.outc(x)
-        print("temp_logits: ", temp_logits.shape)
+        #print("temp_logits: ", temp_logits.shape)
         logits=temp_logits
         #temp_logits = temp_logits.view(batch_size, pairs_num, -1)
         #print("temp_logits: ", temp_logits.shape)
