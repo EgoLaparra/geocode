@@ -92,22 +92,19 @@ if __name__ == '__main__':
                         link_geometry = geom.get_entity_geometry(link)
                         geometries.append(link_geometry)
 
-                # limit_to_inner_boundaries(geom, geometries)
+                limit_to_inner_boundaries(geom, geometries)
                 min_bound, max_bound = geometry_group_bounds(geom, geometries, squared=True)
                 min_bound = (max(min_bound[0], -179.999999), max(min_bound[1], -89.999999))
                 max_bound = (min(max_bound[0], 179.999999), min(max_bound[1], 89.999999))
                 grid = bounded_grid(geom, args.polygon_size, min_bound, max_bound)
-                #print("grid: ", grid)
-                #print("grid length: ", len(grid))
-                #print("min_bound: ", min_bound)
-                #print("max_bound: ", max_bound)
+                geometries = iter(geometries)
                 pID2links = OrderedDict()
                 for p in entity.xpath('./p'):
                     pID = p.get("id")
                     linkID2coordinates = OrderedDict()
                     for e, link in enumerate(p.xpath('./link')):
                         linkID = link.get("id")
-                        link_geometry = geom.get_entity_geometry(link)
+                        link_geometry = next(geometries)
                         link_bitmap = geometry_to_bitmap(geom, grid, link_geometry)
                         #link_geometry_from_bitmap = bitmap_to_geometry(geom, grid, link_bitmap)
                         linkID2coordinates[linkID] = link_bitmap
@@ -123,8 +120,8 @@ if __name__ == '__main__':
                     raise Exception("OUT_OF_BOUNDS!")
                 target_bitmap = geometry_to_bitmap(geom, grid, entity_geometry)
                 #target_geometry_from_bitmap = bitmap_to_geometry(geom, grid, target_bitmap)
-                print('target_geometry_from_bitmap: ', target_bitmap)
-                print('length', len(target_bitmap))
+                #print('target_geometry_from_bitmap: ', target_bitmap)
+                #print('length', len(target_bitmap))
 
                 ##process entity description
                 # temp_text = " ".join(entity.xpath('./p/text()'))
