@@ -316,7 +316,7 @@ def evaluate(args, model, tokenizer, prefix="", test=False):
         #print(out_label_ids)
         print(out_label_ids.shape)
         preds_score = preds.tolist()
-        f1 = f1_score(out_label_ids, (final_preds >= 0.2).astype(int), pos_label=1, average='binary')
+        f1 = f1_score(out_label_ids.flatten(), (final_preds.flatten() >= 0.2).astype(int), pos_label=1, average='binary')
         result = {"eval_acc": f1, "eval_loss": eval_loss}
         # result = {"eval_loss": eval_loss}
         preds_temp = {'preds': final_preds.tolist()}
