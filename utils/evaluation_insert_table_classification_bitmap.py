@@ -29,18 +29,18 @@ def pickle_load_large_file(filepath):
 
 geom = Geometries()
 
-with open('/xdisk/bethard/zeyuzhang/Geo-Compositional_classification_bitmap_unet_deeper/output_100_6_large_epoch100/eval_preds.json', 'r') as file:
+with open('/xdisk/bethard/zeyuzhang/Geo-Compositional_classification_bitmap_unet_deeper/output_64_6_large_epoch100/eval_preds.json', 'r') as file:
     output_raw = json.load(file)
 
-entity2desc = pickle_load_large_file('/xdisk/bethard/zeyuzhang/Geo-Compositional_data/model_input_desc_classification_bitmap_100_dev.pkl')
-entityID2boundary = pickle_load_large_file('/xdisk/bethard/zeyuzhang/Geo-Compositional_data/model_input_boundary_classification_bitmap_100_dev.pkl')
+entity2desc = pickle_load_large_file('/xdisk/bethard/zeyuzhang/Geo-Compositional_data/model_input_desc_classification_bitmap_boundary_64_dev.pkl')
+entityID2boundary = pickle_load_large_file('/xdisk/bethard/zeyuzhang/Geo-Compositional_data/model_input_boundary_classification_bitmap_boundary_64_dev.pkl')
 entityIds = list(entity2desc.keys())
 print(output_raw.keys())
 #value = output_raw['preds_Compositional_classification_relative_boundary/output_10_large']
-value = output_raw['preds_Compositional_classification_bitmap_unet_deeper/output_100_6_large_epoch100']
+value = output_raw['preds_10000']
 #print(value)
 print(len(value))
-threshold = .21
+threshold = .5
 #0.06
 num_table_inserted = 0
 for idx, prediction in enumerate(value):
@@ -48,23 +48,20 @@ for idx, prediction in enumerate(value):
     min_bound, max_bound = entityID2boundary[entity_id]
     min_bound = (max(min_bound[0], -179.999999), max(min_bound[1], -89.999999))
     max_bound = (min(max_bound[0], 179.999999), min(max_bound[1], 89.999999))
-    grid = bounded_grid(geom, 100, min_bound, max_bound)
+    grid = bounded_grid(geom, 64, min_bound, max_bound)
     temp_flag = 0
-    over_flag = []
     for each_row in prediction:
         for item in each_row:
             if item > threshold:
                 temp_flag = 1
-    if entity_id == 'GL033_200':
-        pickle_dump_large_file(grid, "./debug_grid.pkl")
-        pickle_dump_large_file(prediction, "./debug_bitmap.pkl")
+    #if entity_id == 'GL033_200':
+    #    pickle_dump_large_file(grid, "./debug_grid.pkl")
+    #    pickle_dump_large_file(prediction, "./debug_bitmap.pkl")
     #    continue
-    #if entity_id == 'GL461_410' or entity_id == "GL336_180":
-    #    continue
+
     if temp_flag == 0:
         continue
-    #if 0 not in over_flag:
-    #    continue
+
     num_table_inserted+=1
     print(entity_id)
     target_geometry = bitmap_to_geometry(geom, grid, prediction, threshold=threshold)
