@@ -29,7 +29,7 @@ def pickle_load_large_file(filepath):
 
 geom = Geometries()
 
-with open('/xdisk/bethard/zeyuzhang/Geo-Compositional_classification_bitmap_unet_deeper/output_64_6_large_epoch200/eval_preds.json', 'r') as file:
+with open('/xdisk/bethard/zeyuzhang/Geo-Compositional_classification_bitmap_unet_deeper/output_64_6_large_epoch300/eval_preds.json', 'r') as file:
     output_raw = json.load(file)
 
 entity2desc = pickle_load_large_file('/xdisk/bethard/zeyuzhang/Geo-Compositional_data/model_input_desc_classification_bitmap_boundary_64_dev.pkl')
