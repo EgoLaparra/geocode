@@ -38,14 +38,12 @@ def get_entities_fromXML(xml_filepath):
 
     return all_entities
 
-def get_text(node, e_id, flag):
-    print("e_id: ", e_id)
-    print("flag: ", flag)
-    if not node.text.isspace() and not node.tail.isspace() and flag == e_id:
-        #if flag == e_id:
+def get_text(node):
+
+    if not node.text.isspace() and not node.tail.isspace():
         node.text = 'LOCATION'
-        flag+=1
-    parts = ([node.text] + list(chain(*(get_text(c, e_id, flag) for c in node.getchildren()))) + [node.tail])
+
+    parts = ([node.text] + list(chain(*(get_text(c) for c in node.getchildren()))) + [node.tail])
 
     return ''.join(filter(None, parts))
 
@@ -93,8 +91,8 @@ if __name__ == '__main__':
             try:
                 ##process target entity
                 entity_geometry = geom.get_entity_geometry(entity)
-                #entity_type = geom.get_geometry_type(entity_geometry)
-                #entity_size = sprel.geometry_size(geom, entity_geometry, entity_type)
+                entity_type = geom.get_geometry_type(entity_geometry)
+                entity_size = sprel.geometry_size(geom, entity_geometry, entity_type)
                 ##process paras entities
                 for p in entity.xpath('./p'):
                     pID = p.get("id")
@@ -105,8 +103,7 @@ if __name__ == '__main__':
                         relate_matrix = geom.relate(entity_geometry, geometry)
                         reference_azimuth = sprel.reference_azimuth(geom, entity_geometry, geometry)
                         reference_distance = sprel.reference_distance(geom, entity_geometry, geometry)
-                        flag=0
-                        text = get_text(entity, e_id, flag)
+                        text = get_text(entity)
                         print("text: ", text)
                         linkID2relate[linkID] = relate_matrix
                         linkID2azimuth[linkID] = reference_azimuth
