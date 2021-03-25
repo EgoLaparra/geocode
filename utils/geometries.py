@@ -73,10 +73,13 @@ class Geometries:
     def get_bounding_diagonal(self, geometry):
         return self.database.execute_query("bounding_diagonal", geometry)
 
+    def relate(self, geometry_a, geometry_b):
+        return self.database.execute_query("relate", (geometry_a, geometry_b))
+
     def contains(self, geometry_a, geometry_b):
         return self.database.execute_query("contains", (geometry_a, geometry_b))
 
-    def instersects(self, geometry_a, geometry_b):
+    def intersects(self, geometry_a, geometry_b):
         return self.database.execute_query("intersects", (geometry_a, geometry_b))
 
     def calculate_distance(self, geometry_a, geometry_b):
@@ -87,6 +90,9 @@ class Geometries:
 
     def calculate_hausdorff_distance(self, geometry_a, geometry_b):
         return self.database.execute_query("hausdorff", (geometry_a, geometry_b))
+
+    def calculate_azimuth(self, geometry_a, geometry_b):
+        return self.database.execute_query("azimuth", (geometry_a, geometry_b))
 
     def intersect_geometries(self, geometry_list):
         result = geometry_list[0]
