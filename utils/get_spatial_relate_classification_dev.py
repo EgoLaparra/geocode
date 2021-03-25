@@ -41,10 +41,10 @@ def get_entities_fromXML(xml_filepath):
 def get_text(node, e_id, flag):
     print("e_id: ", e_id)
     print("flag: ", flag)
-    if not node.text.isspace() and not node.tail.isspace():
-        if flag == e_id:
-            node.text = 'LOCATION'
-            flag+=1
+    if not node.text.isspace() and not node.tail.isspace() and flag == e_id:
+        #if flag == e_id:
+        node.text = 'LOCATION'
+        flag+=1
     parts = ([node.text] + list(chain(*(get_text(c, e_id, flag) for c in node.getchildren()))) + [node.tail])
 
     return ''.join(filter(None, parts))
