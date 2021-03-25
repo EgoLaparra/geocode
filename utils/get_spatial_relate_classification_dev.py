@@ -44,7 +44,7 @@ def get_text(node, e_id, flag):
     if not node.text.isspace() and not node.tail.isspace():
         if flag == e_id:
             node.text = 'LOCATION'
-        flag+=1
+            flag+=1
     parts = ([node.text] + list(chain(*(get_text(c, e_id, flag) for c in node.getchildren()))) + [node.tail])
 
     return ''.join(filter(None, parts))
