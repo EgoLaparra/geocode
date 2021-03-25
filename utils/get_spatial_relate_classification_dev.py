@@ -38,13 +38,12 @@ def get_entities_fromXML(xml_filepath):
 
     return all_entities
 
-def get_text(node, e_id):
-    flag = 0
+def get_text(node, e_id, flag):
     if not node.text.isspace() and not node.tail.isspace():
         if flag == e_id:
             node.text = 'LOCATION'
         flag+=1
-    parts = ([node.text] + list(chain(*(get_text(c, e_id) for c in node.getchildren()))) + [node.tail])
+    parts = ([node.text] + list(chain(*(get_text(c, e_id, flag) for c in node.getchildren()))) + [node.tail])
 
     return ''.join(filter(None, parts))
 
@@ -104,7 +103,8 @@ if __name__ == '__main__':
                         relate_matrix = geom.relate(entity_geometry, geometry)
                         reference_azimuth = sprel.reference_azimuth(geom, entity_geometry, geometry)
                         reference_distance = sprel.reference_distance(geom, entity_geometry, geometry)
-                        text = get_text(entity, e_id)
+                        flag=0
+                        text = get_text(entity, e_id, flag)
                         print("text: ", text)
                         linkID2relate[linkID] = relate_matrix
                         linkID2azimuth[linkID] = reference_azimuth
