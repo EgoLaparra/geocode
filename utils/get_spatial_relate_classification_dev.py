@@ -44,7 +44,7 @@ def get_text(node, e_id):
         if flag == e_id:
             node.text = 'LOCATION'
         flag+=1
-    parts = ([node.text] + list(chain(*(get_text(c) for c in node.getchildren()))) + [node.tail])
+    parts = ([node.text] + list(chain(*(get_text(c, e_id) for c in node.getchildren()))) + [node.tail])
 
     return ''.join(filter(None, parts))
 
