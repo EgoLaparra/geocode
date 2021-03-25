@@ -104,6 +104,7 @@ if __name__ == '__main__':
                         reference_azimuth = sprel.reference_azimuth(geom, entity_geometry, geometry)
                         reference_distance = sprel.reference_distance(geom, entity_geometry, geometry)
                         flag=0
+                        print("e_id: ", e_id)
                         text = get_text(entity, e_id, flag)
                         print("text: ", text)
                         linkID2relate[linkID] = relate_matrix
