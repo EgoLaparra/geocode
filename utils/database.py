@@ -88,6 +88,8 @@ SQL = {"geometry":          {"query": """select geom from geometries
                              "single_output": True},
        "scale":             {"query": """select st_scale('%s', '%s'::geometry, '%s');""",
                              "single_output": True},
+       "project":           {"query": """select st_project('%s', '%s', radians('%s'));""",
+                             "single_output": True},
        "makepolygon":       {"query": """select st_makepolygon('%s');""",
                              "single_output": True},
        "transform":         {"query": """select st_transform(st_setsrid(st_astext('%s'), 4326), 3857) as geom;""",

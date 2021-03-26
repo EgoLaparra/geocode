@@ -117,6 +117,9 @@ class Geometries:
     def scale_geometry(self, geometry, factor, origin):
         return self.database.execute_query("scale", (geometry, factor, origin))
 
+    def project_geometry(self, geometry, distance, azimuth):
+        return self.database.execute_query("project", (geometry, distance, azimuth))
+
     def make_geography(self, geometry):
         return self.database.execute_query("geography", geometry)
 
