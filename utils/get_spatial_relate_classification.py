@@ -93,6 +93,7 @@ if __name__ == '__main__':
                 ##process target entity
                 entity_geometry = geom.get_entity_geometry(entity)
                 entity_type = geom.get_geometry_type(entity_geometry)
+                print("entity_type: ",entity_type)
                 entity_size = sprel.geometry_size(geom, entity_geometry, entity_type)
                 ##process paras entities
                 for p in entity.xpath('./p'):
