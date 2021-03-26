@@ -96,8 +96,6 @@ if __name__ == '__main__':
                 ##process paras entities
                 links = entity.xpath(".//link")
                 for link in links:
-                    linkID = link.get("id")
-                    print("linkID: ", linkID)
                     geometry = geom.get_entity_geometry(link)
                     relate_matrix = geom.relate(entity_geometry, geometry)
                     reference_azimuth = sprel.reference_azimuth(geom, entity_geometry, geometry)
@@ -105,6 +103,12 @@ if __name__ == '__main__':
                     linkID2relate[linkID] = relate_matrix
                     linkID2azimuth[linkID] = reference_azimuth
                     linkID2distance[linkID] = reference_distance
+                all_links_text = [link.text for link in links]
+                for link in links:
+                    linkID = link.get("id")
+                    print("linkID: ", linkID)
+                    for l_id, l in enumerate(links):
+                        l.text = all_links_text[l_id]
                     link.text = "LOCATION"
                     description_text = get_text(entity)
                     print("text: ", description_text)
