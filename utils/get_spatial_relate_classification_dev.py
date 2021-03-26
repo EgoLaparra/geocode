@@ -53,17 +53,17 @@ if __name__ == '__main__':
                         help='path of data collections')
     parser.add_argument('--sample_size', default=50, type=int,
                         help='number of sample datas')
-    parser.add_argument('--output_relate_dev', default='/xdisk/bethard/zeyuzhang/Geo-Compositional_data/geocode-data/collection_samples/model_input_target_relate_dev.pkl', type=str,
+    parser.add_argument('--output_relate_dev', default='/xdisk/bethard/zeyuzhang/Geo-Compositional_data/model_input_target_relate_dev.pkl', type=str,
                         help='path of data collections samples')
-    parser.add_argument('--output_azimuth_dev', default='/xdisk/bethard/zeyuzhang/Geo-Compositional_data/geocode-data/collection_samples/model_input_target_azimuth_dev.pkl',
+    parser.add_argument('--output_azimuth_dev', default='/xdisk/bethard/zeyuzhang/Geo-Compositional_data/model_input_target_azimuth_dev.pkl',
                         type=str,
                         help='path of data collections samples')
     parser.add_argument('--output_distance_dev',
-                        default='/xdisk/bethard/zeyuzhang/Geo-Compositional_data/geocode-data/collection_samples/model_input_target_distance_dev.pkl',
+                        default='/xdisk/bethard/zeyuzhang/Geo-Compositional_data/model_input_target_distance_dev.pkl',
                         type=str,
                         help='path of data collections samples')
     parser.add_argument('--output_desc_dev',
-                        default='/xdisk/bethard/zeyuzhang/Geo-Compositional_data/geocode-data/collection_samples/model_input_desc_dev.pkl',
+                        default='/xdisk/bethard/zeyuzhang/Geo-Compositional_data/model_input_desc_dev.pkl',
                         type=str,
                         help='path of data collections samples')
     parser.add_argument('--polygon_size',
@@ -91,10 +91,19 @@ if __name__ == '__main__':
             try:
                 ##process target entity
                 entity_geometry = geom.get_entity_geometry(entity)
-                #entity_type = geom.get_geometry_type(entity_geometry)
-                #entity_size = sprel.geometry_size(geom, entity_geometry, entity_type)
+                entity_type = geom.get_geometry_type(entity_geometry)
+                entity_size = sprel.geometry_size(geom, entity_geometry, entity_type)
                 ##process paras entities
+                temp_links = []
+                for p in entity.xpath('./p'):
+                    pID = p.get("id")
+                    linkID2coordinates = OrderedDict()
+                    for e, link in enumerate(p.xpath('./link')):
+                        temp_links.append(link)
+
                 links = entity.xpath(".//link")
+                assert len(links) == len(temp_links)
+
                 for link in links:
                     linkID = link.get("id")
                     geometry = geom.get_entity_geometry(link)
