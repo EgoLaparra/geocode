@@ -104,16 +104,13 @@ if __name__ == '__main__':
                     linkID2relate[linkID] = relate_matrix
                     linkID2azimuth[linkID] = reference_azimuth
                     linkID2distance[linkID] = reference_distance
-                all_links_text = [link.text for link in links]
-                for link in links:
-                    linkID = link.get("id")
-                    print("linkID: ", linkID)
-                    for l_id, l in enumerate(links):
-                        l.text = all_links_text[l_id]
+                    temp_link_text = link.text
                     link.text = "LOCATION"
                     description_text = get_text(entity)
+                    print("linkID: ", linkID)
                     print("text: ", description_text)
                     linkID2desc[linkID] = description_text
+                    link.text = temp_link_text
 
 
                 progress_bar.update(1)
