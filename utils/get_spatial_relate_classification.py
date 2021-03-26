@@ -89,23 +89,28 @@ if __name__ == '__main__':
                 ##process target entity
                 entity_geometry = geom.get_entity_geometry(entity)
                 entity_type = geom.get_geometry_type(entity_geometry)
-                print("entity_type: ",entity_type)
                 entity_size = sprel.geometry_size(geom, entity_geometry, entity_type)
                 ##process paras entities
-                for p in entity.xpath('./p'):
-                    pID = p.get("id")
-                    for e_id, link in enumerate(p.xpath('./link')):
-                        linkID = link.get("id")
-                        print("linkID: ", linkID)
-                        geometry = geom.get_entity_geometry(link)
-                        relate_matrix = geom.relate(entity_geometry, geometry)
-                        reference_azimuth = sprel.reference_azimuth(geom, entity_geometry, geometry)
-                        reference_distance = sprel.reference_distance(geom, entity_geometry, geometry)
-                        text = get_text(entity)
-                        linkID2relate[linkID] = relate_matrix
-                        linkID2azimuth[linkID] = reference_azimuth
-                        linkID2distance[linkID] = reference_distance
-                        linkID2desc[linkID] = text
+                links = entity.xpath(".//link")
+                for link in links:
+                    linkID = link.get("id")
+                    geometry = geom.get_entity_geometry(link)
+                    relate_matrix = geom.relate(entity_geometry, geometry)
+                    reference_azimuth = sprel.reference_azimuth(geom, entity_geometry, geometry)
+                    reference_distance = sprel.reference_distance(geom, entity_geometry, geometry)
+                    linkID2relate[linkID] = relate_matrix
+                    linkID2azimuth[linkID] = reference_azimuth
+                    linkID2distance[linkID] = reference_distance
+                all_links_text = [link.text for link in links]
+                for link in links:
+                    linkID = link.get("id")
+                    print("linkID: ", linkID)
+                    for l_id, l in enumerate(links):
+                        l.text = all_links_text[l_id]
+                    link.text = "LOCATION"
+                    description_text = get_text(entity)
+                    print("text: ", description_text)
+                    linkID2desc[linkID] = description_text
 
 
                 progress_bar.update(1)
