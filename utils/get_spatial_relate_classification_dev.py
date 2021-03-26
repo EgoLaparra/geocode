@@ -40,8 +40,8 @@ def get_entities_fromXML(xml_filepath):
 
 def get_text(node):
 
-    if not node.text.isspace() and not node.tail.isspace():
-        node.text = 'LOCATION'
+    # if not node.text.isspace() and not node.tail.isspace():
+    #     node.text = 'LOCATION'
 
     parts = ([node.text] + list(chain(*(get_text(c) for c in node.getchildren()))) + [node.tail])
 
@@ -94,21 +94,21 @@ if __name__ == '__main__':
                 entity_type = geom.get_geometry_type(entity_geometry)
                 entity_size = sprel.geometry_size(geom, entity_geometry, entity_type)
                 ##process paras entities
-                for p in entity.xpath('./p'):
-                    pID = p.get("id")
-                    for e_id, link in enumerate(p.xpath('./link')):
-                        linkID = link.get("id")
-                        print("linkID: ", linkID)
-                        geometry = geom.get_entity_geometry(link)
-                        relate_matrix = geom.relate(entity_geometry, geometry)
-                        reference_azimuth = sprel.reference_azimuth(geom, entity_geometry, geometry)
-                        reference_distance = sprel.reference_distance(geom, entity_geometry, geometry)
-                        text = get_text(entity)
-                        print("text: ", text)
-                        linkID2relate[linkID] = relate_matrix
-                        linkID2azimuth[linkID] = reference_azimuth
-                        linkID2distance[linkID] = reference_distance
-                        linkID2desc[linkID] = text
+                links = entity.xpath(".//link")
+                for link in links:
+                    linkID = link.get("id")
+                    print("linkID: ", linkID)
+                    geometry = geom.get_entity_geometry(link)
+                    relate_matrix = geom.relate(entity_geometry, geometry)
+                    reference_azimuth = sprel.reference_azimuth(geom, entity_geometry, geometry)
+                    reference_distance = sprel.reference_distance(geom, entity_geometry, geometry)
+                    linkID2relate[linkID] = relate_matrix
+                    linkID2azimuth[linkID] = reference_azimuth
+                    linkID2distance[linkID] = reference_distance
+                    link.text = "LOCATION"
+                    description_text = get_text(entity)
+                    print("text: ", description_text)
+                    linkID2desc[linkID] = description_text
 
 
                 progress_bar.update(1)
