@@ -94,16 +94,7 @@ if __name__ == '__main__':
                 entity_type = geom.get_geometry_type(entity_geometry)
                 entity_size = sprel.geometry_size(geom, entity_geometry, entity_type)
                 ##process paras entities
-                temp_links = []
-                for p in entity.xpath('./p'):
-                    pID = p.get("id")
-                    linkID2coordinates = OrderedDict()
-                    for e, link in enumerate(p.xpath('./link')):
-                        temp_links.append(link)
-
                 links = entity.xpath(".//link")
-                assert len(links) == len(temp_links)
-
                 for link in links:
                     linkID = link.get("id")
                     geometry = geom.get_entity_geometry(link)
