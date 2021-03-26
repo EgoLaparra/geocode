@@ -12,7 +12,8 @@ def ldexp10(x, exp):
 
 def geometry_size(geom, geometry, geometry_type="ST_Polygon", discrete=True):
     size = frexp10(
-        geom.get_geometry_area(geometry) * 1000000 if geometry_type == "ST_Polygon"
+        geom.get_geometry_area(geometry) * 1000000
+        if geometry_type == "ST_Polygon" or geometry_type == "ST_MultiPolygon"
         else geom.get_geometry_length(geometry) * 1000
     )
     return int(size[0]) if discrete else size[0], size[1]
@@ -49,7 +50,8 @@ def project_centroid(geom, reference_geometry, reference_distance, reference_azi
 def buffer_centroid(geom, target_centroid, geometry_type, geometry_size):
     geometry_size = ldexp10(geometry_size[0], geometry_size[1])
     radius = (
-                 math.sqrt(geometry_size / math.pi) if geometry_type == "ST_Polygon"
+                 math.sqrt(geometry_size / math.pi)
+                 if geometry_type == "ST_Polygon" or geometry_type == "ST_MultiPolygon"
                  else geometry_size / 2
               ) / 1000
     return geom.apply_buffer(target_centroid, radius)
