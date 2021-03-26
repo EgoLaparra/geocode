@@ -96,6 +96,7 @@ if __name__ == '__main__':
                 ##process paras entities
                 links = entity.xpath(".//link")
                 for link in links:
+                    linkID = link.get("id")
                     geometry = geom.get_entity_geometry(link)
                     relate_matrix = geom.relate(entity_geometry, geometry)
                     reference_azimuth = sprel.reference_azimuth(geom, entity_geometry, geometry)
