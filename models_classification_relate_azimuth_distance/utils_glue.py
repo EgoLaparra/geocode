@@ -148,10 +148,11 @@ class GeoComposeProcessor(DataProcessor):
         flag_id = 0
         for entity_id in desciptions.keys():
             desc = desciptions[entity_id]
+            text = re.sub(r'( |\n|\t)+', ' ', desc.strip())
             target = relate[entity_id]
             examples.append(InputExample(
                 example_id=str(flag_id),
-                text_a=desc,
+                text_a=text,
                 text_b="",
                 label=target,
             ))
