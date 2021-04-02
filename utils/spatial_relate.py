@@ -1,5 +1,5 @@
 import math
-
+import re
 
 def frexp10(x):
     exp = int(math.log10(x))
@@ -55,3 +55,26 @@ def buffer_centroid(geom, target_centroid, geometry_type, geometry_size):
                  else geometry_size / 2
               ) / 1000
     return geom.apply_buffer(target_centroid, radius)
+
+
+def equivalent_relation(relate_matrix):
+    relation = []
+    if re.match(r'^[^F].F..FFF.$', relate_matrix) is not None:
+        relation = "Equals"
+    elif re.match(r'^FF.FF.{4}$', relate_matrix) is not None:
+        relation = "Disjoint"
+    elif re.match(r'^[^F].{5}FF.$', relate_matrix) is not None:
+        relation = "Contains"
+    elif re.match(r'^([^F].{5}FF.|.[^F].{4}FF.|.{3}[^F]..FF.|.{3}[^F].FF.)$', relate_matrix) is not None:
+        relation = "Covers"
+    elif re.match(r'^[^F].F..F.{3}$', relate_matrix) is not None:
+        relation = "Within"
+    elif re.match(r'^([^F].F..F.{3}|.[^F]F..F.{3}|..F[^F].F.{3}|..F.[^F]F.{3})$', relate_matrix) is not None:
+        relation = "CoveredBy"
+    elif re.match(r'^(F[^F].{7}|F..[^F].{5}|F.{3}[^F].{4})$', relate_matrix) is not None:
+        relation = "Touches"
+    elif re.match(r'^([^F].{8}|.[^F].{7}|.{3}[^F].{5}|.{4}[^F].{4})$', relate_matrix) is not None:
+        relation = "Intersects"
+    elif relation is None:
+        raise Exception("Incorrect relate matrix: %s" % relate_matrix)
+    return relation
