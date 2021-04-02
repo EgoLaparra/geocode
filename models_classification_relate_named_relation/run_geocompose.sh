@@ -29,7 +29,7 @@ singularity exec --nv /xdisk/bethard/zeyuzhang/hpc-ml_centos7-python3.7-transfor
 --do_train \
 --do_eval \
 --eval_all_checkpoints \
---data_dir /home/u12/zeyuzhang/Geo_Compositional/geocode-data/collection_samples \
+--data_dir /xdisk/bethard/zeyuzhang/Geo-Compositional_data/ \
 --n_labels 8 \
 --learning_rate 5e-6 \
 --num_train_epochs 5 \
