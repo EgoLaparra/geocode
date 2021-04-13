@@ -70,6 +70,11 @@ if __name__ == '__main__':
                         default='/xdisk/bethard/zeyuzhang/Geo-Compositional_data/model_input_target_entity_content_dev.pkl',
                         type=str,
                         help='path of data collections samples')
+    parser.add_argument('--output_target_entity_ID_dev',
+                        default='/xdisk/bethard/zeyuzhang/Geo-Compositional_data/model_input_target_entity_ID_dev.pkl',
+                        type=str,
+                        help='path of data collections samples')
+
     parser.add_argument('--polygon_size',
                         default=10,
                         type=int,
@@ -86,6 +91,7 @@ if __name__ == '__main__':
     linkID2azimuth = OrderedDict()
     linkID2distance = OrderedDict()
     linkID2target_entity_content = OrderedDict()
+    linkID2target_entity_ID = OrderedDict()
     entities = iter(entities)
 
     with tqdm(total=num_entities, desc='Entities') as progress_bar:
@@ -117,6 +123,7 @@ if __name__ == '__main__':
                     print("text: ", description_text)
                     linkID2desc[linkID] = description_text
                     linkID2target_entity_content[linkID] = target_entity_content
+                    linkID2target_entity_ID[linkID] = entity_id
                     link.text = temp_link_text
 
 
@@ -145,10 +152,12 @@ if __name__ == '__main__':
     print(len(list(linkID2distance.keys())))
     print(len(list(linkID2desc.keys())))
     print(len(list(linkID2target_entity_content.keys())))
+    print(len(list(linkID2target_entity_ID.keys())))
     assert len(list(linkID2relate.keys())) == len(list(linkID2azimuth.keys())) == len(list(linkID2distance.keys())) == len(list(linkID2desc.keys()))
     pickle_dump_large_file(linkID2relate, args.output_relate_dev)
     pickle_dump_large_file(linkID2azimuth, args.output_azimuth_dev)
     pickle_dump_large_file(linkID2distance, args.output_distance_dev)
     pickle_dump_large_file(linkID2desc, args.output_desc_dev)
     pickle_dump_large_file(linkID2target_entity_content, args.output_target_entity_content_dev)
+    pickle_dump_large_file(linkID2target_entity_ID, args.output_target_entity_ID_dev)
     geom.close_connection()
