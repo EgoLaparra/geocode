@@ -39,7 +39,8 @@ def get_entities_fromXML(xml_filepath):
     return all_entities
 
 def get_text(node):
-
+    if not node.text.isspace() and not node.tail.isspace():
+       node.text = 'LOCATION'
     parts = ([node.text] + list(chain(*(get_text(c) for c in node.getchildren()))) + [node.tail])
 
     return ''.join(filter(None, parts))
@@ -55,7 +56,7 @@ if __name__ == '__main__':
                         type=str,
                         help='path of data collections samples')
     parser.add_argument('--output_desc_train',
-                        default='/xdisk/bethard/zeyuzhang/Geo-Compositional_data/model_input_desc_forTargetSize_train.pkl',
+                        default='/xdisk/bethard/zeyuzhang/Geo-Compositional_data/model_input_desc_forTargetSize_LOCATION_train.pkl',
                         type=str,
                         help='path of data collections samples')
     parser.add_argument('--polygon_size',
