@@ -113,6 +113,6 @@ if __name__ == '__main__':
     print(len(list(entityID2desc.keys())))
     print(len(list(entityID2target.keys())))
     assert len(list(entityID2desc.keys())) == len(list(entityID2target.keys()))
-    pickle_dump_large_file(entityID2desc, args.output_target_train)
-    pickle_dump_large_file(entityID2target, args.output_desc_train)
+    pickle_dump_large_file(entityID2desc, args.output_desc_train)
+    pickle_dump_large_file(entityID2target, args.output_target_train)
     geom.close_connection()
