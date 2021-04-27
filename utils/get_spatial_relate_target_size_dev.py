@@ -46,16 +46,16 @@ def get_text(node):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--xml_filepath_train', default='../../geocode-data/collection_samples/train_samples.xml', type=str,
+    parser.add_argument('--xml_filepath_dev', default='../../geocode-data/collection_samples/dev_samples.xml', type=str,
                         help='path of data collections')
     parser.add_argument('--sample_size', default=50, type=int,
                         help='number of sample datas')
-    parser.add_argument('--output_target_train',
-                        default='/xdisk/bethard/zeyuzhang/Geo-Compositional_data/model_input_target_size_train.pkl',
+    parser.add_argument('--output_target_dev',
+                        default='/xdisk/bethard/zeyuzhang/Geo-Compositional_data/model_input_target_size_dev.pkl',
                         type=str,
                         help='path of data collections samples')
-    parser.add_argument('--output_desc_train',
-                        default='/xdisk/bethard/zeyuzhang/Geo-Compositional_data/model_input_desc_forTargetSize_train.pkl',
+    parser.add_argument('--output_desc_dev',
+                        default='/xdisk/bethard/zeyuzhang/Geo-Compositional_data/model_input_desc_forTargetSize_dev.pkl',
                         type=str,
                         help='path of data collections samples')
     parser.add_argument('--polygon_size',
@@ -66,7 +66,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
     geom = Geometries()
 
-    entities = get_entities_fromXML(args.xml_filepath_train)
+    entities = get_entities_fromXML(args.xml_filepath_dev)
     num_entities = len(entities)
     print("entity numbers: ", num_entities)
     entityID2desc = OrderedDict()
@@ -113,6 +113,6 @@ if __name__ == '__main__':
     print(len(list(entityID2desc.keys())))
     print(len(list(entityID2target.keys())))
     assert len(list(entityID2desc.keys())) == len(list(entityID2target.keys()))
-    pickle_dump_large_file(entityID2desc, args.output_desc_train)
-    pickle_dump_large_file(entityID2target, args.output_target_train)
+    pickle_dump_large_file(entityID2desc, args.output_desc_dev)
+    pickle_dump_large_file(entityID2target, args.output_target_dev)
     geom.close_connection()
