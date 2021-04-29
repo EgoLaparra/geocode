@@ -59,6 +59,10 @@ if __name__ == '__main__':
                         default='/xdisk/bethard/zeyuzhang/Geo-Compositional_data/model_input_desc_forTargetSize_LOCATION_dev.pkl',
                         type=str,
                         help='path of data collections samples')
+    parser.add_argument('--output_target_entity_content_dev',
+                        default='/xdisk/bethard/zeyuzhang/Geo-Compositional_data/model_input_target_entity_content_forTargetSize_dev.pkl',
+                        type=str,
+                        help='path of data collections samples')
     parser.add_argument('--polygon_size',
                         default=10,
                         type=int,
@@ -72,12 +76,14 @@ if __name__ == '__main__':
     print("entity numbers: ", num_entities)
     entityID2desc = OrderedDict()
     entityID2target = OrderedDict()
+    entityID2target_entity_content = OrderedDict()
     entities = iter(entities)
 
     with tqdm(total=num_entities, desc='Entities') as progress_bar:
         entity = next(entities, None)
         while entity is not None:
             entity_id = entity.get("id")
+            target_entity_content = entity.get("wikipedia")
             print(entity_id)
             try:
                 ##process target entity
@@ -90,7 +96,7 @@ if __name__ == '__main__':
 
                 entityID2desc[entity_id] = text
                 entityID2target[entity_id] = entity_size
-
+                entityID2target_entity_content[entity_id] = target_entity_content
                 progress_bar.update(1)
                 entity = next(entities, None)
             except OperationalError as e:
@@ -113,7 +119,9 @@ if __name__ == '__main__':
 
     print(len(list(entityID2desc.keys())))
     print(len(list(entityID2target.keys())))
-    assert len(list(entityID2desc.keys())) == len(list(entityID2target.keys()))
+    print(len(list(entityID2target_entity_content.keys())))
+    assert len(list(entityID2desc.keys())) == len(list(entityID2target.keys())) == len(list(entityID2target_entity_content.keys()))
     pickle_dump_large_file(entityID2desc, args.output_desc_dev)
     pickle_dump_large_file(entityID2target, args.output_target_dev)
+    pickle_dump_large_file(entityID2target_entity_content, args.output_target_entity_content_dev)
     geom.close_connection()
