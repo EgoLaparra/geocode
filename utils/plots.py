@@ -8,9 +8,9 @@ from shapely.geometry import Polygon
 from geometries import Geometries
 
 
-def plot_geometries(geom, gdf, geometry_list, color_list, bound=False, lims=None):
+def plot_geometries(geom, gdf, geometry_list, color_list, alpha_list, bound=False, lims=None):
     _, ax = plt.subplots(figsize=(100., 100.))
-    for geometry, color in zip(geometry_list, color_list):
+    for geometry, color, alpha in zip(geometry_list, color_list, alpha_list):
         if color is None:
             geometry.plot(ax=ax, alpha=0.)
         else:
@@ -24,7 +24,7 @@ def plot_geometries(geom, gdf, geometry_list, color_list, bound=False, lims=None
                 geodataframe = geom.make_geodataframe(geometry, gdf)
                 geom_type = geom.get_geometry_type(geometry)
                 if geom_type == "ST_Polygon" or geom_type == "ST_MultiPolygon":
-                    geodataframe.plot(ax=ax, alpha=0.5, color=color, linewidth=1.5, edgecolor=color)
+                    geodataframe.plot(ax=ax, alpha=alpha, color=color, linewidth=1.5, edgecolor=color)
                 else:
                     geodataframe.plot(ax=ax, alpha=1., color=color, linewidth=2.)
             if bound and geodataframe is not None:
@@ -79,10 +79,12 @@ if __name__ == "__main__":
     gdf = gpd.GeoDataFrame()
     data_source = etree.parse(sys.argv[1])
     entity_id = sys.argv[2]
+    target_color = "darkred"
+    ref_color = "steelblue"
     print("Plot entity %s" % entity_id)
     exclude = []
     if len(sys.argv) > 3:
-        exclude = sys.argv[4].split(",")
+        exclude = sys.argv[3].split(",")
         print("Exclude entity %s" % exclude)
     prediction_table = None
     if len(sys.argv) == 5:
@@ -91,10 +93,11 @@ if __name__ == "__main__":
     entity = data_source.xpath("//entity[@id='%s' and @status='5']" % entity_id)[0]
     if entity is not None and prediction_table is not None:
         entity_geometries = get_entity_geometries(geom, entity)
-        predicted_geometry = [geom.get_predicted_geometry(data_source, entity_id)]
+        predicted_geometry = [geom.get_predicted_geometry(prediction_table, entity_id)]
         geometries_for_plot = entity_geometries + predicted_geometry
-        colors_for_plot = ["darkred"]*len(entity_geometries) + ["steelblue"]
-        plot_geometries(geom, gdf, geometries_for_plot, colors_for_plot, bound=True)
+        colors_for_plot = [target_color]*len(entity_geometries) + [ref_color]
+        alphas_for_plot = [0.5] * len(colors_for_plot)
+        plot_geometries(geom, gdf, geometries_for_plot, colors_for_plot, alphas_for_plot, bound=True)
     elif entity is not None:
         entity_geometries = get_entity_geometries(geom, entity)
         link_geometries = []
@@ -102,5 +105,6 @@ if __name__ == "__main__":
             if link.get("id") not in exclude:
                 link_geometries.extend(get_entity_geometries(geom, link))
         geometries_for_plot = entity_geometries + link_geometries
-        colors_for_plot = ["darkred"]*len(entity_geometries) + ["steelblue"]*len(link_geometries)
-        plot_geometries(geom, gdf, geometries_for_plot, colors_for_plot)
+        colors_for_plot = [target_color]*len(entity_geometries) + [ref_color]*len(link_geometries)
+        alphas_for_plot = [0.5] * len(colors_for_plot)
+        plot_geometries(geom, gdf, geometries_for_plot, colors_for_plot, alphas_for_plot)

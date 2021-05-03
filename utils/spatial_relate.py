@@ -1,6 +1,7 @@
 import math
 import re
 
+
 def frexp10(x):
     exp = int(math.log10(x))
     return x / 10**exp, exp
