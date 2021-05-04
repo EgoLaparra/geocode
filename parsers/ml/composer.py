@@ -1,6 +1,7 @@
 import sys
 import csv
 import argparse
+import traceback
 from lxml import etree
 from operator import itemgetter
 from math import pi, cos, sin, sqrt
@@ -209,10 +210,13 @@ if __name__ == "__main__":
     data_source = etree.parse(args.data_file)
     for record_id, entity in enumerate(data_source.xpath("//entity[@status='5']")):
         entity_id = entity.get("id")
-        print("Composing entity %s..." % entity_id)
-        size = load_size(entity, size_predictions)
-        reference_data = load_reference_data(geom, entity, relation_predictions)
-        prediction = compose_arcs(reference_data)
-        prediction = buffer_to_area(prediction, size)
-        prediction = calculate_spatial_relations(prediction, reference_data)
-        geom.database.insert_in_table(args.table_name, record_id, entity_id, prediction)
+        try:
+            print("Composing entity %s..." % entity_id)
+            size = load_size(entity, size_predictions)
+            reference_data = load_reference_data(geom, entity, relation_predictions)
+            prediction = compose_arcs(reference_data)
+            prediction = buffer_to_area(prediction, size)
+            prediction = calculate_spatial_relations(prediction, reference_data)
+            geom.database.insert_in_table(args.table_name, record_id, entity_id, prediction)
+        except KeyError:
+            traceback.print_exc(file=sys.stdout)
