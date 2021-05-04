@@ -66,12 +66,24 @@ def reverse_azimuth(azimuth):
     return azimuth if azimuth >= 0 else 8 - azimuth
 
 
+def split_geometry(geometry, line):
+    splits = []
+    if geometry.type == "GeometryCollection":
+        for geom in geometry:
+            splits.extend(
+                ops.split(geom, line).geoms
+            )
+    else:
+        splits = ops.split(geometry, line).geoms
+    return splits
+
+
 def complete_hull(geom_a, geom_b, difference=False):
     point_a = affinity.rotate(geom_a.centroid, 90, origin=geom_b.centroid)
     point_b = affinity.rotate(geom_a.centroid, -90, origin=geom_b.centroid)
     crossing_line = LineString([point_a, point_b])
     splits = []
-    for split in ops.split(geom_b, crossing_line).geoms:
+    for split in split_geometry(geom_b, crossing_line):
         distance = geom_a.distance(split)
         splits.append((distance, split))
     split = min(splits, key=itemgetter(0))[1]
@@ -81,21 +93,21 @@ def complete_hull(geom_a, geom_b, difference=False):
 
 def calculate_spatial_relation(geometry, relation, relation_geometry):
     if relation == "Disjoint" and not geometry.disjoint(relation_geometry):
-        if geometry.intersects(relation_geometry):
+        if geometry.crosses(relation_geometry):
             geometry = geometry.difference(relation_geometry)
     elif relation == "Touches" and not geometry.touches(relation_geometry):
         if geometry.disjoint(relation_geometry):
             geometry = complete_hull(geometry, relation_geometry, difference=True)
-        elif geometry.intersects(relation_geometry):
+        elif geometry.crosses(relation_geometry):
             geometry = geometry.difference(relation_geometry)
     elif relation == "Intersects" and not geometry.intersects(relation_geometry):
         if geometry.disjoint(relation_geometry) or geometry.touches(relation_geometry):
             geometry = complete_hull(geometry, relation_geometry)
     elif relation == "Contains" and not geometry.contains(relation_geometry):
-        if geometry.intersects(relation_geometry) or geometry.within(relation_geometry):
+        if geometry.crosses(relation_geometry) or geometry.within(relation_geometry):
             geometry = geometry.intersection(relation_geometry)
     elif relation == "Within" and not geometry.within(relation_geometry):
-        if geometry.intersects(relation_geometry) or geometry.contains(relation_geometry):
+        if geometry.crosses(relation_geometry) or geometry.contains(relation_geometry):
             geometry = geometry.intersection(relation_geometry)
     return geometry
 
