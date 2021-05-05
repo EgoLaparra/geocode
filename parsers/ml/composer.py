@@ -68,7 +68,9 @@ def reverse_azimuth(azimuth):
 
 def split_geometry(geometry, line):
     splits = []
-    if geometry.type == "GeometryCollection":
+    if geometry.geom_type == "Point":
+        splits.append(geometry)
+    elif geometry.geom_type == "GeometryCollection":
         for geom in geometry:
             splits.extend(
                 ops.split(geom, line).geoms
