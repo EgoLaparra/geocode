@@ -73,7 +73,7 @@ def split_geometry(geometry, line):
     elif geometry.geom_type == "GeometryCollection":
         for geom in geometry:
             splits.extend(
-                ops.split(geom, line).geoms
+                split_geometry(geom, line)
             )
     else:
         splits = ops.split(geometry, line).geoms
