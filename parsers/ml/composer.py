@@ -133,8 +133,11 @@ def compose_arcs(reference_data):
 
 
 def buffer_to_area(prediction, size):
-    radius = sqrt(size/pi)
-    return prediction.centroid.buffer(radius)
+    if size > 0:
+        radius = sqrt(size/pi)
+        return prediction.centroid.buffer(radius)
+    else:
+        return prediction
 
 
 def load_size(entity, size_predictions):
