@@ -228,12 +228,15 @@ if __name__ == "__main__":
     for record_id, entity in enumerate(data_source.xpath("//entity[@status='5']")):
         entity_id = entity.get("id")
         try:
-            print("Composing entity %s..." % entity_id)
-            size = load_size(entity, size_predictions)
-            reference_data = load_reference_data(geom, entity, relation_predictions)
-            prediction = compose_arcs(reference_data)
-            prediction = buffer_to_area(prediction, size)
-            prediction = calculate_spatial_relations(prediction, reference_data)
-            geom.database.insert_in_table(args.table_name, record_id, entity_id, prediction)
+            if geom.database.select_from_table(args.table_name, entity_id) is not None:
+                print("Entity %s already in %s" % (entity_id, args.table_name))
+            else:
+                print("Composing entity %s..." % entity_id)
+                size = load_size(entity, size_predictions)
+                reference_data = load_reference_data(geom, entity, relation_predictions)
+                prediction = compose_arcs(reference_data)
+                prediction = buffer_to_area(prediction, size)
+                prediction = calculate_spatial_relations(prediction, reference_data)
+                geom.database.insert_in_table(args.table_name, record_id, entity_id, prediction)
         except KeyError:
             traceback.print_exc(file=sys.stdout)
