@@ -3,7 +3,7 @@ import re
 
 
 def frexp10(x):
-    exp = int(math.log10(x))
+    exp = math.floor(math.log10(x))
     return x / 10**exp, exp
 
 
@@ -17,7 +17,7 @@ def geometry_size(geom, geometry, geometry_type="ST_Polygon", discrete=True):
         if geometry_type == "ST_Polygon" or geometry_type == "ST_MultiPolygon"
         else geom.get_geometry_length(geometry) * 1000
     )
-    return int(size[0]) if discrete else size[0], size[1]
+    return round(size[0]) if discrete else size[0], size[1]
 
 
 def reference_azimuth(geom, geometry_a, geometry_b, discrete=True):
@@ -30,14 +30,14 @@ def reference_azimuth(geom, geometry_a, geometry_b, discrete=True):
     return math.floor(azimuth) if discrete else azimuth
 
 
-def reference_distance(geom, geometry_a, geometry_b, discrete=True):
+def reference_distance(geom, geometry_a, geometry_b, discrete=True, round_to=1):
     distance = frexp10(
         geom.calculate_distance(
             geom.get_centrality(geometry_a),
             geom.get_centrality(geometry_b)
         ) * 1000
     )
-    return int(distance[0]) if discrete else distance[0], distance[1]
+    return round(distance[0], round_to) if discrete else distance[0], distance[1]
 
 
 def project_centroid(geom, reference_geometry, reference_distance, reference_azimuth):
