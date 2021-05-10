@@ -52,7 +52,7 @@ SQL = {"geometry":          {"query": """select geom from geometries
                              "single_output": True},
        "relate":            {"query": """select st_relate('%s', '%s');""",
                              "single_output": True},
-       "contains":          {"query": """select st_contains('%s', '%s');""",
+       "contains":          {"query": """select st_contains('%s'::geometry, '%s'::geometry);""",
                              "single_output": True},
        "intersects":        {"query": """select st_intersects('%s', '%s');""",
                              "single_output": True},
