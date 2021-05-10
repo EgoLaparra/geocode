@@ -344,7 +344,7 @@ if __name__ == "__main__":
     size_predictions = load_size_predictions(args.size_file, gold=args.use_gold)
     relation_predictions = load_relation_predictions(args.relations_file, gold=args.use_gold)
     data_source = etree.parse(args.data_file)
-    gold_entities = data_source.xpath("//entity[@status='5']")[:5]
+    gold_entities = data_source.xpath("//entity[@status='5']")
     if args.do_evaluation:
         num_gold_entities = len(gold_entities)
         scores = Scores(total_gold=num_gold_entities)
