@@ -9,7 +9,6 @@ from shapely.geometry import Polygon, LineString, Point
 from shapely import wkt
 from shapely import affinity, ops
 
-
 from geometries import Geometries
 import spatial_relate as sr
 from evaluate import Scores, score, print_scores, update_scores
@@ -72,10 +71,14 @@ class LinkData(GeomData):
         distance = sr.ldexp10(distance_mantissa, distance_exponent) / 1000
         self.set_distance(distance)
 
-        link_arc = arc(self.centroid, self.distance, 20, self.azimuth)
+        link_arc = arc(self.centroid, self.distance, 200, self.azimuth)
         self.set_arc(link_arc)
 
     def calculate_link_gold_data(self, geom, entity, distance_discrete=True, round_to=1, arc_as_polygon=False):
+        azimuth = sr.reference_azimuth(geom, entity.centroid, self.centroid, discrete=True)
+        azimuth = reverse_azimuth(azimuth)
+        self.azimuth = azimuth
+
         distance_mantissa, distance_exponent = sr.reference_distance(geom, entity.centroid, self.centroid,
                                                                      discrete=distance_discrete, round_to=round_to)
         distance = sr.ldexp10(distance_mantissa, distance_exponent) / 1000
@@ -84,13 +87,12 @@ class LinkData(GeomData):
         if arc_as_polygon:
             distance1 = sr.ldexp10(distance_mantissa - 0.5, distance_exponent) / 1000
             distance2 = sr.ldexp10(distance_mantissa + 0.5, distance_exponent) / 1000
-            link_arc1 = arc(self.centroid, distance1, 20, self.azimuth)
-            link_arc2 = arc(self.centroid, distance2, 20, self.azimuth)
+            link_arc1 = arc(self.centroid, distance1, 200, self.azimuth)
+            link_arc2 = arc(self.centroid, distance2, 200, self.azimuth)
             link_arc = Polygon(list(link_arc1.coords) + link_arc2.coords[::-1] + link_arc1.coords[:1])
         else:
-            link_arc = arc(self.centroid, self.distance, 20, self.azimuth)
+            link_arc = arc(self.centroid, self.distance, 200, self.azimuth)
         self.set_arc(link_arc)
-
 
     @staticmethod
     def from_xml_and_geom(entity, geom):
@@ -246,8 +248,30 @@ def calculate_spatial_relations(geometry, links):
     return geometry
 
 
-def compose_arcs(links):
+def filter_arc_intersection(closest_points, intersections, proximities):
+    avg_intersections = sum([len(intersections[i]) for i in intersections]) / len(intersections)
+    points_to_filter = [point
+                        for i in intersections if len(intersections[i]) < avg_intersections
+                        for point in intersections[i] + proximities[i]]
+    return [point for e, point in enumerate(closest_points) if e not in points_to_filter]
+
+
+def filter_arc_intersection_by_distance(closest_points):
+    sum_distances = [0] * len(closest_points)
+    for i in range(len(closest_points)):
+        for j in range(i + 1, len(closest_points)):
+            distance = closest_points[i].distance(closest_points[j])
+            sum_distances[i] += distance
+            sum_distances[j] += distance
+    avg_distances = [sum_dist / (len(closest_points) - 1) for sum_dist in sum_distances]
+    avg_distance = sum(avg_distances) / len(closest_points)
+    return [point for i, point in enumerate(closest_points) if avg_distances[i] <= avg_distance]
+
+
+def get_intersecting_points(links, with_proximities=True):
     closest_points = []
+    intersections = {i: [] for i in range(len(links))}
+    proximities = {i: [] for i in range(len(links))}
     for i in range(len(links)):
         for j in range(i + 1, len(links)):
             arc_i = links[i].arc
@@ -255,11 +279,24 @@ def compose_arcs(links):
             if arc_i.intersects(arc_j):
                 arc_intersection = arc_i.intersection(arc_j)
                 if arc_intersection.geom_type == "Point":
+                    intersections[i].append(len(closest_points))
+                    intersections[j].append(len(closest_points))
                     closest_points.append(arc_intersection)
-            else:
+            elif with_proximities:
+                proximities[i].append(len(closest_points))
+                proximities[j].append(len(closest_points))
                 closest_points.extend(
                     [point for point in ops.nearest_points(arc_j, arc_i)]
                 )
+    return closest_points, intersections, proximities
+
+
+def compose_arcs(links, with_proximities=True, filter_points=True):
+    closest_points, intersections, proximities = get_intersecting_points(links, with_proximities)
+    if len(closest_points) == 0 and not with_proximities:
+        closest_points, intersections, proximities = get_intersecting_points(links, True)
+    if filter_points and len(closest_points) > 1:
+        closest_points = filter_arc_intersection_by_distance(closest_points)
     return ops.unary_union(closest_points).centroid
 
 
@@ -338,6 +375,10 @@ if __name__ == "__main__":
                         help='Round to this value when calculating gold distance.')
     parser.add_argument('--arc_as_polygon', action="store_true",
                         help='Calculate gold arcs as Polygon instead of LineString.')
+    parser.add_argument('--with_proximities', action="store_true",
+                        help='Compose gold arcs using proximities.')
+    parser.add_argument('--filter_points', action="store_true",
+                        help='Filter points when composing gold arcs.')
     args = parser.parse_args()
 
     geom = Geometries()
@@ -367,7 +408,8 @@ if __name__ == "__main__":
                 if args.arc_as_polygon:
                     prediction = compose_arc_polygons(entity_data.links)
                 else:
-                    prediction = compose_arcs(entity_data.links)
+                    prediction = compose_arcs(entity_data.links,
+                                              with_proximities=args.with_proximities, filter_points=args.filter_points)
                     prediction = buffer_to_area(prediction, entity_data.size)
                 prediction = calculate_spatial_relations(prediction, entity_data.links)
 
