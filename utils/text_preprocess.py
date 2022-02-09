@@ -1,4 +1,5 @@
 from itertools import chain
+from functools import reduce
 import spacy
 import re
 
@@ -6,6 +7,16 @@ import re
 def get_text(node):
     parts = ([node.text] + list(chain(*(get_text(c) for c in node.getchildren()))) + [node.tail])
     return ''.join(filter(None, parts))
+
+
+def get_parts(node):
+    parts = [(node, node.text)] + list(chain(*(get_parts(c) for c in node.getchildren()))) + [(None, node.tail)]
+    return filter(lambda x: x[1] is not None, parts)
+
+
+def get_links(node):
+    parts = reduce(lambda x, y: x + [(y[0], x[-1][-1], x[-1][-1] + len(y[1]))], get_parts(node), [(None, 0, 0)])
+    return filter(lambda x: x[0] is not None and x[0].tag == "link", parts)
 
 
 def get_recursive_partial_text(node, until):
@@ -27,8 +38,7 @@ def get_partial_text(node, until):
 
 
 def init_nlp():
-    nlp = spacy.blank("en")
-    nlp.add_pipe("sentencizer")
+    nlp = spacy.load("en_core_web_sm")
     return nlp
 
 
