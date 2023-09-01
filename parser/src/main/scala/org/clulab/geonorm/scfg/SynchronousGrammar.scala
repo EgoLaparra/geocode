@@ -120,7 +120,7 @@ object SynchronousGrammar {
    */
   def fromString(text: String): SynchronousGrammar = {
     val stripLabel: (String => String) = _.replaceAll("\\[(.*),.*\\]", "[$1]")
-    val lines = text.lines
+    val lines = text.linesIterator
     val firstLine = lines.next
     if (!firstLine.startsWith("ROOTS")) {
       throw new IllegalArgumentException("First line must define root symbols, e.g. ROOTS [XXX] [YYY]")

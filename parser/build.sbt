@@ -8,9 +8,9 @@ scalacOptions := Seq("-unchecked", "-deprecation")
 
 
 resolvers ++= Seq(
-  "maven2-repository.dev.java.net" at "http://download.java.net/maven/2",
+  "maven2-repository.dev.java.net" at "https://download.java.net/maven/2",
   "osgeo" at "https://repo.osgeo.org/repository/release/",
-  "boundless" at "http://repo.boundlessgeo.com/main",
+  "boundless" at "https://repo.boundlessgeo.com/main",
 )
 
 
