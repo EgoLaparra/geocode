@@ -5,13 +5,17 @@ import org.locationtech.jts.geom.Geometry
 import scala.xml.{Node, XML}
 
 object Data {
-  def fromPath(xmlPath: String, database: Option[DataBase] = None) = apply(XML.loadFile(xmlPath), database)
-  def apply(xml: Node, database: Option[DataBase] = None) = new Data(xml, database)
+  def fromPath(xmlPath: String, database: Option[DataBase] = None, tsv: Option[TSV] = None) = apply(XML.loadFile(xmlPath), database, tsv)
+  def apply(xml: Node, database: Option[DataBase] = None, tsv: Option[TSV] = None) = new Data(xml, database, tsv)
 }
-class Data(val xml: Node, database: Option[DataBase]) {
-  val entities: Iterator[Node] = (xml \\ "entity")
-    .filter(_.attribute("status").map(_.text).contains("5")).toIterator
-  def nextEntity(): Entity = Entity.apply(entities.next, database)
+class Data(val xml: Node, database: Option[DataBase], tsv: Option[TSV]) {
+  val entities: Iterator[Node] = tsv match {
+    case None => (xml \\ "entity")
+      .filter(_.attribute("status").map(_.text).contains("5")).toIterator
+    case Some(t) => (xml \\ "entity")
+      .filter(_.attribute("id").getOrElse(Seq()).exists(id => t.tsv.contains(id.text))).toIterator
+  }
+  def nextEntity(): Entity = Entity.apply(entities.next, database, tsv)
 }
 
 
@@ -19,7 +23,7 @@ object Entity {
 
   val CONTINENTS = Array("Europe", "Africa", "Asia", "Oceania", "Americas", "South_America", "North_America")
 
-  def apply(xml: Node, database: Option[DataBase]): Entity = {
+  def apply(xml: Node, database: Option[DataBase], tsv: Option[TSV]): Entity = {
     val entity_id = xml.attribute("id").get.text
     val entity_name = xml.attribute("wikipedia").get.text.replaceAll("_", " ")
     val paragraph =
@@ -46,10 +50,16 @@ object Entity {
       case _ => None
     }
     // This line replaces all the toponym ocurrences with their corresponding SHPid
-    val processedText = toponymMap.keys.foldLeft(text)((newtext, toponym) =>
-        newtext.replaceAll(s"(?<=\\W)${toponym}(?=\\W)", s"SHP${toponymMap(toponym)}"))
-    val sentenceBoundary = "(?<=\\.)\\s+(?=[A-Z])".r
-    val expressions = sentenceBoundary.split(processedText).map(Expression(_, shapeMap)).toIndexedSeq
+    val expressions = tsv match {
+      case None =>
+        val processedText = toponymMap.keys.foldLeft(text)((newtext, toponym) =>
+          newtext.replaceAll(s"(?<=\\W)${toponym}(?=\\W)", s"SHP${toponymMap(toponym)}"))
+        val sentenceBoundary = "(?<=\\.)\\s+(?=[A-Z])".r
+        sentenceBoundary.split(processedText).map(Expression(_, shapeMap)).toIndexedSeq
+      case Some(t) =>
+        t.tsv.get(entity_id).map(Expression(_, shapeMap)).toIndexedSeq
+    }
+
     new Entity(Some(entity_id), expressions)
   }
 

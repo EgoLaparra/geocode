@@ -125,15 +125,24 @@ object DefaultTokenizer extends (String => IndexedSeq[String]) {
       if (word.isEmpty) {
         IndexedSeq.empty[String]
       }
-        else if (word.matches("^SHP\\d+$")) {
-          IndexedSeq(word.substring(0, 3), word.substring(3))
-        }
+      else if (word.matches("^SHP\\d+$")) {
+        IndexedSeq(word.substring(0, 3), word.substring(3))
+      }
       // otherwise, split at all letter/non-letter boundaries
       else {
         this.letterNonLetterBoundary.split(word).toIndexedSeq.map(_.trim.toLowerCase).filterNot(_.isEmpty)
       }
     }
     tokens.flatten
+  }
+}
+
+
+object OperatorTokenizer extends (String => IndexedSeq[String]) {
+  final val operatorSplitter = "((?<=(,|\\(|\\)))|(?=(,|\\(|\\))))".r
+
+  def apply(sourceText: String): IndexedSeq[String] = {
+    this.operatorSplitter.split(sourceText).toIndexedSeq
   }
 }
 

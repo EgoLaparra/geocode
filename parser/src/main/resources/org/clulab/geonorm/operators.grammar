@@ -1,0 +1,26 @@
+ROOTS [Location]
+
+[Cardinal] ||| GeoCardinal ( N ) ||| N ||| 1.0
+[Cardinal] ||| GeoCardinal ( S ) ||| S ||| 1.0
+[Cardinal] ||| GeoCardinal ( E ) ||| E ||| 1.0
+[Cardinal] ||| GeoCardinal ( W ) ||| W ||| 1.0
+[Cardinal] ||| GeoCardinal ( NE ) ||| NE ||| 1.0
+[Cardinal] ||| GeoCardinal ( NW ) ||| NW ||| 1.0
+[Cardinal] ||| GeoCardinal ( SE ) ||| SE ||| 1.0
+[Cardinal] ||| GeoCardinal ( SW ) ||| SW ||| 1.0
+
+[Unit] ||| KM ||| KM ||| 1.0
+[Unit] ||| MI ||| MI ||| 1.0
+[Unit] ||| NMI ||| NMI ||| 1.0
+
+[Location] ||| SubLocation ( [Location] ) ||| SubLocation [Location] ||| 1.0
+[Location] ||| SimpleLocation ( [Location] , None ) ||| Simple [Location] ||| 1.0
+[Location] ||| SimpleLocation ( [Location] , Some ( [Cardinal] ) ) ||| Simple [Location] [Cardinal] ||| 1.0
+[Location] ||| GeoLocation ( [Int] , None ) ||| Toponym [Int] ||| 1.0
+[Location] ||| GeoLocation ( [Int] , Some ( [Cardinal] ) ) ||| Toponym [Int] [Cardinal] ||| 1.0
+[Location] ||| Between ( [Location,1] , [Location,2] ) ||| Between [Location,1] [Location,2] ||| 1.0
+[Location] ||| Intersection ( [Location,1] , [Location,2] ) ||| Intersection [Location,1] [Location,2] ||| 1.0
+[Location] ||| Adjacent ( [Location] , None ) ||| Adjacent [Location] ||| 1.0
+[Location] ||| Adjacent ( [Location] , Some ( [Cardinal] ) ) ||| Adjacent [Location] [Cardinal] ||| 1.0
+[Location] ||| Distance ( [Location] , [Int] , [Unit] , None ) ||| Distance [Location] [Int] [Unit] ||| 1.0
+[Location] ||| Distance ( [Location] , [Int] , [Unit] , Some ( [Cardinal] ) ) ||| Distance [Location] [Int] [Unit] [Cardinal] ||| 1.0
