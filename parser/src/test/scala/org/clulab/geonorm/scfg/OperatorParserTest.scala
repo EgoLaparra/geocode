@@ -34,7 +34,7 @@ class OperatorParserTest extends FunSuite {
       Expression.applyFromText(
         "Intersection(SubLocation(SimpleLocation(SimpleLocation(GeoLocation(1001,None),None),None)),Adjacent(SimpleLocation(GeoLocation(1003,None),None),Some(GeoCardinal(N))))"))
       === Success(Intersection(
-      SubLocation(SimpleLocation(GeoLocation(1001,None),None)),Between(SimpleLocation(GeoLocation(1002,None),None),SimpleLocation(SimpleLocation(GeoLocation(1003,None),None),None)))))
+      SubLocation(SimpleLocation(SimpleLocation(GeoLocation(1001,None),None),None)),Adjacent(SimpleLocation(GeoLocation(1003,None),None),Some(GeoCardinal("N"))))))
 
   }
 }

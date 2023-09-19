@@ -43,7 +43,8 @@ object Entity {
       }
     }
     val (textIndexSeq, toponymIndexSeq, shapeIndexSeq) = paragraph.unzip3
-    val text: String = clean_text(textIndexSeq.mkString).replaceAll(entity_name, "TARGET")
+    val text: String = replace_target(clean_text(textIndexSeq.mkString), entity_name)
+    println(text)
     val toponymMap: Map[String, Int] = toponymIndexSeq.flatten.toMap
     val shapeMap: Option[Map[Int, Array[Geometry]]] = database match {
       case Some(db) => Some(shapeIndexSeq.flatten.map{location => location._1 -> db.query(location._2)}.toMap)
@@ -69,6 +70,10 @@ object Entity {
     val expressions = sentenceBoundary.split(text).map(Expression(_)).toIndexedSeq
     new Entity(None, expressions)
   }
+
+  def replace_target(text: String, entity_name: String): String = text
+    .replaceAll(".+(?= is (an?|the|one of)\\b)", "TARGET")
+    .replaceAll(entity_name, "TARGET")
 
   def clean_text(text: String): String = text
     .replaceAll("\\[[0-9]+\\]", "") // remove wikipedia refs
