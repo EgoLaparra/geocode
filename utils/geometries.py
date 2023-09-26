@@ -61,6 +61,9 @@ class Geometries:
     def get_point_on_surface(self, geometry):
         return self.database.execute_query("point_on_surface", geometry)
 
+    def get_boundary(self, geometry):
+        return self.database.execute_query("boundary", geometry)
+        
     def get_envelope(self, geometry):
         return self.database.execute_query("envelope", geometry)
 
