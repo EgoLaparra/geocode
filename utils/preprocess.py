@@ -145,9 +145,11 @@ def bitmap_to_geometry(geom, grid, bitmap, threshold=.5):
     )
 
 
-def geometry_to_image(geom, grid, geometry, color):
+def geometry_to_image(geom, grid, geometry, color, clip=None):
     num_tiles = geom.raster_width(grid)
     image = [[[0, 0, 0] for _ in range(num_tiles)] for _ in range(num_tiles)]
+    if clip is not None:
+        geometry = geom.intersect_geometries([geometry, clip])
     geometry_raster = geom.geometry_as_raster(geometry, grid)
     raster_union = geom.unite_rasters(grid, geometry_raster)
     for pixel in geom.raster_pixels(raster_union):

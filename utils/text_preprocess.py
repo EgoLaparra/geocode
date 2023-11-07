@@ -4,18 +4,22 @@ import spacy
 import re
 
 
+def get_text_from_parts(parts):
+    return "".join([part[1] for part in parts])
+
+
 def get_text(node):
-    parts = ([node.text] + list(chain(*(get_text(c) for c in node.getchildren()))) + [node.tail])
-    return ''.join(filter(None, parts))
+    parts = get_parts(node)
+    return get_text_from_parts(parts)
 
 
 def get_parts(node):
-    parts = [(node, node.text)] + list(chain(*(get_parts(c) for c in node.getchildren()))) + [(None, node.tail)]
+    parts = [[node, node.text]] + list(chain(*(get_parts(c) for c in node.getchildren()))) + [[None, node.tail]]
     return filter(lambda x: x[1] is not None, parts)
 
 
 def get_links(node):
-    parts = reduce(lambda x, y: x + [(y[0], x[-1][-1], x[-1][-1] + len(y[1]))], get_parts(node), [(None, 0, 0)])
+    parts = reduce(lambda x, y: x + [[y[0], x[-1][-1], x[-1][-1] + len(y[1])]], get_parts(node), [[None, 0, 0]])
     return filter(lambda x: x[0] is not None and x[0].tag == "link", parts)
 
 

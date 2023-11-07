@@ -18,8 +18,8 @@ class Geometries:
     def dump_points(self, geometry):
         return self.database.execute_query("dumppoints", geometry)
 
-    def apply_buffer(self, geometry, offset):
-        return self.database.execute_query("buffer", (geometry, offset))
+    def apply_buffer(self, geometry, offset, obj_type='geometry'):
+        return self.database.execute_query("buffer", (geometry, obj_type, offset))
 
     def geometry_is_empty(self, geometry):
         return self.database.execute_query("isempty", geometry)
@@ -33,19 +33,27 @@ class Geometries:
     def get_geometry_type(self, geometry):
         return self.database.execute_query("type", geometry)
 
-    def get_geometry_area(self, geometry):
-        return self.database.execute_query("area", geometry)
+    def get_srid(self, geometry, obj_type='geometry'):
+        return self.database.execute_query("srid", (geometry, obj_type))
 
-    def get_geometry_length(self, geometry):
-        return self.database.execute_query("length", geometry)
+    def set_srid(self, geometry, srid, obj_type='geometry'):
+        return self.database.execute_query("setsrid", (geometry, obj_type, srid))
+
+    def get_geometry_area(self, geometry, obj_type='geometry'):
+        return self.database.execute_query("area", (geometry, obj_type))
+
+    def get_geometry_length(self, geometry, obj_type='geometry'):
+        return self.database.execute_query("length", (geometry, obj_type))
 
     def get_coordinates(self, geometry):
         x = self.database.execute_query("x", geometry)
         y = self.database.execute_query("y", geometry)
         return x, y
 
-    def get_centrality(self, geometry, metric="centroid"):
+    def get_centrality(self, geometry, metric="centroid", inside=True):
         centrality = self.database.execute_query(metric, geometry)
+        if not inside:
+            return centrality
         return self.database.execute_query("closest_point", (geometry, centrality))
 
     def get_max(self, geometry):
@@ -85,8 +93,8 @@ class Geometries:
     def intersects(self, geometry_a, geometry_b):
         return self.database.execute_query("intersects", (geometry_a, geometry_b))
 
-    def calculate_distance(self, geometry_a, geometry_b):
-        return self.database.execute_query("distance", (geometry_a, geometry_b))
+    def calculate_distance(self, geometry_a, geometry_b, obj_type="geometry"):
+        return self.database.execute_query("distance", (geometry_a, obj_type, geometry_b, obj_type))
 
     def calculate_max_distance(self, geometry_a, geometry_b):
         return self.database.execute_query("max_distance", (geometry_a, geometry_b))
@@ -181,7 +189,7 @@ class Geometries:
                 if geometry_isclosed:
                     geometry = self.database.execute_query("makepolygon", geometry)
             return geometry
-        elif geometry_type == "ST_Point" or geometry_type == "ST_MultiPoint":
+        elif geometry_type in ["ST_Point", "ST_MultiPoint", "ST_Polygon", "ST_MultiPolygon"]:
             return geometry[0]
         else:
             print(self.as_text(self.database.execute_query("linemerge", geometry)))
@@ -246,6 +254,12 @@ class Geometries:
 
     def pixel_as_polygons(self, raster):
         return self.database.execute_query("pixelaspolygons", (raster))
+
+    def clip_raster(self, raster, geometry):
+        return self.database.execute_query("clip", (raster, geometry))
+
+    def raster_as_png(self, raster):
+        return self.database.execute_query("aspng", (raster))
 
     def close_connection(self):
         self.database.close()
