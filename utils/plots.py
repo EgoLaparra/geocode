@@ -8,7 +8,7 @@ from shapely.geometry import Polygon
 from geometries import Geometries
 
 
-def plot_geometries(geom, gdf, geometry_list, color_list, alpha_list, bound=False, lims=None):
+def plot_geometries(geom, gdf, geometry_list, color_list, alpha_list, entity_id, bound=False, lims=None):
     _, ax = plt.subplots(figsize=(100., 100.))
     for geometry, color, alpha in zip(geometry_list, color_list, alpha_list):
         if color is None:
@@ -29,13 +29,13 @@ def plot_geometries(geom, gdf, geometry_list, color_list, alpha_list, bound=Fals
                     geodataframe.plot(ax=ax, alpha=1., color=color, linewidth=2.)
             if bound and geodataframe is not None:
                 bound_dataframe(geodataframe, ax)
-    ctx.add_basemap(ax, url=ctx.providers.OpenStreetMap.Mapnik, zoom=12, attribution_size=5)
+    # ctx.add_basemap(ax, url=ctx.providers.OpenAIP, zoom=12, attribution_size=5)
     ax.axis('off')
     if lims is not None:
         ax.set_xlim(lims.minx[0], lims.maxx[0])
         ax.set_ylim(lims.miny[0], lims.maxy[0])
 
-    plt.show()
+    plt.savefig(f"{entity_id}.png")
 
 
 def bound_dataframe(geodataframe, ax):
@@ -69,7 +69,7 @@ def get_entity_geometries(geom, entity):
             print(osm, otype, entity_wikipedia)
             osm_geometries = geom.get_geometries(osm, otype)
             for osm_geometry in osm_geometries:
-                geometry = geom.process_geometry(osm_geometry)
+                geometry = geom.process_geometry(osm_geometry) # combine all lines to one
                 entity_geometries.append(geometry)
     return [geom.unite_geometries(entity_geometries)]
 
@@ -97,7 +97,7 @@ if __name__ == "__main__":
         geometries_for_plot = entity_geometries + predicted_geometry
         colors_for_plot = [target_color]*len(entity_geometries) + [ref_color]
         alphas_for_plot = [0.5] * len(colors_for_plot)
-        plot_geometries(geom, gdf, geometries_for_plot, colors_for_plot, alphas_for_plot, bound=True)
+        plot_geometries(geom, gdf, geometries_for_plot, colors_for_plot, alphas_for_plot, entity_id, bound=True)
     elif entity is not None:
         entity_geometries = get_entity_geometries(geom, entity)
         link_geometries = []
@@ -107,4 +107,4 @@ if __name__ == "__main__":
         geometries_for_plot = entity_geometries + link_geometries
         colors_for_plot = [target_color]*len(entity_geometries) + [ref_color]*len(link_geometries)
         alphas_for_plot = [0.5] * len(colors_for_plot)
-        plot_geometries(geom, gdf, geometries_for_plot, colors_for_plot, alphas_for_plot)
+        plot_geometries(geom, gdf, geometries_for_plot, colors_for_plot, alphas_for_plot, entity_id)

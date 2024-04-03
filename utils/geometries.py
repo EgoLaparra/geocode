@@ -63,7 +63,7 @@ class Geometries:
 
     def get_boundary(self, geometry):
         return self.database.execute_query("boundary", geometry)
-        
+
     def get_envelope(self, geometry):
         return self.database.execute_query("envelope", geometry)
 
@@ -223,7 +223,7 @@ class Geometries:
 
     def make_geodataframe(self, geometry, dataframe):
         geodataframe = self.database.dataframe_from_sql(geometry, dataframe)
-        geodataframe = geodataframe.to_crs(epsg=3857)
+        geodataframe = geodataframe.to_crs(epsg=4326)
         return geodataframe
 
     def make_raster(self, width, height, left_x, upper_y, scale_x, scale_y):
