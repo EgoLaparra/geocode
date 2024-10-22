@@ -95,12 +95,12 @@ class Near:
         return result - geometry
 
 
-class GeoJsonReader:
-    def __init__(self, root: str):
-        self.root = root
+class GeoJsonDirReader:
+    def __init__(self, root_dir: str):
+        self.root_dir = root_dir
 
     def read(self, osm) -> shapely.geometry.base.BaseGeometry:
-        with open(f"{self.root}/{osm[:2]}/{osm}") as f:
+        with open(f"{self.root_dir}/{osm[:2]}/{osm}") as f:
             collection = shapely.from_geojson(f.read())
         [geometry] = collection.geoms
         # recover polygons that were inappropriately stored as MultiLineStrings

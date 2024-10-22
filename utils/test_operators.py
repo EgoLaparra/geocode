@@ -1,19 +1,15 @@
 from operators import *
-import shapely.plotting
-import matplotlib.pyplot as plt
 
 
-def test_adjacent():
-    reader = GeoJsonReader("../clean_data_database")
-
-    az = reader.read("162018")
-    ca = reader.read("165475")
-    co = reader.read("161961")
-    la = reader.read("224922")
-    mx = reader.read("114686")
-    nm = reader.read("162014")
-    nv = reader.read("165473")
-    ut = reader.read("161993")
+def test_adjacent(georeader: GeoJsonDirReader):
+    az = georeader.read("162018")
+    ca = georeader.read("165475")
+    co = georeader.read("161961")
+    la = georeader.read("224922")
+    mx = georeader.read("114686")
+    nm = georeader.read("162014")
+    nv = georeader.read("165473")
+    ut = georeader.read("161993")
 
     assert Near.to(az).intersection(nm).area > 0.0
 
@@ -81,12 +77,10 @@ def test_adjacent():
     assert Near.to(az).intersection(la).area == 0.0
 
 
-def test_distance():
-    reader = GeoJsonReader("../clean_data_database")
-
-    de = reader.read("51477")
-    fr = reader.read("1403916")  # "Metropolitan France" not the territories
-    es = reader.read("1311341")
+def test_distance(georeader: GeoJsonDirReader):
+    de = georeader.read("51477")
+    fr = georeader.read("1403916")  # "Metropolitan France" not the territories
+    es = georeader.read("1311341")
 
     # Near should not overlap the original polygon
     assert Near.to(de).intersection(de).area == 0
