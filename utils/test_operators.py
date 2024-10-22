@@ -89,7 +89,8 @@ def test_distance():
     es = reader.read("1311341")
 
     # Spain is southwest of Germany, across France
-    assert Near.to(de, distance=diameter(fr)).intersection(es).area > 0.0
-    assert SouthWest.of(de, distance=diameter(fr)).intersection(es).area > 0.0
-    assert Near.to(es, distance=diameter(fr)).intersection(de).area > 0.0
-    assert NorthEast.of(es, distance=diameter(fr)).intersection(de).area > 0.0
+    fr_diameter = diameter(fr)
+    assert Near.to(de, distance=fr_diameter).intersection(es).area > 0.0
+    assert SouthWest.of(de, distance=fr_diameter).intersection(es).area > 0.0
+    assert Near.to(es, distance=fr_diameter).intersection(de).area > 0.0
+    assert NorthEast.of(es, distance=fr_diameter).intersection(de).area > 0.0
