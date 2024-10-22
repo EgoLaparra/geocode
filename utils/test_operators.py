@@ -88,6 +88,16 @@ def test_distance():
     fr = reader.read("1403916")  # "Metropolitan France" not the territories
     es = reader.read("1311341")
 
+    # Near should not overlap the original polygon
+    assert Near.to(de).intersection(de).area == 0
+    assert Near.to(fr).intersection(fr).area == 0
+    assert Near.to(es).intersection(es).area == 0
+
+    # Near with a distance greater than radius + diameter should not overlap
+    assert Near.to(de, distance=1.5*diameter(de)).intersection(de).area == 0
+    assert Near.to(fr, distance=1.5*diameter(fr)).intersection(fr).area == 0
+    assert Near.to(es, distance=1.5*diameter(es)).intersection(es).area == 0
+
     # Spain is southwest of Germany, across France
     fr_diameter = diameter(fr)
     assert Near.to(de, distance=fr_diameter).intersection(es).area > 0.0
