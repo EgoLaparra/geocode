@@ -1,6 +1,14 @@
 import dataclasses
 import shapely
 import shapely.affinity
+import geopandas
+import matplotlib.pyplot as plt
+
+
+def show_plot(*geometries: shapely.geometry.base.BaseGeometry):
+    gdf = geopandas.GeoDataFrame(geometry=list(geometries), crs='EPSG:4326')
+    gdf.plot(color=plt.rcParams['axes.prop_cycle'].by_key()['color'], aspect='equal')
+    plt.show()
 
 
 def diameter(geometry: shapely.geometry.base.BaseGeometry):
@@ -102,10 +110,3 @@ class GeoJsonReader:
             if not cuts and not dangles and not invalid:
                 geometry = shapely.multipolygons(shapely.get_parts(polygons))
         return geometry
-
-
-# import shapely.plotting
-# import matplotlib.pyplot as plt
-# g = shapely.from_wkt("POLYGON ((1.05 1.0, 0.805 0.826, 0.805 1.274, 1.05 1.1, 1.0 1.1, 1.0 1.0, 1.05 1.0)))")
-# shapely.plotting.plot_polygon(g)
-# shapely.plotting.plot_points(g.centroid, color='black')
