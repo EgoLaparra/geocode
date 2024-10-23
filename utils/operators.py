@@ -17,36 +17,6 @@ def diameter(geometry: shapely.geometry.base.BaseGeometry):
     return max(corner0.distance(corner1), corner1.distance(corner2))
 
 
-def _diameter_and_start(geometry: shapely.geometry.base.BaseGeometry,
-                        distance: float = None) -> (float, float):
-    d = diameter(geometry)
-    radius = d / 2
-    if distance is None:
-        start_distance = radius
-    else:
-        start_distance = max(0.0, distance - radius)
-    return d, start_distance
-
-
-def _chord_perpendicular_to_point(geometry: shapely.geometry.base.BaseGeometry,
-                                  point: shapely.Point) -> shapely.LineString:
-    # line from the centroid to the point
-    toward = shapely.LineString([geometry.centroid, point])
-    # line from the centroid directly away from the point
-    away = shapely.affinity.rotate(toward, angle=180, origin=geometry.centroid)
-    # combine the two lines
-    line = shapely.MultiLineString([toward, away])
-    line = shapely.simplify(shapely.line_merge(line), tolerance=0)
-    # rotate the line to be perpendicular
-    line = shapely.affinity.rotate(line, angle=90, origin=geometry.centroid)
-    # return only the portion of the line that intersects the input
-    # (using the convex hull if necessary to guarantee only 2 intersections)
-    result = line.intersection(geometry)
-    if len(result.coords) != 2:
-        result = line.intersection(geometry.convex_hull)
-    return result
-
-
 @dataclasses.dataclass
 class GeoCardinal:
     azimuth: int
@@ -122,3 +92,33 @@ class GeoJsonDirReader:
             if not cuts and not dangles and not invalid:
                 geometry = shapely.multipolygons(shapely.get_parts(polygons))
         return geometry
+
+
+def _diameter_and_start(geometry: shapely.geometry.base.BaseGeometry,
+                        distance: float = None) -> (float, float):
+    d = diameter(geometry)
+    radius = d / 2
+    if distance is None:
+        start_distance = radius
+    else:
+        start_distance = max(0.0, distance - radius)
+    return d, start_distance
+
+
+def _chord_perpendicular_to_point(geometry: shapely.geometry.base.BaseGeometry,
+                                  point: shapely.Point) -> shapely.LineString:
+    # line from the centroid to the point
+    toward = shapely.LineString([geometry.centroid, point])
+    # line from the centroid directly away from the point
+    away = shapely.affinity.rotate(toward, angle=180, origin=geometry.centroid)
+    # combine the two lines
+    line = shapely.MultiLineString([toward, away])
+    line = shapely.simplify(shapely.line_merge(line), tolerance=0)
+    # rotate the line to be perpendicular
+    line = shapely.affinity.rotate(line, angle=90, origin=geometry.centroid)
+    # return only the portion of the line that intersects the input
+    # (using the convex hull if necessary to guarantee only 2 intersections)
+    result = line.intersection(geometry)
+    if len(result.coords) != 2:
+        result = line.intersection(geometry.convex_hull)
+    return result
