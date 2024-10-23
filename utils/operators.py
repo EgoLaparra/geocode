@@ -117,8 +117,8 @@ def _chord_perpendicular_to_point(geometry: shapely.geometry.base.BaseGeometry,
     # rotate the line to be perpendicular
     line = shapely.affinity.rotate(line, angle=90, origin=geometry.centroid)
     # return only the portion of the line that intersects the input
-    # (using the convex hull if necessary to guarantee only 2 intersections)
     result = line.intersection(geometry)
-    if len(result.coords) != 2:
-        result = line.intersection(geometry.convex_hull)
+    # if the line is discontinuous, take the longest piece
+    if isinstance(result, shapely.MultiLineString):
+        result = max(result.geoms, key=lambda g: g.length)
     return result
