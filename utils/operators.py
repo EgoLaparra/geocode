@@ -24,22 +24,16 @@ class GeoCardinal:
     def of(self,
            geometry: shapely.geometry.base.BaseGeometry,
            distance: float = None) -> shapely.Polygon:
+        centroid = geometry.centroid
         d, start_distance = _diameter_and_start(geometry, distance)
-        # line at azimuth 0 (i.e., North)
-        y = geometry.centroid.y + start_distance + d
-        line = shapely.LineString([geometry.centroid, (geometry.centroid.x, y)])
-        # rotate line to specified azimuth (negative = clockwise)
-        line = shapely.affinity.rotate(line, -self.azimuth, origin=geometry.centroid)
+        # create point at azimuth 0 (North) and rotate (negative = clockwise)
+        point = shapely.Point(centroid.x, centroid.y + start_distance + d)
+        point = shapely.affinity.rotate(point, -self.azimuth, origin=centroid)
         # collect points along the arc
-        coordinates = [geometry.centroid]
-        for angle in range(-45, +45 + 1, 15):
-            rotated_line = shapely.affinity.rotate(
-                line, -angle, origin=geometry.centroid)
-            _, coordinate = rotated_line.coords
-            coordinates.append(coordinate)
-        # add the centroid again and construct the polygon
-        coordinates.append(geometry.centroid)
-        result = shapely.Polygon(coordinates)
+        arc = [shapely.affinity.rotate(point, -angle, origin=centroid)
+               for angle in range(-45, +45 + 1, 15)]
+        # add the centroid and construct the polygon
+        result = shapely.Polygon([centroid] + arc + [centroid])
         # if a distance is provided, remove the region nearest to the input
         if distance is not None and start_distance > 0:
             result -= geometry.centroid.buffer(start_distance)
