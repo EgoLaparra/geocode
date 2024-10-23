@@ -98,3 +98,13 @@ def test_distance(georeader: GeoJsonDirReader):
     assert SouthWest.of(de, distance=fr_diameter).intersection(es).area > 0.0
     assert Near.to(es, distance=fr_diameter).intersection(de).area > 0.0
     assert NorthEast.of(es, distance=fr_diameter).intersection(de).area > 0.0
+
+
+def test_between(georeader: GeoJsonDirReader):
+    na = georeader.read("195266")  # Namibia
+    bw = georeader.read("1889339")  # Botswana
+    zw = georeader.read("195272")  # Zimbabwe
+
+    # Botswana is between Namibia and Zimbabwe
+    assert Between.of(na, zw).intersection(bw).area > 0
+    assert Between.of(zw, na).intersection(bw).area > 0

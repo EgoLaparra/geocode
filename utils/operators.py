@@ -28,20 +28,23 @@ def _diameter_and_start(geometry: shapely.geometry.base.BaseGeometry,
     return d, start_distance
 
 
-def chord_perpendicular_to_point(polygon: shapely.Polygon,
-                                 point: shapely.Point) -> shapely.LineString:
+def _chord_perpendicular_to_point(geometry: shapely.geometry.base.BaseGeometry,
+                                  point: shapely.Point) -> shapely.LineString:
     # line from the centroid to the point
-    toward = shapely.LineString([polygon.centroid, point])
+    toward = shapely.LineString([geometry.centroid, point])
     # line from the centroid directly away from the point
-    away = shapely.affinity.rotate(toward, angle=180, origin=polygon.centroid)
+    away = shapely.affinity.rotate(toward, angle=180, origin=geometry.centroid)
     # combine the two lines
     line = shapely.MultiLineString([toward, away])
     line = shapely.simplify(shapely.line_merge(line), tolerance=0)
     # rotate the line to be perpendicular
-    line = shapely.affinity.rotate(line, angle=90, origin=polygon.centroid)
-    # return only the portion of the line that intersects the polygon
-    # (using the convex hull here to guarantee only 2 intersections)
-    return line.intersection(polygon.convex_hull)
+    line = shapely.affinity.rotate(line, angle=90, origin=geometry.centroid)
+    # return only the portion of the line that intersects the input
+    # (using the convex hull if necessary to guarantee only 2 intersections)
+    result = line.intersection(geometry)
+    if len(result.coords) != 2:
+        result = line.intersection(geometry.convex_hull)
+    return result
 
 
 @dataclasses.dataclass
@@ -93,6 +96,15 @@ class Near:
         if distance is not None and start_distance > 0:
             result -= geometry.centroid.buffer(start_distance)
         return result - geometry
+
+
+class Between:
+    @staticmethod
+    def of (geometry1: shapely.geometry.base.BaseGeometry,
+            geometry2: shapely.geometry.base.BaseGeometry) -> shapely.Polygon:
+        chord1 = _chord_perpendicular_to_point(geometry1, geometry2.centroid)
+        chord2 = _chord_perpendicular_to_point(geometry2, geometry1.centroid)
+        return chord1.union(chord2).convex_hull - geometry1 - geometry2
 
 
 class GeoJsonDirReader:
