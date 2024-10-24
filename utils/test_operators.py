@@ -1,7 +1,26 @@
 from operators import *
 
 
-def test_adjacent(georeader: GeoJsonDirReader):
+def test_inner_regions(georeader: GeoJsonDirReader):
+    india = georeader.read("304716")
+    delhi = georeader.read("1942586")
+    hyderabad = georeader.read("7868535")
+    gorakhpur = georeader.read("1959872")
+
+    # Delhi is in the North of India
+    assert North.part_of(india).intersection(delhi).area > 0
+    assert South.part_of(india).intersection(delhi).area == 0
+
+    # Hyderabad is in the South of India
+    assert North.part_of(india).intersection(hyderabad).area == 0
+    assert South.part_of(india).intersection(hyderabad).area > 0
+
+    # Gorakhpur is in the NorthEast of India
+    assert NorthEast.part_of(india).intersection(gorakhpur).area > 0
+    assert SouthWest.part_of(india).intersection(gorakhpur).area == 0
+
+
+def test_outer_regions(georeader: GeoJsonDirReader):
     az = georeader.read("162018")
     ca = georeader.read("165475")
     co = georeader.read("161961")
@@ -14,9 +33,9 @@ def test_adjacent(georeader: GeoJsonDirReader):
     assert Near.to(az).intersection(nm).area > 0.0
 
     # Utah is north of Arizona
-    assert NorthWest.of(az).intersection(ut).area >= 0
-    assert North.of(az).intersection(ut).area >= 0
-    assert NorthEast.of(az).intersection(ut).area >= 0
+    assert NorthWest.of(az).intersection(ut).area > 0
+    assert North.of(az).intersection(ut).area > 0
+    assert NorthEast.of(az).intersection(ut).area > 0
     assert East.of(az).intersection(ut).area == 0
     assert SouthEast.of(az).intersection(ut).area == 0
     assert South.of(az).intersection(ut).area == 0
@@ -24,9 +43,9 @@ def test_adjacent(georeader: GeoJsonDirReader):
     assert West.of(az).intersection(ut).area == 0
 
     # Colorado is northeast of Arizona
-    assert North.of(az).intersection(co).area >= 0
-    assert NorthEast.of(az).intersection(co).area >= 0
-    assert East.of(az).intersection(co).area >= 0
+    assert North.of(az).intersection(co).area > 0
+    assert NorthEast.of(az).intersection(co).area > 0
+    assert East.of(az).intersection(co).area > 0
     assert SouthEast.of(az).intersection(co).area == 0
     assert South.of(az).intersection(co).area == 0
     assert SouthWest.of(az).intersection(co).area == 0
@@ -34,9 +53,9 @@ def test_adjacent(georeader: GeoJsonDirReader):
     assert NorthWest.of(az).intersection(co).area == 0
 
     # New Mexico is east of Arizona
-    assert NorthEast.of(az).intersection(nm).area >= 0
-    assert East.of(az).intersection(nm).area >= 0
-    assert SouthEast.of(az).intersection(nm).area >= 0
+    assert NorthEast.of(az).intersection(nm).area > 0
+    assert East.of(az).intersection(nm).area > 0
+    assert SouthEast.of(az).intersection(nm).area > 0
     # assert South.of(az).intersection(nm).area == 0
     assert SouthWest.of(az).intersection(nm).area == 0
     assert West.of(az).intersection(nm).area == 0
@@ -44,19 +63,19 @@ def test_adjacent(georeader: GeoJsonDirReader):
     # assert North.of(az).intersection(nm).area == 0
 
     # Mexico is southeast, south, and southwest of Arizona
-    assert East.of(az).intersection(mx).area >= 0
-    assert SouthEast.of(az).intersection(mx).area >= 0
-    assert South.of(az).intersection(mx).area >= 0
-    assert SouthWest.of(az).intersection(mx).area >= 0
-    assert West.of(az).intersection(mx).area >= 0
+    assert East.of(az).intersection(mx).area > 0
+    assert SouthEast.of(az).intersection(mx).area > 0
+    assert South.of(az).intersection(mx).area > 0
+    assert SouthWest.of(az).intersection(mx).area > 0
+    assert West.of(az).intersection(mx).area > 0
     assert NorthWest.of(az).intersection(mx).area == 0
     assert North.of(az).intersection(mx).area == 0
     assert NorthEast.of(az).intersection(mx).area == 0
 
     # California is west of Arizona
-    assert SouthWest.of(az).intersection(ca).area >= 0
-    assert West.of(az).intersection(ca).area >= 0
-    assert NorthWest.of(az).intersection(ca).area >= 0
+    assert SouthWest.of(az).intersection(ca).area > 0
+    assert West.of(az).intersection(ca).area > 0
+    assert NorthWest.of(az).intersection(ca).area > 0
     assert North.of(az).intersection(ca).area == 0
     assert NorthEast.of(az).intersection(ca).area == 0
     assert East.of(az).intersection(ca).area == 0
@@ -64,9 +83,9 @@ def test_adjacent(georeader: GeoJsonDirReader):
     assert South.of(az).intersection(ca).area == 0
 
     # Nevada is northwest of Arizona
-    assert West.of(az).intersection(nv).area >= 0
-    assert NorthWest.of(az).intersection(nv).area >= 0
-    assert North.of(az).intersection(nv).area >= 0
+    assert West.of(az).intersection(nv).area > 0
+    assert NorthWest.of(az).intersection(nv).area > 0
+    assert North.of(az).intersection(nv).area > 0
     assert NorthEast.of(az).intersection(nv).area == 0
     assert East.of(az).intersection(nv).area == 0
     assert SouthEast.of(az).intersection(nv).area == 0

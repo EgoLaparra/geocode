@@ -7,7 +7,8 @@ import matplotlib.pyplot as plt
 
 def show_plot(*geometries: shapely.geometry.base.BaseGeometry):
     gdf = geopandas.GeoDataFrame(geometry=list(geometries), crs='EPSG:4326')
-    gdf.plot(color=plt.rcParams['axes.prop_cycle'].by_key()['color'], aspect='equal')
+    color_list = plt.rcParams['axes.prop_cycle'].by_key()['color']
+    gdf.plot(color=color_list, aspect='equal')
     plt.show()
 
 
@@ -40,6 +41,21 @@ class GeoCardinal:
         # keep only the region that does not overlap with the input
         return result - geometry
 
+    def part_of(self, geometry: shapely.geometry.base.BaseGeometry):
+        d = diameter(geometry)
+        c = geometry.centroid
+        # create point at azimuth 0 (North) and rotate (negative = clockwise)
+        point = shapely.Point(c.x, c.y + d)
+        point = shapely.affinity.rotate(point, -self.azimuth, origin=c)
+        # find a line perpendicular to that point
+        line = _line_through_centroid_perpendicular_to_point(geometry, point)
+        # find the one-directional buffer of the chord that crosses the point
+        buf1 = line.buffer(distance=d, single_sided=True, cap_style='flat')
+        buf2 = line.buffer(distance=-d, single_sided=True, cap_style='flat')
+        polygon = buf1 if buf1.intersection(point) else buf2
+        # keep only the region that overlaps with the input
+        return polygon.intersection(geometry)
+
 
 North = GeoCardinal(azimuth=0)
 NorthEast = GeoCardinal(azimuth=45)
@@ -64,8 +80,8 @@ class Near:
 
 class Between:
     @staticmethod
-    def of (geometry1: shapely.geometry.base.BaseGeometry,
-            geometry2: shapely.geometry.base.BaseGeometry) -> shapely.Polygon:
+    def of(geometry1: shapely.geometry.base.BaseGeometry,
+           geometry2: shapely.geometry.base.BaseGeometry) -> shapely.Polygon:
         chord1 = _chord_perpendicular_to_point(geometry1, geometry2.centroid)
         chord2 = _chord_perpendicular_to_point(geometry2, geometry1.centroid)
         return chord1.union(chord2).convex_hull - geometry1 - geometry2
@@ -99,17 +115,22 @@ def _diameter_and_start(geometry: shapely.geometry.base.BaseGeometry,
     return d, start_distance
 
 
-def _chord_perpendicular_to_point(geometry: shapely.geometry.base.BaseGeometry,
-                                  point: shapely.Point) -> shapely.LineString:
-    # line from the centroid to the point
-    toward = shapely.LineString([geometry.centroid, point])
-    # line from the centroid directly away from the point
-    away = shapely.affinity.rotate(toward, angle=180, origin=geometry.centroid)
-    # combine the two lines
-    line = shapely.MultiLineString([toward, away])
-    line = shapely.simplify(shapely.line_merge(line), tolerance=0)
+def _line_through_centroid_perpendicular_to_point(
+        geometry: shapely.geometry.base.BaseGeometry,
+        point: shapely.Point) -> shapely.LineString:
+    # line through the centroid to the point, extending equally on either side
+    start = shapely.affinity.rotate(point, angle=180, origin=geometry.centroid)
+    line = shapely.LineString([start, point])
     # rotate the line to be perpendicular
     line = shapely.affinity.rotate(line, angle=90, origin=geometry.centroid)
+    # extend the line past the geometry
+    scale = line.length / diameter(geometry)
+    return shapely.affinity.scale(line, xfact=scale, yfact=scale)
+
+
+def _chord_perpendicular_to_point(geometry: shapely.geometry.base.BaseGeometry,
+                                  point: shapely.Point) -> shapely.LineString:
+    line = _line_through_centroid_perpendicular_to_point(geometry, point)
     # return only the portion of the line that intersects the input
     result = line.intersection(geometry)
     # if the line is discontinuous, take the longest piece
